@@ -114,16 +114,16 @@ export class Note {
 
 async function writeIndex(notes) {
   let noteImports = '';
+  let noteLogs = '';
+  let noteObj = '';
   for (let key in notes) {
     noteImports += `import {${notes[key].id}} from './${notes[key].id}';\n`
-  }
-
-  let noteLogs = '';
-  for (let key in notes) {
     noteLogs += `console.log('imported', ${notes[key].id})\n`
+    noteObj += `\n  ${notes[key].id},`
   }
 
-  await fs.writeFile(path.join(outDir, 'index.js'), noteImports + '\n' + noteLogs);
+  noteObj = `let Notes = {${noteObj}\n};` + `\n\nconsole.log({Notes})`;
+  await fs.writeFile(path.join(outDir, 'index.js'), noteImports + '\n' + noteLogs + '\n' + noteObj);
 }
 
 async function main() {

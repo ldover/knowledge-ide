@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node compile-mdl.mjs && vite build",
     "preview": "sirv dist --no-clear"
   },
   "devDependencies": {

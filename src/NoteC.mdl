@@ -1,0 +1,9 @@
+import {NoteA} from './NoteA'
+import {NoteB} from './NoteB'
+
+# Note C
+Let's see the composite note
+
+{NoteB.render()}
+
+{NoteA.render()}
