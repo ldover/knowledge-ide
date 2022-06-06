@@ -1,0 +1,25 @@
+{
+  "name": "notebase",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "sirv dist --no-clear"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.31",
+    "svelte": "^3.44.2",
+    "vite": "^2.7.1"
+  },
+  "dependencies": {
+    "acorn": "^8.7.1",
+    "mdast-util-from-markdown": "^1.2.0",
+    "mdast-util-mdx-expression": "^1.2.1",
+    "mdast-util-mdxjs-esm": "^1.2.0",
+    "mdast-util-to-markdown": "^1.3.0",
+    "micromark-extension-mdx-expression": "^1.0.3",
+    "micromark-extension-mdxjs-esm": "^1.0.3",
+    "sirv-cli": "^1.0.0"
+  }
+}

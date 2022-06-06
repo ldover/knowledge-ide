@@ -1,0 +1,5 @@
+import {NoteA} from "./NoteA"
+
+# Note B
+Content of Note B.
+{NoteA.render()}
