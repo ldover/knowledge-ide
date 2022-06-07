@@ -1,9 +1,11 @@
 import Heading from "./components/Heading.svelte";
 import Text from "./components/Text.svelte";
 import Paragraph from "./components/Paragraph.svelte";
+import Note from "./components/Note.svelte";
 
-const Components = {
+export const Components = {
   'text': Text,
+  'root': Note,
   'heading': Heading,
   'paragraph': Paragraph,
 }

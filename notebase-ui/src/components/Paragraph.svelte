@@ -1,17 +1,9 @@
-<script>
-    import {injectComponents} from "../util";
-
-    export let node;
-
-    $: children = injectComponents(node.children);
-</script>
-
 <p>
-    {#each children as childNode}
-        <svelte:component this={childNode.component} node={childNode} />
-    {/each}
+    <slot></slot>
 </p>
 
 <style lang="scss">
-
+  h1 {
+    font-size: 28px;
+  }
 </style>

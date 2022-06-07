@@ -1,6 +1,7 @@
 <script>
     import {Notes} from './notebaseJs/index';
-    import Note from "./Note.svelte";
+    import Node from "./components/Node.svelte";
+    import Note from "./components/Note.svelte";
 
     let note = Notes.NoteA;
 
@@ -11,11 +12,7 @@
     <h1>Notebase</h1>
 
     <div>
-        <Note note={note}/>
-
-        <!--{#each notes as note}-->
-<!--            <div class="whitespace-pre-wrap">{note.stringify()}</div>-->
-<!--        {/each}-->
+        <Node node={note.render()}/>
     </div>
 </div>
 
