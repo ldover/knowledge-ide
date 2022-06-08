@@ -1,11 +1,10 @@
 <script>
     import {Notes} from './notebaseJs/index';
     import Node from "./components/Node.svelte";
-    import Note from "./components/Note.svelte";
+    import {sNavigation} from "./store";
 
-    let note = Notes.NoteA;
-
-    console.log('Note', {note})
+    sNavigation.set(Notes.NoteC);
+    $: note = $sNavigation;
 </script>
 
 <div class="p-10">
