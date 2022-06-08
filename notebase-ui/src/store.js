@@ -1,3 +1,16 @@
 import {writable} from "svelte/store";
+import {Notes} from './notebaseJs/index';
 
-export const sNavigation = writable(null);
+const _sNavigation = writable(Notes.NoteC);
+
+
+export const sNavigation = {
+  subscribe: _sNavigation.subscribe,
+  set: _sNavigation.set,
+  navigate: (name) => {
+    if (!Notes[name]) return window.alert('Note not found: "' + name + '"');
+
+    _sNavigation.set(Notes[name]);
+  }
+}
+

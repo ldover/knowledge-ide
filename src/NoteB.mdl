@@ -2,4 +2,5 @@ import {NoteA} from "./NoteA"
 
 # Note B
 Content of Note B.
+Now let's render {NoteA} —
 {NoteA.render()}

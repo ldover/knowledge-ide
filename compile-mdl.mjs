@@ -105,6 +105,7 @@ export class Note {
   render() {
     return {
       type: 'root',
+      note: this,
       children: this.children
     }
   }
