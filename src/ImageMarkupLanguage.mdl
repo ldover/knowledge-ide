@@ -1,0 +1,21 @@
+import {WritingMarkupLanguage} from './WritingMarkupLanguage'
+
+# Image Markup Language
+Image Markup Language is a programming framework for developing images with syntax for communicating with libraries of machine learning models. Just like {WritingMarkupLanguage} is used to develop text.
+
+## Example
+This is the famous image [DALLE•E 2](https://openai.com/dall-e-2/) generated from the following input:
+> “A propaganda poster depicting a cat dressed as French emperor Napoleon holding a piece of cheese”
+
+Provided the right ML libraries exist, {ImageMarkupLanguage} could express the same intent as:
+```jsx
+import Cat from 'libs/animals';
+import Poster from 'libs/artefacts';
+import Person from 'libs/people';
+
+<Poster style={'propaganda'}>
+	<Person name={'Napoleon'}>
+		<Person.Face from={Cat}/>
+	</Person>
+</Poster>
+```

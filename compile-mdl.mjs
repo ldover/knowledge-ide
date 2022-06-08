@@ -33,6 +33,9 @@ function compile(tree, baseName) {
       } else if (child.type === 'mdxjsEsm') {
         // skip imports
       } else {
+        if (child.type === 'mdxTextExpression') {
+          // child.
+        }
         compiled.push(JSON.stringify(child, null, 2));
       }
     })
@@ -123,7 +126,7 @@ async function writeIndex(notes) {
     noteObj += `\n  ${notes[key].id},`
   }
 
-  noteObj = `let Notes = {${noteObj}\n};` + `\n\nconsole.log({Notes})`;
+  noteObj = `export const Notes = {${noteObj}\n};` + `\n\nconsole.log({Notes})`;
   await fs.writeFile(path.join(outDir, 'index.js'), noteImports + '\n' + noteLogs + '\n' + noteObj);
 }
 

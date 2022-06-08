@@ -1,7 +1,7 @@
 import {writable} from "svelte/store";
 import {Notes} from './notebaseJs/index';
 
-const _sNavigation = writable(Notes.NoteC);
+const _sNavigation = writable(Notes.KnowledgeLanguage);
 
 
 export const sNavigation = {

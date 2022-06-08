@@ -4,9 +4,15 @@ import Paragraph from "./components/Paragraph.svelte";
 import Note from "./components/Note.svelte";
 import Link from "./components/Link.svelte";
 import NoteReference from "./components/NoteReference.svelte";
+import Emphasis from "./components/Emphasis.svelte";
+import Strong from "./components/Strong.svelte";
+import InlineCode from "./components/InlineCode.svelte";
 
 export const Components = {
   'text': Text,
+  'emphasis': Emphasis,
+  'inlineCode': InlineCode,
+  'strong': Strong,
   'root': Note,
   'heading': Heading,
   'paragraph': Paragraph,
