@@ -90,6 +90,39 @@ async function readAllNotes(noteFolderPath) {
 }
 
 
+async function readImage(imagePath) {
+  const baseName = path.parse(imagePath).name.replace(/\s/g, '');
+  const ext = path.parse(imagePath).ext;
+
+  const compile = (baseName, ext) => {
+    return `import {NotebaseImage} from "./lib/core";
+
+export const ${baseName} = new NotebaseImage('/notebaseJs/assets/${baseName}${ext}', '${baseName}')`
+  }
+
+  const out = compile(baseName, ext)
+
+  return {
+    id: baseName,
+    title: baseName,
+    outPath: path.join(outDir, 'assets', baseName + ext),
+    path: imagePath,
+    out
+  };
+}
+
+async function readAllImages(imageFolderPath) {
+  const imageDirectoryEntries = await fs.readdir(imageFolderPath, {withFileTypes: true});
+  const imagePaths = imageDirectoryEntries
+    .filter(entry => entry.isFile() && !entry.name.startsWith("."))
+    .map(entry => path.join(imageFolderPath, entry.name));
+
+  const imageEntries = await Promise.all(imagePaths.map(async imagePath => [imagePath, await readImage(imagePath)]));
+  return Object.fromEntries(imageEntries);
+}
+
+
+
 async function writeLib() {
   const noteClass = `import {toMarkdown} from "mdast-util-to-markdown"
 
@@ -116,6 +149,27 @@ export class Note {
   await fs.writeFile(path.join(outDir, 'lib', 'core.js'), noteClass);
 }
 
+async function writeImageLib() {
+
+  const imageClass = `export class NotebaseImage {
+  constructor(url, title) {
+    this.url = url;
+    this.title = title;
+  }
+
+  render() {
+    return {
+      type: 'notebase-image',
+      url: this.url,
+      title: this.title,
+      image: this,
+    }
+  }
+}`
+  await fs.writeFile(path.join(outDir, 'images', 'lib', 'core.js'), imageClass);
+
+}
+
 async function writeIndex(notes) {
   let noteImports = '';
   let noteLogs = '';
@@ -130,8 +184,28 @@ async function writeIndex(notes) {
   await fs.writeFile(path.join(outDir, 'index.js'), noteImports + '\n' + noteLogs + '\n' + noteObj);
 }
 
+async function writeImageIndex(notes) {
+  let noteImports = '';
+  let noteLogs = '';
+  let noteObj = '';
+  for (let key in notes) {
+    noteImports += `import {${notes[key].id}} from './${notes[key].id}';\n`
+    noteLogs += `console.log('imported', ${notes[key].id})\n`
+    noteObj += `\n  ${notes[key].id},`
+  }
+
+  noteObj = `export const Images = {${noteObj}\n};` + `\n\nconsole.log({Images})`;
+  await fs.writeFile(path.join(outDir, 'images', 'index.js'), noteImports + '\n' + noteLogs + '\n' + noteObj);
+}
+
 async function main() {
   fs.mkdir('./notebaseJs/lib', { recursive: true }, (err) => {
+    if (err) throw err;
+  });
+  fs.mkdir('./notebaseJs/images/lib', { recursive: true }, (err) => {
+    if (err) throw err;
+  });
+  fs.mkdir('./notebaseJs/assets', { recursive: true }, (err) => {
     if (err) throw err;
   });
 
@@ -140,9 +214,18 @@ async function main() {
     await fs.writeFile(path.join(outDir, allNotes[key].id + '.js'), allNotes[key].out);
   }
 
-  writeLib();
-  writeIndex(allNotes);
+  const allImages = await readAllImages(path.join(srcDir, 'images'));
+  for (let key in allImages) {
+    await fs.writeFile(path.join(outDir, 'images', allImages[key].id + '.js'), allImages[key].out);
+    await fs.copyFile(key, allImages[key].outPath)
+  }
 
+
+
+  writeLib();
+  writeImageLib();
+  writeIndex(allNotes);
+  writeImageIndex(allImages);
 }
 
 await main();

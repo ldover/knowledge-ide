@@ -1,7 +1,5 @@
 <script>
   export let node;
-
-  console.log("Link", node)
 </script>
 
 <a href="{node.url}"

@@ -7,6 +7,7 @@ import NoteReference from "./components/NoteReference.svelte";
 import Emphasis from "./components/Emphasis.svelte";
 import Strong from "./components/Strong.svelte";
 import InlineCode from "./components/InlineCode.svelte";
+import NotebaseImage from "./components/NotebaseImage.svelte";
 
 export const Components = {
   'text': Text,
@@ -17,6 +18,7 @@ export const Components = {
   'heading': Heading,
   'paragraph': Paragraph,
   'link': Link,
+  'notebase-image': NotebaseImage,
   'mdxTextExpression': NoteReference, // todo: this kind of works now as the only thing I use it for, but maybe ditch mdx and create custom node types for common patterns?
 }
 export function injectComponents(children) {
