@@ -22,9 +22,6 @@ em {
     @apply bg-gray-600 text-white;
 }
 
-a {
-    @apply text-blue-500;
-}
 
 .note {
     @apply border border-blue-800 cursor-pointer;

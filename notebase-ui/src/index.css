@@ -36,4 +36,8 @@
     ol, ul {
         @apply mb-3;
     }
+
+    a {
+        @apply text-blue-500;
+    }
 }
