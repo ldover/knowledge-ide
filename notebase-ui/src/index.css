@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    h1 {
+        @apply text-2xl;
+    }
+    h2 {
+        @apply text-xl;
+    }
+    h3 {
+        @apply text-lg;
+    }
+    hr {
+        @apply my-2 bg-gray-300;
+    }
+
+    ul {
+        list-style-type: disc;
+    }
+
+
+    ol {
+        list-style: decimal;
+    }
+
+    li > ul {
+        padding-left: 24px;
+    }
+
+    li > ol {
+        padding-left: 24px;
+    }
+
+    ol, ul {
+        @apply mb-3;
+    }
+}

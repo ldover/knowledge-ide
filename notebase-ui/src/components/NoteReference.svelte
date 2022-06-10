@@ -11,8 +11,3 @@
     {node.value}
 </a>
 
-<style lang="scss">
-  a {
-    @apply text-blue-500;
-  }
-</style>

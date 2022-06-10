@@ -3,7 +3,3 @@
 </script>
 
 <span>{node.value}</span>
-
-<style lang="scss">
-
-</style>

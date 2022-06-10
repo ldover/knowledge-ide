@@ -7,8 +7,3 @@
     {node.title || node.children[0].value}
 </a>
 
-<style lang="scss">
-  a {
-    @apply text-blue-500;
-  }
-</style>

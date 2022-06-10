@@ -5,12 +5,14 @@
   export let node;
   let component = Components[node.type];
 
-  // let children = injectComponents(node.children);
+  console.log({node, component})
 </script>
 
 <svelte:component this={component} node={node}>
-    {#each node.children as childNode}
-        <Node node={childNode}/>
-    {/each}
+    {#if Array.isArray(node.children)}
+        {#each node.children as childNode}
+            <Node node={childNode}/>
+        {/each}
+    {/if}
 </svelte:component>
 

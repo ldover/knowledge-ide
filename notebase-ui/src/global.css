@@ -1,0 +1,36 @@
+blockquote {
+    @apply m-0 border-l-2 border-gray-300 pl-3;
+}
+
+blockquote > p {
+    margin: 0;
+}
+
+pre {
+    @apply p-2 bg-gray-700 overflow-x-auto rounded-sm;
+}
+
+code {
+    @apply bg-gray-700 font-mono p-2 text-white;
+}
+
+em {
+    @apply italic;
+}
+
+.inline-code {
+    @apply bg-gray-600 text-white;
+}
+
+a {
+    @apply text-blue-500;
+}
+
+.note {
+    @apply border border-blue-800 cursor-pointer;
+}
+
+strong {
+    @apply font-bold;
+}
+
