@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "vite",
     "build": "node compile-mdl.mjs && vite build",
-    "preview": "sirv dist --no-clear"
+    "preview": "sirv dist --no-clear",
+    "watch": "nodemon --watch src -e mdl,png,jpg -x \"node compile-mdl.mjs\""
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.31",
+    "nodemon": "^2.0.16",
     "svelte": "^3.44.2",
     "vite": "^2.7.1"
   },

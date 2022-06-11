@@ -8,7 +8,7 @@ import {mdxjsEsmFromMarkdown, mdxjsEsmToMarkdown} from 'mdast-util-mdxjs-esm'
 import path from "path";
 
 const srcDir = './src';
-const outDir = './notebaseJs';
+const outDir = './notebase-ui/src/notebaseJs';
 
 function compile(tree, baseName) {
   const classTemplate = (name, children) => `export const ${name.replace(' ', '')} = new Note(${compileChildren(children)});`
@@ -199,13 +199,13 @@ async function writeImageIndex(notes) {
 }
 
 async function main() {
-  fs.mkdir('./notebaseJs/lib', { recursive: true }, (err) => {
+  fs.mkdir(path.join(outDir, 'lib'), { recursive: true }, (err) => {
     if (err) throw err;
   });
-  fs.mkdir('./notebaseJs/images/lib', { recursive: true }, (err) => {
+  fs.mkdir(path.join(outDir, 'images', 'lib'), { recursive: true }, (err) => {
     if (err) throw err;
   });
-  fs.mkdir('./notebaseJs/assets', { recursive: true }, (err) => {
+  fs.mkdir(path.join(outDir, 'assets'), { recursive: true }, (err) => {
     if (err) throw err;
   });
 
