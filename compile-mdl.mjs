@@ -198,6 +198,40 @@ async function writeImageIndex(notes) {
   await fs.writeFile(path.join(outDir, 'images', 'index.js'), noteImports + '\n' + noteLogs + '\n' + noteObj);
 }
 
+/**
+ * Only two rules which — (1) only alpha and decimal numbers allowed. (2) Cannot start with number
+ * @param dir
+ * @throws Error - if validation fails throw an error with message describing filename and how it violates the rule
+ */
+async function validateFileNames(dir) {
+  function _validateEntry(entry) {
+    if (entry.name[0].match(/[0-9]/)) {
+      throw new Error(`File name cannot start with a number: ${path.join(dir, entry.name)}`);
+    }
+
+    for (let char of path.parse(entry.name).name) {
+      if(!char.match(/[a-zA-z0-9]/)) {
+        throw new Error(`File name must not contain any spaces, dashes, only plain alpha characters: ${path.join(dir, entry.name)}`);
+      }
+    }
+  }
+  // Validate MDL files
+  const noteDirectoryEntries = await fs.readdir(dir, {withFileTypes: true});
+  const notePaths = noteDirectoryEntries
+    .filter(entry => entry.isFile() && !entry.name.startsWith(".") && entry.name.endsWith(".mdl"))
+    .map(entry => {
+      _validateEntry(entry)
+    });
+
+  // Validate image file
+  const imageDirectoryEntries = await fs.readdir(path.join(dir, 'images'), {withFileTypes: true});
+  const imagePaths = imageDirectoryEntries
+    .filter(entry => entry.isFile() && !entry.name.startsWith("."))
+    .map(entry => {
+      _validateEntry(entry)
+    });
+}
+
 async function main() {
   fs.mkdir(path.join(outDir, 'lib'), { recursive: true }, (err) => {
     if (err) throw err;
@@ -208,6 +242,8 @@ async function main() {
   fs.mkdir(path.join(outDir, 'assets'), { recursive: true }, (err) => {
     if (err) throw err;
   });
+
+  validateFileNames(srcDir)
 
   const allNotes = await readAllNotes(srcDir)
   for (let key in allNotes) {
