@@ -68,4 +68,8 @@
         @apply text-sm;
         font-family: 'Roboto Mono', monospace;
     }
+
+    pre {
+        @apply mb-3;
+    }
 }

@@ -8,6 +8,7 @@
 
 <div class="flex w-full h-full overflow-y-hidden">
     <div class="sidebar flex flex-col">
+        <div class="text-gray-300 font-medium text-base">NOTES</div>
         <nav>
             {#each Object.keys($sNotes) as name}
                 <div>
@@ -31,6 +32,7 @@
 <style lang="scss">
     .sidebar {
       @apply bg-gray-600 p-3;
+      width: 300px;
       height: 100vw;
     }
 
