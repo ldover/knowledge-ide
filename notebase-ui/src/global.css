@@ -7,11 +7,12 @@ blockquote > p {
 }
 
 pre {
-    @apply p-2 bg-gray-700 overflow-x-auto rounded-sm;
+    @apply p-2 bg-gray-100 overflow-x-auto rounded-sm;
 }
 
 code {
-    @apply bg-gray-700 font-mono p-2 text-white;
+    @apply bg-gray-100 font-mono p-2 text-gray-700 rounded-sm;
+    font-family: 'Roboto Mono', monospace;
 }
 
 em {
@@ -24,7 +25,12 @@ em {
 
 
 .note {
-    @apply border border-blue-800 cursor-pointer;
+    @apply font-light;
+    font-family: 'Roboto', sans-serif;
+}
+
+.roboto {
+    font-family: 'Roboto', sans-serif;
 }
 
 strong {

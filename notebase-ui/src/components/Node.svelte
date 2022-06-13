@@ -4,6 +4,7 @@
   import {beforeUpdate} from "svelte";
 
   export let node;
+  export let root = false;
   let prevNode;
 
   const addId = (node) => node.id = Math.round(Math.random() * 100000000) + '';
@@ -22,7 +23,7 @@
   console.log({node, component})
 </script>
 
-<svelte:component this={component} node={node}>
+<svelte:component this={component} node={node} root={root}>
     {#if Array.isArray(node.children)}
         {#each node.children as childNode (childNode.id)}
             <Node node={childNode}/>

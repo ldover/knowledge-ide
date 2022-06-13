@@ -5,12 +5,15 @@
 @layer base {
     h1 {
         @apply text-2xl;
+        @apply mb-3;
     }
     h2 {
         @apply text-xl;
+        @apply mb-3;
     }
     h3 {
         @apply text-lg;
+        @apply mb-3;
     }
     hr {
         @apply my-2 bg-gray-300;
@@ -19,7 +22,6 @@
     ul {
         list-style-type: disc;
     }
-
 
     ol {
         list-style: decimal;
@@ -39,5 +41,31 @@
 
     a {
         @apply text-blue-500;
+    }
+
+    a.note-reference {
+        @apply text-teal-600;
+    }
+
+    p {
+        @apply mb-3;
+    }
+
+    img {
+        @apply mb-3;
+    }
+
+    blockquote {
+        @apply mb-3;
+        @apply text-gray-700;
+    }
+
+    li > p {
+        @apply mb-0;
+    }
+
+    code {
+        @apply text-sm;
+        font-family: 'Roboto Mono', monospace;
     }
 }

@@ -1,23 +1,26 @@
 <script>
-    import {sNavigation} from "../store";
+  import {sNavigation, sNotes} from "../store";
 
-    export let node;
+  export let node;
+  export let root = false;
 </script>
 
 
-<div class="note"
-     on:click|stopPropagation={() => sNavigation.set(node.note)}
->
+<div class="note relative">
+    {#if !root}
+        <a class="note-handle cursor-pointer absolute text-orange-500 text-xs font-medium"
+           on:click|stopPropagation={() => sNavigation.set(node.note)}
+        >
+            {node.note.children[0].children[0].value} →
+        </a>
+    {/if}
     <slot></slot>
 </div>
 
 <style>
-    .note {
-        @apply shadow-2xl bg-white p-3;
-
-        max-width: 600px;
-        width: 600px;
-        min-width: 300px;
+    .note-handle {
+        top: 0;
+        right: 0;
     }
 
 </style>

@@ -6,7 +6,7 @@
 
 </script>
 
-<div class="flex w-full h-full">
+<div class="flex w-full h-full overflow-y-hidden">
     <div class="sidebar flex flex-col">
         <nav>
             {#each Object.keys($sNotes) as name}
@@ -21,8 +21,10 @@
 
         </nav>
     </div>
-    <div class="flex-grow p-10 flex justify-center">
-        <Node node={note.render()}/>
+    <div class="flex-grow p-10 flex justify-center overflow-y-auto">
+        <div class="note-container">
+            <Node node={note.render()} root={true}/>
+        </div>
     </div>
 </div>
 
@@ -34,5 +36,11 @@
 
     a {
         @apply text-teal-200;
+    }
+
+    .note-container {
+      max-width: 600px;
+      width: 600px;
+      min-width: 300px;
     }
 </style>
