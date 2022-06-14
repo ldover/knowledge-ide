@@ -1,9 +1,12 @@
 import {WritingMarkupLanguage} from './WritingMarkupLanguage'
 import {DalleE2} from './images/DalleE2'
+import {NoteA} from './NoteA'
+import {BoydDestructionAndCreationQuote} from './quotes/BoydDestructionAndCreationQuote'
 
 # Image Markup Language
 Image Markup Language is a programming framework for developing images with syntax for communicating with libraries of machine learning models. Just like {WritingMarkupLanguage} is used to develop text.
 
+{BoydDestructionAndCreationQuote.render()}
 ## Example
 This is the famous image [DALLE•E 2](https://openai.com/dall-e-2/) generated from the following input:
 > “A propaganda poster depicting a cat dressed as French emperor Napoleon holding a piece of cheese”
@@ -22,3 +25,7 @@ import Person from 'libs/people';
 	</Person>
 </Poster>
 ```
+
+I can pretty clearly do something like this and embed the content of {NoteA} —
+
+{NoteA.render()}
