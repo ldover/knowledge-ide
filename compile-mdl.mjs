@@ -137,14 +137,12 @@ async function readQuote(quotePath) {
     }
 
     const copy = JSON.parse(quote);
-    console.log('validating quote', {quote, copy});
     [
       {field: "value", required: true},
       {field: "author", required: false},
       {field: "reference", required: false},
     ].forEach(({field, required}) => {
       if (required && !copy[field]) {
-        console.log(field, required)
         throw new Error(`Quote validation failed: required field '${field}' is missing from '${quotePath}'`);
       }
 
@@ -403,7 +401,11 @@ async function main() {
   writeQuoteIndex(allQuotes);
 }
 
-await main();
+try {
+  await main();
+} catch (err) {
+  console.error(err)
+}
 
 
 
