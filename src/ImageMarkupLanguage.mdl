@@ -11,7 +11,7 @@ Image Markup Language is a programming framework for developing images with synt
 This is the famous image [DALLE•E 2](https://openai.com/dall-e-2/) generated from the following input:
 > “A propaganda poster depicting a cat dressed as French emperor Napoleon holding a piece of cheese”
 
-{DalleE2.render()}
+{DalleE2.render({width: 100, style: 'filter: grayscale(1);'})}
 
 Provided the right ML libraries exist, {ImageMarkupLanguage} could express the same intent as:
 ```jsx

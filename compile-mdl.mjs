@@ -223,12 +223,13 @@ async function writeImageLib() {
     this.title = title;
   }
 
-  render() {
+  render(props = {}) {
     return {
       type: 'notebase-image',
       url: this.url,
       title: this.title,
       image: this,
+      props
     }
   }
 }`
