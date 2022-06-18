@@ -7,21 +7,21 @@
 </script>
 
 <div class="flex w-full h-full overflow-y-hidden">
-    <div class="sidebar flex flex-col">
-        <div class="text-gray-300 font-medium text-base">NOTES</div>
-        <nav>
-            {#each Object.keys($sNotes) as name}
-                <div>
-                    <a on:click|preventDefault={() => sNavigation.navigate(name)}
-                       href="javascript:;"
-                    >
-                        {$sNotes[name].children[0].children[0].value}
-                    </a>
-                </div>
-            {/each}
+<!--    <div class="sidebar flex flex-col">-->
+<!--        <div class="text-gray-300 font-medium text-base">NOTES</div>-->
+<!--        <nav>-->
+<!--            {#each Object.keys($sNotes) as name}-->
+<!--                <div>-->
+<!--                    <a on:click|preventDefault={() => sNavigation.navigate(name)}-->
+<!--                       href="javascript:;"-->
+<!--                    >-->
+<!--                        {$sNotes[name].children[0].children[0].value}-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            {/each}-->
 
-        </nav>
-    </div>
+<!--        </nav>-->
+<!--    </div>-->
     <div class="flex-grow p-10 flex justify-center overflow-y-auto">
         <div class="note-container">
             <Node node={note.render()} root={true}/>
