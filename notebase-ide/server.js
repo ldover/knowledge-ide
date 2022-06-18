@@ -49,4 +49,17 @@ app.get('/', (req, res) => {
   res.json(allFiles)
 })
 
+
+// respond with "hello world" when a GET request is made to the homepage
+app.get('/file/:filePath', (req, res) => {
+  const path = req.params['filePath']
+  console.log('reading file', path)
+  const file =  fs.readFileSync(path, {encoding: 'utf-8'});
+
+  res.json({
+    content: file,
+    path,
+  })
+})
+
 app.listen(8080)

@@ -1,9 +1,13 @@
 <script>
-  export let name;
-  $: type = name.slice(name.lastIndexOf('.') + 1);
+  import {createEventDispatcher} from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  export let file;
+
 </script>
 
-<span>{name}</span>
+<a on:click={() => dispatch('click', file)} href="javascript:;"><span>{file.name}</span></a>
 
 <style>
     span {

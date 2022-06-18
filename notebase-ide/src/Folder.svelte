@@ -2,24 +2,23 @@
   import File from './File.svelte';
 
   export let expanded = false;
-  export let name;
-  export let files;
+  export let file;
 
   function toggle() {
     expanded = !expanded;
   }
 </script>
 
-<span class:expanded on:click={toggle}>{name}</span>
+<span class:expanded on:click={toggle}>{file.name}</span>
 
 {#if expanded}
     <ul>
-        {#each files as file}
+        {#each file.files as file}
             <li>
                 {#if file.files}
-                    <svelte:self {...file}/>
+                    <svelte:self file={file} on:click/>
                 {:else}
-                    <File {...file}/>
+                    <File file={file} on:click/>
                 {/if}
             </li>
         {/each}
