@@ -1,5 +1,6 @@
 <script>
   import Folder from './Folder.svelte';
+  import {onMount} from "svelte";
 
   let root = [
     {
@@ -32,6 +33,25 @@
     },
     { name: 'TODO.md' }
   ];
+
+  onMount(async () => {
+    try {
+        const data = fetch('http://localhost:8080')
+          .then(async (response) => {
+            if (!response.ok) {
+              let responseJson = await response.json();
+              throw responseJson.error;
+            }
+            return response;
+          })
+          .then((res) => res.json());
+
+        console.log('fileTree.svelte', data);
+    } catch (err) {
+      console.error(err);
+    }
+
+  })
 </script>
 
 <Folder name="Home" files={root} expanded/>
