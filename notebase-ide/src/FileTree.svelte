@@ -2,41 +2,11 @@
   import Folder from './Folder.svelte';
   import {onMount} from "svelte";
 
-  let root = [
-    {
-      name: 'Important work stuff',
-      files: [
-        { name: 'quarterly-results.xlsx' }
-      ]
-    },
-    {
-      name: 'Animal GIFs',
-      files: [
-        {
-          name: 'Dogs',
-          files: [
-            { name: 'treadmill.gif' },
-            { name: 'rope-jumping.gif' }
-          ]
-        },
-        {
-          name: 'Goats',
-          files: [
-            { name: 'parkour.gif' },
-            { name: 'rampage.gif' }
-          ]
-        },
-        { name: 'cat-roomba.gif' },
-        { name: 'duck-shuffle.gif' },
-        { name: 'monkey-on-a-pig.gif' }
-      ]
-    },
-    { name: 'TODO.md' }
-  ];
+  let root = [];
 
   onMount(async () => {
     try {
-        const data = fetch('http://localhost:8080')
+        const dir = await fetch('http://localhost:8080')
           .then(async (response) => {
             if (!response.ok) {
               let responseJson = await response.json();
@@ -46,7 +16,8 @@
           })
           .then((res) => res.json());
 
-        console.log('fileTree.svelte', data);
+        console.log('fileTree.svelte', dir);
+        root = [dir]
     } catch (err) {
       console.error(err);
     }

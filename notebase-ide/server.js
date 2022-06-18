@@ -5,21 +5,25 @@ const path = require("path")
 const app = express()
 
 
-let files = [];
-const getAllFiles = function (dirPath, arrayOfFiles) {
-  files = fs.readdirSync(dirPath)
-
-  arrayOfFiles = arrayOfFiles || []
-
-  files.forEach(function (file) {
+const getAllFiles = function (dirPath) {
+  const files = fs.readdirSync(dirPath).map(file => {
     if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-      arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles)
+      return getAllFiles(dirPath + "/" + file)
     } else {
-      arrayOfFiles.push(path.join(__dirname, dirPath, "/", file))
+      return {
+        type: 'file',
+        name: path.parse(file).base,
+        path: path.join(__dirname, dirPath, "/", file),
+      }
     }
   })
 
-  return arrayOfFiles
+  return {
+    type: 'folder',
+    name: path.parse(dirPath).base,
+    path: dirPath,
+    files
+  }
 }
 
 // Add headers before the routes are defined
@@ -42,7 +46,7 @@ app.use(function (req, res, next) {
 app.get('/', (req, res) => {
   let allFiles = getAllFiles('../src');
 
-  res.json({files: allFiles})
+  res.json(allFiles)
 })
 
 app.listen(8080)
