@@ -1,6 +1,6 @@
 import {get, writable} from "svelte/store";
 import {basicSetup, EditorView} from "codemirror";
-
+import * as _ from 'lodash';
 import {markdown} from "@codemirror/lang-markdown";
 import {languages} from "@codemirror/language-data";
 
@@ -9,16 +9,19 @@ const _sEditor = writable({el: null, view: null, file: null,});
 export const sEditor = {
   subscribe: _sEditor.subscribe,
   set: _sEditor.set,
-  init: (el) => {
+  init: function (el) {
+    this._setUpdateListener(el)
+    _sEditor.update(state => ({...state, el}));
+  },
+  _setUpdateListener: function (el) {
+    // sFileSystem.updateFile = _.debounce(sFileSystem.updateFile);
+
     el.addEventListener('input', () => {
-      const {view} = get(_sEditor);
+      const {view, file} = get(_sEditor);
 
       let newContent = view.state.toJSON().doc;
-      console.log({view, state: view.state.toJSON()})
-      // _.debounce() Method
+      sFileSystem.updateFile(file, newContent)
     })
-
-    _sEditor.update(state => ({...state, el}));
   },
   setFile: function (file) {
     if (file.content) {
@@ -93,7 +96,34 @@ export const sFileSystem = {
     }
 
   },
-  updateFile: function (file, state) {
+  updateFile: async function (file, state) {
+    console.log('updateFile called with', {file, state})
+    try {
+      let bodyOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          file,
+          content: state
+        })
+      };
+
+      console.log({bodyOptions})
+      const response = await fetch('http://localhost:8080/file/' + encodeURIComponent(file.path), bodyOptions)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+      return response
+    } catch (err) {
+      console.error(err);
+    }
 
   }
 }

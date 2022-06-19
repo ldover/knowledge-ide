@@ -1,4 +1,7 @@
 const express = require('express')
+const bodyParser = require("body-parser");
+
+
 const fs = require("fs")
 const path = require("path")
 
@@ -42,6 +45,10 @@ app.use(function (req, res, next) {
   next();
 });
 
+//Here we are configuring express to use body-parser as middle-ware.
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 // respond with "hello world" when a GET request is made to the homepage
 app.get('/', (req, res) => {
   let allFiles = getAllFiles('../src');
@@ -60,6 +67,25 @@ app.get('/file/:filePath', (req, res) => {
     content: file,
     path,
   })
+});
+
+app.post('/file/:filePath', (req, res) => {
+  const path = req.params['filePath']
+  const content = req.body.content;
+  console.log('writing file', path)
+  try {
+    fs.writeFileSync(path, content, {encoding: 'utf-8'});
+    res.json({
+      content,
+      path,
+    })
+  } catch (err) {
+    res.json({
+      status: 'error',
+      path,
+    })
+  }
 })
+
 
 app.listen(8080)
