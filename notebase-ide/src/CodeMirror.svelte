@@ -3,14 +3,16 @@
   import {onMount} from "svelte";
   import {sEditor} from "./store";
 
+  let el;
+
   onMount(() => {
-    sEditor.setValue("Hello\n\n```javascript\nlet x = 'y'\n```",)
+    sEditor.init(el);
   })
 
 
 </script>
 
-<div bind:this={$sEditor.el}
+<div bind:this={el}
      class="h-full"
 >
 

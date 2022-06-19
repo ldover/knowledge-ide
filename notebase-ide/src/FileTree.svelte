@@ -1,54 +1,30 @@
 <script>
   import Folder from './Folder.svelte';
   import {onMount} from "svelte";
-  import {sEditor} from "./store";
+  import {sEditor, sFileSystem} from "./store";
 
   let root;
 
   onMount(async () => {
-    try {
-      const dir = await fetch('http://localhost:8080')
-        .then(async (response) => {
-          if (!response.ok) {
-            let responseJson = await response.json();
-            throw responseJson.error;
-          }
-          return response;
-        })
-        .then((res) => res.json());
-
-      console.log('fileTree.svelte', dir);
-      root = dir;
-    } catch (err) {
-      console.error(err);
+    const dir = await sFileSystem.init()
+    if (dir?.files) {
+      const firstFile = dir.files[0];
+      const firstFileFull = await sFileSystem.getFile(firstFile.path);
+      sEditor.setFile(firstFileFull);
     }
   })
 
   async function onClick(e) {
-    try {
-      const file = await fetch('http://localhost:8080/file/' + encodeURIComponent(e.detail.path))
-        .then(async (response) => {
-          if (!response.ok) {
-            let responseJson = await response.json();
-            throw responseJson.error;
-          }
-          return response;
-        })
-        .then((res) => res.json());
-
-      console.log('file fetched', file);
-
-      if (file.content) {
-        sEditor.setValue(file.content)
-      } else {
-        window.alert('no content in file')
-      }
-    } catch (err) {
-      console.error(err);
+    const file = await sFileSystem.getFile(e.detail.path)
+    if (file?.content) {
+      sEditor.setValue(file.content)
+      sEditor.setFile(file)
+    } else {
+      window.alert('no content in file')
     }
   }
 </script>
 
-{#if root}
-    <Folder file={root} expanded on:click={onClick}/>
+{#if $sFileSystem}
+    <Folder file={$sFileSystem} expanded on:click={onClick}/>
 {/if}
