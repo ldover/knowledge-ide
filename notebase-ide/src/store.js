@@ -14,22 +14,33 @@ export const sEditor = {
     _sEditor.update(state => ({...state, el}));
   },
   _setUpdateListener: function (el) {
-    // sFileSystem.updateFile = _.debounce(sFileSystem.updateFile);
-
-    el.addEventListener('input', () => {
+    function _listener() {
       const {view, file} = get(_sEditor);
 
       let newContent = view.state.toJSON().doc;
       sFileSystem.updateFile(file, newContent)
-    })
+    }
+
+    let listener = _.debounce(_listener, 5000);
+
+    el.addEventListener('input', listener)
   },
   setFile: function (file) {
+    _sEditor.update(state => {
+
+      // Update current file before we switch
+      if (state.file) {
+        sFileSystem.updateFile(file, state.view.state.toJSON().doc)
+      }
+      return {...state, file}
+    })
+
+    // Set editor content
     if (file.content) {
-      this.setValue(file.content);
+      this._setValue(file.content);
     }
-    _sEditor.update(state => ({...state, file}))
   },
-  setValue: function (value) {
+  _setValue: function (value) {
     const {el, view} = get(_sEditor);
     view?.destroy();
 
@@ -112,13 +123,13 @@ export const sFileSystem = {
 
       console.log({bodyOptions})
       const response = await fetch('http://localhost:8080/file/' + encodeURIComponent(file.path), bodyOptions)
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
 
       return response
     } catch (err) {
