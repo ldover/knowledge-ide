@@ -16,11 +16,7 @@
 
   async function onClick(e) {
     const file = await sFileSystem.getFile(e.detail.path)
-    if (file?.content) {
-      sEditor.setFile(file)
-    } else {
-      window.alert('no content in file')
-    }
+    sEditor.setFile(file)
   }
 </script>
 

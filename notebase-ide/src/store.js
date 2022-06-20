@@ -29,16 +29,16 @@ export const sEditor = {
     _sEditor.update(state => {
 
       // Update current file before we switch
-      if (state.file) {
-        sFileSystem.updateFile(file, state.view.state.toJSON().doc)
-      }
+      // if (state.file) {
+      //   sFileSystem.updateFile(file, state.view.state.toJSON().doc)
+      // }
       return {...state, file}
     })
 
     // Set editor content
-    if (file.content) {
-      this._setValue(file.content);
-    }
+    let value = file.content || '';
+    console.log('setFile', {file, value})
+    this._setValue(value);
   },
   _setValue: function (value) {
     const {el, view} = get(_sEditor);
@@ -102,6 +102,34 @@ export const sFileSystem = {
         .then((res) => res.json());
 
       return file
+    } catch (err) {
+      console.error(err);
+    }
+
+  },
+  addFile: async function (filepath) {
+    console.log('addFile called with', {filepath})
+    try {
+      let bodyOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filepath,
+        })
+      };
+      const response = await fetch('http://localhost:8080/add-file/' + encodeURIComponent(filepath), bodyOptions)
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          this.init(); // todo: just insert file so we don't have to do another fetch
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
+      return response
     } catch (err) {
       console.error(err);
     }

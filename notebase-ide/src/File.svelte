@@ -1,13 +1,17 @@
 <script>
   import {createEventDispatcher} from 'svelte';
+  import {sEditor} from "./store";
 
   const dispatch = createEventDispatcher();
 
   export let file;
 
+  $: console.log('File.svelte', {active: $sEditor.file, file})
 </script>
 
-<a on:click={() => dispatch('click', file)} href="javascript:;"><span>{file.name}</span></a>
+<a on:click={() => dispatch('click', file)}
+   class:text-red-500={file.path === $sEditor.file.path}
+   href="javascript:;"><span>{file.name}</span></a>
 
 <style>
     span {

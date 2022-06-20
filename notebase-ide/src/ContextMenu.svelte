@@ -1,11 +1,14 @@
 <script>
   import {clickOutside} from "./util";
   import {sContextMenu} from "./context-menu/store";
+  import {sFileSystem} from "./store";
 
   const options = [
     {
       name: 'New',
-      onClick: () => console.log('new')
+      onClick: () => {
+        sContextMenu.onNew();
+      }
     },
     {
       name: 'Rename',
@@ -29,7 +32,7 @@
      on:outclick={() => sContextMenu.hide()}
 >
     {#each options as option}
-        <div class="item">{option.name}</div>
+        <div class="item" on:click={() => option.onClick()}>{option.name}</div>
     {/each}
 </div>
 

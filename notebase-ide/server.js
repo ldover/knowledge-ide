@@ -87,5 +87,23 @@ app.post('/file/:filePath', (req, res) => {
   }
 })
 
+app.post('/add-file/:filePath', (req, res) => {
+  const path = req.params['filePath']
+  console.log('writing file', path)
+  try {
+    fs.writeFileSync(path, '', {encoding: 'utf-8'});
+    res.json({
+      status: 'success',
+      path,
+    })
+  } catch (err) {
+    res.json({
+      status: 'error',
+      path,
+    })
+  }
+})
+
+
 
 app.listen(8080)
