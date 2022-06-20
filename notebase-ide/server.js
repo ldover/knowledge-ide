@@ -104,6 +104,23 @@ app.post('/add-file/:filePath', (req, res) => {
   }
 })
 
+app.delete('/file/:filePath', (req, res) => {
+  const path = req.params['filePath']
+  console.log('writing file', path)
+  try {
+    fs.rmSync(path);
+    res.json({
+      status: 'success',
+      path,
+    })
+  } catch (err) {
+    res.json({
+      status: 'error',
+      path,
+    })
+  }
+})
+
 
 
 app.listen(8080)

@@ -135,6 +135,32 @@ export const sFileSystem = {
     }
 
   },
+  deleteFile: async function (file) {
+    console.log('updateFile called with', {file})
+    try {
+      let bodyOptions = {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      console.log({bodyOptions})
+      const response = await fetch('http://localhost:8080/file/' + encodeURIComponent(file.path), bodyOptions)
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          this.init(); // todo: just insert file so we don't have to do another fetch
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
+      return response
+    } catch (err) {
+      console.error(err);
+    }
+  },
   updateFile: async function (file, state) {
     console.log('updateFile called with', {file, state})
     try {
@@ -163,6 +189,6 @@ export const sFileSystem = {
     } catch (err) {
       console.error(err);
     }
+  },
 
-  }
 }

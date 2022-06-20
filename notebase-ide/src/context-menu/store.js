@@ -29,5 +29,10 @@ export const sContextMenu = {
     const {file} = get(_sContextMenu);
     sModal.show(file);
     this.hide();
-  }
+  },
+  onDelete: async function() {
+    const {file} = get(_sContextMenu);
+    this.hide();
+    sFileSystem.deleteFile(file);
+  },
 }

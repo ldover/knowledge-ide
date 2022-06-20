@@ -17,7 +17,7 @@
 
     {
       name: 'Delete',
-      onClick: () => console.log('Delete')
+      onClick: () => sContextMenu.onDelete()
     }
   ]
 
