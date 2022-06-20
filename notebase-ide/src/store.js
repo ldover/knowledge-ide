@@ -21,9 +21,9 @@ export const sEditor = {
       sFileSystem.updateFile(file, newContent)
     }
 
-    let listener = _.debounce(_listener, 5000);
+    // let listener = _.debounce(_listener, 500);
 
-    el.addEventListener('input', listener)
+    el.addEventListener('input', _listener)
   },
   setFile: function (file) {
     _sEditor.update(state => {
