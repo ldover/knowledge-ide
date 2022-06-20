@@ -3,6 +3,7 @@
   import FileTree from "./FileTree.svelte";
   import CodeMirror from "./CodeMirror.svelte";
   import ContextMenu from "./ContextMenu.svelte";
+  import NewFileModal from "./modal/NewFileModal.svelte";
 </script>
 
 <div class="w-full flex h-full justify-between overflow-x-hidden">
@@ -18,6 +19,7 @@
 </div>
 
 <ContextMenu/>
+<NewFileModal />
 
 <style lang="scss">
 

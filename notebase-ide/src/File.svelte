@@ -10,7 +10,7 @@
 </script>
 
 <a on:click={() => dispatch('click', file)}
-   class:text-red-500={file.path === $sEditor.file.path}
+   class:text-red-500={file.path === $sEditor.file?.path}
    href="javascript:;"><span>{file.name}</span></a>
 
 <style>

@@ -1,5 +1,6 @@
 import {writable, get} from "svelte/store";
 import {sFileSystem} from "../store";
+import {sModal} from "../modal/store";
 
 const _sContextMenu = writable({
   el: null,
@@ -26,12 +27,7 @@ export const sContextMenu = {
   },
   onNew: async function() {
     const {file} = get(_sContextMenu);
-    console.log('onNew: folder in context', file)
-    if (file.type !== 'folder') {
-      return window.alert('Cannot add file to file... this edge case not implemented')
-    }
-    let filepath = [file.path, `NewFile${Math.round(Math.random() * 10000)}.mdl`].join('/');
-    this.hide()
-    await sFileSystem.addFile(filepath)
+    sModal.show(file);
+    this.hide();
   }
 }
