@@ -19,8 +19,6 @@
 
 
   let component = Components[node.type];
-
-  console.log({node, component})
 </script>
 
 <svelte:component this={component} node={node} root={root}>

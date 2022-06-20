@@ -1,5 +1,6 @@
 <script>
   import File from './File.svelte';
+  import {sContextMenu} from "./context-menu/store";
 
   export let expanded = false;
   export let file;
@@ -9,7 +10,9 @@
   }
 </script>
 
-<span class:expanded on:click={toggle}>{file.name}</span>
+<span on:contextmenu|preventDefault={event => sContextMenu.addEvent(event)}
+      class:expanded
+      on:click={toggle}>{file.name}</span>
 
 {#if expanded}
     <ul>

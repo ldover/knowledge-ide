@@ -1,31 +1,32 @@
 <script>
-    import {clickOutside} from "./util";
+  import {clickOutside} from "./util";
+  import {sContextMenu} from "./context-menu/store";
 
-    const options = [
-      {
-        name: 'New',
-        onClick: () => console.log('new')
-      },
-      {
-        name: 'Rename',
-        onClick: () => console.log('Rename')
-      },
+  const options = [
+    {
+      name: 'New',
+      onClick: () => console.log('new')
+    },
+    {
+      name: 'Rename',
+      onClick: () => console.log('Rename')
+    },
 
-      {
-        name: 'Delete',
-        onClick: () => console.log('Delete')
-      }
-    ]
+    {
+      name: 'Delete',
+      onClick: () => console.log('Delete')
+    }
+  ]
 
-    let el;
-    export let visible;
+  $: style = $sContextMenu.visible ? `left: ${$sContextMenu.left}px;top: ${$sContextMenu.top}px;` : '';
 </script>
 
 <div id="context-menu"
-     class:invisible={!visible}
-     bind:this={el}
+     style="{style}"
+     class:invisible={!$sContextMenu.visible}
+     bind:this={$sContextMenu.el}
      use:clickOutside
-     on:outclick={() => {console.log('invisible');visible = false}}
+     on:outclick={() => sContextMenu.hide()}
 >
     {#each options as option}
         <div class="item">{option.name}</div>
@@ -33,16 +34,16 @@
 </div>
 
 <style lang="scss">
-    #context-menu {
-      @apply fixed z-50 bg-white rounded-md shadow-md;
-      width: 150px;
-    }
+  #context-menu {
+    @apply fixed z-50 bg-white rounded-md shadow-md;
+    width: 150px;
+  }
 
-    #context-menu .item {
-      @apply p-2 text-sm cursor-pointer;
-    }
+  #context-menu .item {
+    @apply p-2 text-sm cursor-pointer;
+  }
 
-    #context-menu .item:hover {
-      @apply bg-gray-100;
-    }
+  #context-menu .item:hover {
+    @apply bg-gray-100;
+  }
 </style>
