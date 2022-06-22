@@ -7,18 +7,14 @@
 
   export let file;
 
-  $: console.log('File.svelte', {active: $sEditor.file, file})
 </script>
 
 <a on:click={() => dispatch('click', file)}
    on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
    class:text-red-500={file.path === $sEditor.file?.path}
-   href="javascript:;"><span>{file.name}</span></a>
+   class="flex items-center"
+   href="javascript:;"><span class="material-symbols-sharp text-gray-400">description</span>{file.name}
+</a>
 
 <style>
-    span {
-        padding: 0 0 0 1.5em;
-        background: 0 0.1em no-repeat;
-        background-size: 1em 1em;
-    }
 </style>

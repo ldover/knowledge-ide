@@ -1,7 +1,6 @@
 <script>
   import File from './File.svelte';
   import {sContextMenu} from "./context-menu/store";
-  import {sEditor} from "./store";
 
   export let expanded = false;
   export let file;
@@ -11,12 +10,17 @@
   }
 </script>
 
-<span on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
-      class:expanded
-      on:click={toggle}>{file.name}</span>
+<div on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
+     class:expanded
+     class="flex items-center cursor-pointer"
+     on:click={toggle}>
+    <span class="material-symbols-sharp">{expanded ? 'expand_more' : 'chevron_right'}</span>
+    <span class="material-symbols-sharp text-gray-600">folder</span>{file.name}
+</div>
+
 
 {#if expanded}
-    <ul>
+    <ul class=ml-6>
         {#each file.files as file}
             <li>
                 {#if file.files}
@@ -30,24 +34,10 @@
 {/if}
 
 <style>
-    span {
-        padding: 0 0 0 1.5em;
-        background-size: 1em 1em;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
     .expanded {
     }
 
     ul {
-        padding: 0.2em 0 0 0.5em;
-        margin: 0 0 0 0.5em;
         list-style: none;
-        border-left: 1px solid #eee;
-    }
-
-    li {
-        padding: 0.2em 0;
     }
 </style>
