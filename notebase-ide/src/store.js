@@ -74,6 +74,10 @@ export const sEditor = {
         "&.cm-focused .cm-selectionBackground, ::selection": {
           backgroundColor: "#074"
         },
+        ".ͼ7": {
+          fontSize: '20px',
+          textDecoration: 'none',
+        },
         ".cm-content, .cm-gutter": {minHeight: "100vh"},
         ".cm-gutters": {
           display: "none",
