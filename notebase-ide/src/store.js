@@ -60,8 +60,8 @@ export const sEditor = {
 
       let myTheme = EditorView.theme({
         "&": {
-          color: "white",
-          backgroundColor: "#034"
+          color: "black",
+          backgroundColor: "#ffffff"
         },
         ".cm-content": {
           caretColor: "#0e9",
@@ -85,7 +85,7 @@ export const sEditor = {
           color: "transparent",
           border: "none"
         }
-      }, {dark: true})
+      }, {dark: false})
 
       console.log({myTheme})
       // The Markdown parser will dynamically load parsers

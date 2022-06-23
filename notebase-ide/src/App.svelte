@@ -14,11 +14,11 @@
 </script>
 
 <div class="w-full flex h-full overflow-x-hidden">
-    <div class="w-64 bg-gray-100 overflow-x-auto">
+    <div class="w-3/12 bg-gray-100 overflow-x-auto">
         <FileTree/>
     </div>
     <Resizer />
-    <div class="w-1/3 h-fullvw">
+    <div class="w-5/12 h-fullvw">
         <CodeMirror/>
     </div>
     <Resizer />
