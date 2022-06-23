@@ -3,7 +3,8 @@ import {basicSetup, EditorView} from "codemirror";
 import * as _ from 'lodash';
 import {markdown} from "@codemirror/lang-markdown";
 import {languages} from "@codemirror/language-data";
-
+import {indentWithTab} from "@codemirror/commands"
+import {keymap} from "@codemirror/view"
 import {highlightTree, tags} from "@lezer/highlight"
 import {HighlightStyle, syntaxHighlighting} from "@codemirror/language"
 
@@ -96,6 +97,7 @@ export const sEditor = {
         extensions: [
           basicSetup,
           myTheme,
+          keymap.of([indentWithTab]),
           EditorView.lineWrapping,
           // myHighlightStyleExt,
           markdown({codeLanguages: languages}),
