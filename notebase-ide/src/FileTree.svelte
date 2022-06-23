@@ -21,5 +21,8 @@
 </script>
 
 {#if $sFileSystem}
-    <Folder file={$sFileSystem} expanded on:click={onClick}/>
+    <div class="flex">
+        <Folder file={$sFileSystem} expanded on:click={onClick}/>
+        <div class="px-3"></div>
+    </div>
 {/if}

@@ -10,28 +10,30 @@
   }
 </script>
 
-<div on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
-     class:expanded
-     class="flex items-center cursor-pointer"
-     on:click={toggle}>
-    <span class="material-symbols-sharp">{expanded ? 'expand_more' : 'chevron_right'}</span>
-    <span class="material-symbols-sharp text-gray-600">folder</span>{file.name}
+<div>
+    <div on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
+         class:expanded
+         class="flex items-center cursor-pointer"
+         on:click={toggle}>
+        <span class="material-symbols-sharp">{expanded ? 'expand_more' : 'chevron_right'}</span>
+        <span class="material-symbols-sharp text-gray-600">folder</span>{file.name}
+    </div>
+    {#if expanded}
+        <ul class=ml-6>
+            {#each file.files as file}
+                <li>
+                    {#if file.files}
+                        <svelte:self file={file} on:click/>
+                    {:else}
+                        <File file={file} on:click/>
+                    {/if}
+                </li>
+            {/each}
+        </ul>
+    {/if}
 </div>
 
 
-{#if expanded}
-    <ul class=ml-6>
-        {#each file.files as file}
-            <li>
-                {#if file.files}
-                    <svelte:self file={file} on:click/>
-                {:else}
-                    <File file={file} on:click/>
-                {/if}
-            </li>
-        {/each}
-    </ul>
-{/if}
 
 <style>
     .expanded {

@@ -4,6 +4,17 @@ import * as _ from 'lodash';
 import {markdown} from "@codemirror/lang-markdown";
 import {languages} from "@codemirror/language-data";
 
+import {highlightTree, tags} from "@lezer/highlight"
+import {HighlightStyle, syntaxHighlighting} from "@codemirror/language"
+
+const myHighlightStyle = HighlightStyle.define([
+  {tag: tags.keyword, color: "#fc6"},
+  {tag: tags.comment, color: "#f5d", fontStyle: "italic"}
+])
+
+const myHighlightStyleExt = syntaxHighlighting(myHighlightStyle, {fallback: true})
+
+console.log({myHighlightStyle, myHighlightStyleExt})
 
 const _sEditor = writable({el: null, view: null, file: null,});
 
@@ -63,9 +74,11 @@ export const sEditor = {
         "&.cm-focused .cm-selectionBackground, ::selection": {
           backgroundColor: "#074"
         },
+        ".cm-content, .cm-gutter": {minHeight: "100vh"},
         ".cm-gutters": {
+          display: "none",
           backgroundColor: "#045",
-          color: "#ddd",
+          color: "transparent",
           border: "none"
         }
       }, {dark: true})
@@ -79,7 +92,9 @@ export const sEditor = {
         extensions: [
           basicSetup,
           myTheme,
-          markdown({codeLanguages: languages})
+          EditorView.lineWrapping,
+          // myHighlightStyleExt,
+          markdown({codeLanguages: languages}),
         ],
         parent: el
       });

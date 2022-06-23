@@ -33,7 +33,7 @@
     .sidebar {
       @apply bg-gray-600 p-3;
       width: 300px;
-      height: 100vw;
+      height: 100vh;
     }
 
     a {

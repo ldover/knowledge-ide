@@ -69,6 +69,10 @@
   .resizer {
     cursor: col-resize;
     background: black;
-    height: 100vw;
+    height: 100vh;
+  }
+
+  .resizer:hover {
+    background: blue;
   }
 </style>
