@@ -7,16 +7,19 @@ const path = require("path")
 
 const app = express()
 
+let ROOT_DIR = '../src';
 
 const getAllFiles = function (dirPath) {
   const files = fs.readdirSync(dirPath).map(file => {
-    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-      return getAllFiles(dirPath + "/" + file)
+    if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
+      return getAllFiles(path.join(dirPath, file))
     } else {
+      let absoluteFilePath = path.join(__dirname, dirPath, file);
       return {
         type: 'file',
         name: path.parse(file).base,
-        path: path.join(__dirname, dirPath, "/", file),
+        path: absoluteFilePath,
+        relativePath: path.relative(ROOT_DIR, absoluteFilePath)
       }
     }
   })
@@ -51,7 +54,7 @@ app.use(bodyParser.json());
 
 // respond with "hello world" when a GET request is made to the homepage
 app.get('/', (req, res) => {
-  let allFiles = getAllFiles('../src');
+  let allFiles = getAllFiles(ROOT_DIR);
 
   res.json(allFiles)
 })

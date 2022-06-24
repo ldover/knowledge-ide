@@ -1,89 +1,48 @@
 import {get, writable} from "svelte/store";
 import {basicSetup, EditorView} from "codemirror";
-import * as _ from 'lodash';
 import {markdown} from "@codemirror/lang-markdown";
 import {languages} from "@codemirror/language-data";
 import {indentWithTab} from "@codemirror/commands"
 import {keymap} from "@codemirror/view"
-import {highlightTree, tags} from "@lezer/highlight"
-import {HighlightStyle, syntaxHighlighting} from "@codemirror/language"
 
 import {syntaxTree} from "@codemirror/language"
 import {javascriptLanguage} from "@codemirror/lang-javascript"
 
-const importAutocomplete = javascriptLanguage.data.of({
-  autocomplete: completeFromFiles
-})
+function getImportAutocomplete(files) {
+  function completeFromFiles(context) {
+    let nodeBefore = syntaxTree(context.state).resolveInner(context.pos, -1)
+    console.log('completeFromFiles', {syntaxTree: nodeBefore});
 
-const completePropertyAfter = ["PropertyName", ".", "?."]
-const dontCompleteIn = ["TemplateString", "LineComment", "BlockComment",
-  "VariableDefinition", "PropertyDefinition"]
-
-
-function completeProperties(from, object) {
-  let options = []
-  for (let name in object) {
-    options.push({
-      label: name,
-      type: typeof object[name] == "function" ? "function" : "variable"
-    })
-  }
-  return {
-    from,
-    options,
-    validFor: /^[\w$]*$/
-  }
-}
-
-function completeFromFiles(context) {
-  let nodeBefore = syntaxTree(context.state).resolveInner(context.pos, -1)
-  console.log('completeFromFiles', {syntaxTree: nodeBefore});
-
-  if (nodeBefore.name === 'VariableDefinition' && nodeBefore.parent.name === "ImportGroup") {
-    console.log('Node parent', nodeBefore.parent);
     let from = /\./.test(nodeBefore.name) ? nodeBefore.to : nodeBefore.from
 
-    // this is mock
-    // todo — add actual files here and see if a different type might be useful?
+    const isImport = nodeBefore.name === 'VariableDefinition' && nodeBefore.parent.name === "ImportGroup";
+
+    const options = files.map(file => {
+      let label = file.name.split('.')[0];
+      const opt = {
+        label: label,
+        type: 'variable'
+      }
+      if (isImport) {
+        opt.apply = `${label}} from './${file.relativePath}'`
+      }
+
+      return opt;
+    })
+
     let completion = {
       from,
-      options: [{
-        label: 'WritingMarkupLanguage',
-        type: 'variable'
-      }],
+      options: options,
       validFor: /^[\w$]*$/
     };
     console.log({completion})
     return  completion
   }
 
-  return null;
-
-  // if (completePropertyAfter.includes(nodeBefore.name) &&
-  //   nodeBefore.parent?.name == "MemberExpression") {
-  //   let object = nodeBefore.parent.getChild("Expression")
-  //   if (object?.name == "VariableName") {
-  //     let from = /\./.test(nodeBefore.name) ? nodeBefore.to : nodeBefore.from
-  //     let variableName = context.state.sliceDoc(object.from, object.to)
-  //     if (typeof window[variableName] == "object")
-  //       return completeProperties(from, window[variableName])
-  //   }
-  // } else if (nodeBefore.name == "VariableName") {
-  //   return completeProperties(nodeBefore.from, window)
-  // } else if (context.explicit && !dontCompleteIn.includes(nodeBefore.name)) {
-  //   return completeProperties(context.pos, window)
-  // }
-  // return null
+  return javascriptLanguage.data.of({
+    autocomplete: completeFromFiles
+  })
 }
-
-const myHighlightStyle = HighlightStyle.define([
-  {tag: tags.keyword, color: "#fc6"},
-  {tag: tags.comment, color: "#f5d", fontStyle: "italic"}
-])
-
-const myHighlightStyleExt = syntaxHighlighting(myHighlightStyle, {fallback: true})
-
-console.log({myHighlightStyle, myHighlightStyleExt})
 
 const _sEditor = writable({el: null, view: null, file: null,});
 
@@ -160,6 +119,13 @@ export const sEditor = {
       // The Markdown parser will dynamically load parsers
       // for code blocks, using @codemirror/language-data to
       // look up the appropriate dynamic import.
+
+      let files = sFileSystem.flatten();
+      console.log('allfiles', {files});
+
+
+      let importAutocomplete = getImportAutocomplete(files)
+
       let editorView = new EditorView({
         doc: value,
         extensions: [
@@ -204,6 +170,16 @@ export const sFileSystem = {
     } catch (err) {
       console.error(err);
     }
+  },
+  flatten: function () {
+    const dir = get(_sFileSystem);
+    if (!dir) return [];
+
+    function walk(dir) {
+      return dir.files.reduce((allFiles, nextFile) => nextFile.type === 'folder' ? [...allFiles, ...walk(nextFile)] : [...allFiles, nextFile], [])
+    }
+
+    return walk(dir);
   },
   getFile: async function (path) {
     try {
