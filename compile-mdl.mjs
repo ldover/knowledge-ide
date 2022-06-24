@@ -6,6 +6,7 @@ import {mdxExpressionFromMarkdown, mdxExpressionToMarkdown} from 'mdast-util-mdx
 import {mdxjsEsm} from 'micromark-extension-mdxjs-esm'
 import {mdxjsEsmFromMarkdown, mdxjsEsmToMarkdown} from 'mdast-util-mdxjs-esm'
 import path from "path";
+import {remove} from 'unist-util-remove'
 
 const srcDir = './src';
 const outDir = './notebase-ui/src/notebaseJs';
@@ -13,10 +14,13 @@ const outDir = './notebase-ui/src/notebaseJs';
 function compile(tree, baseName) {
   const classTemplate = (name, children) => `export const ${name.replace(' ', '')} = new Note(${compileChildren(children)});`
 
-  const extractImports = (tree) => tree.children
-    .filter(({type}) => type === 'mdxjsEsm')
-    .map(node => node.value.endsWith(';') ? node.value : node.value + ';')
-    .join('\n') || '';
+  const extractImports = (tree) => {
+    if (tree.children[0].type === 'html') {
+      return tree.children["0"].value.substring(8, tree.children["0"].value.length - 9);
+    }
+
+    return '';
+  }
 
   const fileTemplate = (tree, fileName, imports) => {
     const baseImports = `import {Note} from './lib/core';`
@@ -43,8 +47,9 @@ function compile(tree, baseName) {
   }
 
 
-
-  return fileTemplate(tree, baseName, extractImports(tree));
+  let extractedScript = extractImports(tree);
+  remove(tree, 'html')
+  return fileTemplate(tree, baseName, extractedScript);
 }
 
 /**

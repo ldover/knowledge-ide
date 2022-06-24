@@ -1,7 +1,8 @@
-import {WritingMarkupLanguage} from './WritingMarkupLanguage'
-import {DalleE2} from './images/DalleE2'
-import {NoteA} from './NoteA'
-import {BoydDestructionAndCreationQuote} from './quotes/BoydDestructionAndCreationQuote'
+<script>
+  import {WritingMarkupLanguage} from './WritingMarkupLanguage'
+  import {DalleE2} from './images/DalleE2'
+  import {BoydDestructionAndCreationQuote} from './quotes/BoydDestructionAndCreationQuote'
+</script>
 
 # Image Markup Language
 Image Markup Language is a programming framework for developing images with syntax for communicating with libraries of machine learning models. Just like {WritingMarkupLanguage} is used to develop text.
@@ -25,7 +26,3 @@ import Person from 'libs/people';
 	</Person>
 </Poster>
 ```
-
-I can pretty clearly do something like this and embed the content of {NoteA} —
-
-{NoteA.render()}

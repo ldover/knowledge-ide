@@ -1,7 +1,10 @@
-import {KnowledgeLanguage} from './KnowledgeLanguage'
+<script>
+  import {KnowledgeLanguage} from './KnowledgeLanguage'
+  import {BoydDestructionAndCreationQuote} from './quotes/BoydDestructionAndCreationQuote'  
+</script>
 
 # Writing Markup Language
-Writing Markup Language (WML) might be an extension of HTML that lets a developer separate the content from the style of the text and use machine learning language models to style the text.
+Writing Markup Language (WML) might be an extension of HTML that lets a developer separate the content from the style of the text and use machine learning language models to style the text. ...
 
 In essence, it is an extension of the CSS and HTML.
 * HTML might have additional tags for specifying the content and it might have certain in-built functions
