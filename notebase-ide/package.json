@@ -17,6 +17,7 @@
     "vite": "^2.7.1"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.0.2",
     "@codemirror/commands": "^6.0.0",
     "@codemirror/lang-javascript": "^6.0.0",
     "@codemirror/lang-markdown": "^6.0.0",

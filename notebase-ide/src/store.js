@@ -1,6 +1,6 @@
 import {get, writable} from "svelte/store";
 import {basicSetup, EditorView} from "codemirror";
-import {markdown} from "@codemirror/lang-markdown";
+import {markdown, markdownLanguage} from "@codemirror/lang-markdown";
 import {languages} from "@codemirror/language-data";
 import {indentWithTab} from "@codemirror/commands"
 import {keymap} from "@codemirror/view"
@@ -10,11 +10,9 @@ import {javascriptLanguage} from "@codemirror/lang-javascript"
 
 function getImportAutocomplete(files) {
   function completeFromFiles(context) {
-    let nodeBefore = syntaxTree(context.state).resolveInner(context.pos, -1)
-    console.log('completeFromFiles', {syntaxTree: nodeBefore});
-
+    let tree = syntaxTree(context.state);
+    let nodeBefore = tree.resolveInner(context.pos, -1)
     let from = /\./.test(nodeBefore.name) ? nodeBefore.to : nodeBefore.from
-
     const isImport = nodeBefore.name === 'VariableDefinition' && nodeBefore.parent.name === "ImportGroup";
 
     const options = files.map(file => {
@@ -25,6 +23,8 @@ function getImportAutocomplete(files) {
       }
       if (isImport) {
         opt.apply = `${label}} from './${file.relativePath}'`
+      } else {
+        opt.apply = `{${label}}`
       }
 
       return opt;
@@ -33,15 +33,20 @@ function getImportAutocomplete(files) {
     let completion = {
       from,
       options: options,
-      validFor: /^[\w$]*$/
+      // validFor: /^[\w$]*$/
     };
     console.log({completion})
-    return  completion
+    return completion
   }
 
-  return javascriptLanguage.data.of({
-    autocomplete: completeFromFiles
-  })
+  return {
+    markdown: markdownLanguage.data.of({
+      autocomplete: completeFromFiles
+    }),
+    javascript: javascriptLanguage.data.of({
+      autocomplete: completeFromFiles
+    })
+  }
 }
 
 const _sEditor = writable({el: null, view: null, file: null,});
@@ -132,7 +137,8 @@ export const sEditor = {
           basicSetup,
           myTheme,
           keymap.of([indentWithTab]),
-          importAutocomplete,
+          importAutocomplete.javascript, // Autocomplete for JS (within script tag)
+          importAutocomplete.markdown, // Autocomplete for markdown (works within MD-like body) // todo: does not work within curly brackets
           EditorView.lineWrapping,
           // myHighlightStyleExt,
           markdown({codeLanguages: languages}),
