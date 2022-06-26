@@ -4,9 +4,51 @@ import {markdown, markdownLanguage} from "@codemirror/lang-markdown";
 import {languages} from "@codemirror/language-data";
 import {indentWithTab} from "@codemirror/commands"
 import {keymap} from "@codemirror/view"
+import {Strikethrough} from "@lezer/markdown";
 
 import {syntaxTree} from "@codemirror/language"
 import {javascriptLanguage} from "@codemirror/lang-javascript"
+import {tags as t} from "@lezer/highlight";
+
+/**
+ * This is nowhere near bulletproof code
+ * @return
+ */
+function getCodeBraceExtension() {
+  const CodeSymbols = {
+    open: '{'.charCodeAt(0),
+    close: '}'.charCodeAt(0)
+  }
+
+  const CodeDelimiter = {resolve: "CodeBrace", mark: "CodeBraceMark"}
+  return {
+    defineNodes: [
+      {
+        name: CodeDelimiter.resolve,
+        style: {[`${CodeDelimiter.resolve}/...`]: t.className},
+      },
+      {
+        name: CodeDelimiter.mark,
+        style: t.brace
+      }
+    ],
+    // wrap: wrap,
+    parseInline: [
+      {
+        name: "CodeBrace",
+        parse(cx, next, pos) {
+          // Check for { or }
+          if (next !== CodeSymbols.open && next !== CodeSymbols.close) return -1;
+
+          // Return our delimiter, signify whether it's opening or closing, and
+          // signify next position parser should continue at
+          return cx.addDelimiter(CodeDelimiter, pos, pos + 1, next === CodeSymbols.open, next === CodeSymbols.close)
+        }
+      }
+    ]
+  }
+
+}
 
 function getImportAutocomplete(files) {
   function completeFromFiles(context) {
@@ -107,6 +149,10 @@ export const sEditor = {
         "&.cm-focused .cm-selectionBackground, ::selection": {
           backgroundColor: "#074"
         },
+        ".ͼj": {
+          color: '#CD5654',
+          fontWeight: '400',
+        },
         ".ͼ7": {
           fontSize: '20px',
           textDecoration: 'none',
@@ -140,8 +186,7 @@ export const sEditor = {
           importAutocomplete.javascript, // Autocomplete for JS (within script tag)
           importAutocomplete.markdown, // Autocomplete for markdown (works within MD-like body) // todo: does not work within curly brackets
           EditorView.lineWrapping,
-          // myHighlightStyleExt,
-          markdown({codeLanguages: languages}),
+          markdown({codeLanguages: languages, extensions: [Strikethrough, getCodeBraceExtension()]}),
         ],
         parent: el
       });

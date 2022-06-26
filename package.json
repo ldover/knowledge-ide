@@ -16,7 +16,10 @@
   },
   "dependencies": {
     "@codemirror/language": "^6.1.0",
+    "@lezer/common": "^1.0.0",
     "@lezer/highlight": "^1.0.0",
+    "@lezer/markdown": "^1.0.0",
+    "@lezer/javascript": "^1.0.0",
     "acorn": "^8.7.1",
     "mdast-util-from-markdown": "^1.2.0",
     "mdast-util-mdx-expression": "^1.2.1",
