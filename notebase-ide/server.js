@@ -62,13 +62,14 @@ app.get('/', (req, res) => {
 
 // respond with "hello world" when a GET request is made to the homepage
 app.get('/file/:filePath', (req, res) => {
-  const path = req.params['filePath']
-  console.log('reading file', path)
-  const file =  fs.readFileSync(path, {encoding: 'utf-8'});
+  const filepath = req.params['filePath']
+  console.log('reading file', filepath)
+  const file =  fs.readFileSync(filepath, {encoding: 'utf-8'});
 
   res.json({
     content: file,
-    path,
+    name: path.parse(filepath).base,
+    path: filepath,
   })
 });
 

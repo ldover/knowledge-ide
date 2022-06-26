@@ -5,8 +5,7 @@
   console.log('NoteReference', {node});
 </script>
 
-<a on:click|preventDefault|stopPropagation={() => sNavigation.navigate(node.value)}
-   href="javascript:;"
+<a href="#/{node.value}"
    class="note-reference">
     {$sNotes[node.value].children[0].children[0].value}
 </a>

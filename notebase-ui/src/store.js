@@ -3,13 +3,7 @@ import {Notes} from './notebaseJs/index';
 
 export const sNotes = writable(Notes);
 
-let note = Object.keys(Notes)[0]
-const lastNote = localStorage.getItem('lastNote');
-if (lastNote && Notes[lastNote]) {
-  note = lastNote;
-}
-
-const _sNavigation = writable(Notes[note]);
+const _sNavigation = writable(null);
 
 
 export const sNavigation = {
