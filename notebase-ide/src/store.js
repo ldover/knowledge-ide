@@ -64,7 +64,7 @@ function getImportAutocomplete(files) {
         type: 'variable'
       }
       if (isImport) {
-        opt.apply = `${label}} from './${file.relativePath}'`
+        opt.apply = `${label}} from './${file.relativePath.split('.')[0]}'`
       } else {
         opt.apply = `{${label}}`
       }
