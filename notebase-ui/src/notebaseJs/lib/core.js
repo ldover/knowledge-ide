@@ -18,7 +18,7 @@ export class System {
 
 
 export class Statement extends System {
-  constructor(node, statements) {
+  constructor(node, statements = []) {
     super(node, statements)
   }
 
