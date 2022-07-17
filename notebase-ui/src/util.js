@@ -14,6 +14,7 @@ import ThematicBreak from "./components/ThematicBreak.svelte";
 import Break from "./components/Break.svelte";
 import ListItem from "./components/ListItem.svelte";
 import List from "./components/List.svelte";
+import Reference from "./components/Reference.svelte";
 
 export const Components = {
   'text': Text,
@@ -32,6 +33,7 @@ export const Components = {
   'list': List,
   'notebase-image': NotebaseImage,
   'mdxTextExpression': NoteReference, // todo: this kind of works now as the only thing I use it for, but maybe ditch mdx and create custom node types for common patterns?
+  'reference': Reference,
 }
 export function injectComponents(children) {
   children.forEach(child => {

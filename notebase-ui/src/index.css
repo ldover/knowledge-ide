@@ -43,7 +43,7 @@
         @apply text-blue-500;
     }
 
-    a.note-reference {
+    a.note-reference, a.reference {
         @apply text-teal-600;
     }
 

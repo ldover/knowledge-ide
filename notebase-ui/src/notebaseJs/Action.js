@@ -4,30 +4,27 @@ import {
   heading as h,
 } from 'mdast-builder';
 
-import {System, Statement, reference as r} from './lib/core';
-import {Action} from "./Action";
+import {System, Statement} from './lib/core';
 
 
 // (1) Declare
 let A;
-let Abstraction;
+let Action;
 
 
 // (2) Assign individual Statements
 A = new Statement(
   'A',
   h(2, [
-    t('Abstraction is ' ),
-    r(Action),
-    t(' which maps to a Set')
+    t('Action is movement in the Value space')
   ])
 );
 
 // (3) Put them together into a System
-Abstraction = new System(
-  'Abstraction',
+Action = new System(
+  'Action',
   h(1, [
-    t('Abstraction')
+    t('Action')
   ]),
   [
     A,
@@ -38,5 +35,5 @@ Abstraction = new System(
 // (4) Export
 export {
   A,
-  Abstraction
+  Action
 }

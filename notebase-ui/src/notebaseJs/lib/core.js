@@ -1,5 +1,6 @@
 export class System {
-  constructor(node, statements) {
+  constructor(title, node, statements) {
+    this.title = title;
     this.node = node;
     this.statements = statements;
   }
@@ -18,8 +19,8 @@ export class System {
 
 
 export class Statement extends System {
-  constructor(node, statements = []) {
-    super(node, statements)
+  constructor(title, node, statements = []) {
+    super(title, node, statements)
   }
 
   /** TODO:
@@ -37,3 +38,10 @@ export class Statement extends System {
     return out.children;
   }
 }
+
+const valueNode = (type, value) => ({
+  type,
+  value
+});
+
+export const reference = (node) => valueNode("reference", node);
