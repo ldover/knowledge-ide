@@ -1,38 +1,29 @@
 export class System {
-  constructor(title, node, statements) {
+  constructor(title, statements = []) {
     this.title = title;
-    this.node = node;
-    this.statements = statements;
+    this.statements = statements
+  }
+
+  add(...nodes) {
+    return (this.statements = [...this.statements, ...nodes])
   }
 
   render() {
     return {
       type: 'root',
       note: this,
-      children: [
-        this.node,
-        ...this.statements.reduce((all, statement) => [...all, ...statement.render()], []),
-      ]
+      children: this.statements
     }
   }
 }
 
 
 export class Statement extends System {
-  constructor(title, node, statements = []) {
-    super(title, node, statements)
+  constructor(title, statements = []) {
+    super(title, statements)
   }
 
-  /** TODO:
-   *  Consider doing this instead, after adapting the UI
-   *  render() {
-   *     const out = super.render();
-   *     out.type = 'statement';
-   *     return out;
-   *   }
-   */
-
-
+  // todo: consider creating a root structure and assigning a type: 'statement'
   render() {
     const out = super.render();
     return out.children;

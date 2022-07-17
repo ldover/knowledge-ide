@@ -4,7 +4,7 @@ import {
   heading as h,
 } from 'mdast-builder';
 
-import {System, Statement} from './lib/core';
+import {System, Statement, reference as r} from './lib/core';
 
 
 // (1) Declare
@@ -12,25 +12,24 @@ let A;
 let Action;
 
 
-// (2) Assign individual Statements
-A = new Statement(
-  'A',
-  h(2, [
-    t('Action is movement in the Value space')
-  ])
-);
+// (2) Assign
+A = new Statement('A');
+Action = new System('Action')
 
-// (3) Put them together into a System
-Action = new System(
-  'Action',
+// (3) Build
+A.add(
+  h(2, [
+    r(Action),
+    t(' is movement in the Value space'),
+  ])
+)
+
+Action.add(
   h(1, [
     t('Action')
   ]),
-  [
-    A,
-  ]
+  ...A.render(),
 )
-
 
 // (4) Export
 export {

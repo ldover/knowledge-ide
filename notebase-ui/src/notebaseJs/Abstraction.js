@@ -14,25 +14,25 @@ let Abstraction;
 
 
 // (2) Assign individual Statements
-A = new Statement(
-  'A',
+A = new Statement('A');
+Abstraction = new System('Abstraction')
+
+A.add(
   h(2, [
-    t('Abstraction is ' ),
+    r(Abstraction),
+    t(' is '),
     r(Action),
     t(' which maps to a Set')
   ])
-);
+)
+Abstraction.add(
+  h(1, [
+    r(Abstraction),
+  ]),
+  ...A.render(),
+)
 
 // (3) Put them together into a System
-Abstraction = new System(
-  'Abstraction',
-  h(1, [
-    t('Abstraction')
-  ]),
-  [
-    A,
-  ]
-)
 
 
 // (4) Export
