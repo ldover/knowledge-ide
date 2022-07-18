@@ -1,7 +1,7 @@
 import Heading from "./components/Heading.svelte";
 import Text from "./components/Text.svelte";
 import Paragraph from "./components/Paragraph.svelte";
-import Note from "./components/Note.svelte";
+import System from "./components/System.svelte";
 import Link from "./components/Link.svelte";
 import NoteReference from "./components/NoteReference.svelte";
 import Emphasis from "./components/Emphasis.svelte";
@@ -26,7 +26,7 @@ export const Components = {
   'emphasis': Emphasis,
   'inlineCode': InlineCode,
   'strong': Strong,
-  'root': Note,
+  'system': System,
   'heading': Heading,
   'paragraph': Paragraph,
   'link': Link,

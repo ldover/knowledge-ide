@@ -9,9 +9,9 @@
 <div class="note relative">
     {#if !root}
         <a class="note-handle cursor-pointer absolute text-orange-500 text-xs font-medium"
-           on:click|stopPropagation={() => sNavigation.set(node.note)}
+           on:click|stopPropagation={() => sNavigation.set(node.system)}
         >
-            {node.note.children[0].children[0].value} →
+            {node.system.title} →
         </a>
     {/if}
     <slot></slot>

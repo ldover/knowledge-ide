@@ -12,9 +12,9 @@
 <div class="statement relative">
     {#if !root}
         <a class="note-handle cursor-pointer absolute text-orange-500 text-xs font-medium"
-           on:click|stopPropagation={() => sNavigation.set(node.note)}
+           on:click|stopPropagation={() => sNavigation.set(node.statement)}
         >
-            {node.note.title} →
+            {node.statement.title} →
         </a>
     {/if}
     <slot></slot>

@@ -10,8 +10,8 @@ export class System {
 
   render() {
     return {
-      type: 'root',
-      note: this,
+      type: 'system',
+      system: this,
       children: this.nodes
     }
   }
@@ -26,7 +26,7 @@ export class Statement extends System {
   render() {
     return {
       type: 'statement',
-      note: this,
+      statement: this,
       children: this.nodes
     }
   }
