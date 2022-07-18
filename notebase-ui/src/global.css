@@ -25,7 +25,7 @@ em {
 }
 
 
-.note {
+.note, .statement {
     @apply font-light;
     font-family: 'Roboto', sans-serif;
 }

@@ -28,8 +28,10 @@ Action.add(
   h(1, [
     t('Action')
   ]),
-  ...A.render(),
+  A.render(),
 )
+
+// todo: consider adding statements
 
 // (4) Export
 export {

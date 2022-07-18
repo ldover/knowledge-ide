@@ -29,7 +29,7 @@ Abstraction.add(
   h(1, [
     r(Abstraction),
   ]),
-  ...A.render(),
+  A.render(),
 )
 
 // (3) Put them together into a System
