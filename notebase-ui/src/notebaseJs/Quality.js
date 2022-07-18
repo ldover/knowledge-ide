@@ -5,47 +5,35 @@ import {
 } from 'mdast-builder';
 
 import {System, Statement, reference as r} from './lib/core';
+import {Action} from "./Action";
 import {Value} from "./Value";
-import {Quality} from "./Quality";
 
 
 // (1) Declare
 let A;
-let B;
-let Action;
+let Quality;
 
 
 // (2) Assign
 A = new Statement('A');
-B = new Statement('B');
-Action = new System('Action')
+Quality = new System('Quality')
 
 // (3) Build
 A.add(
   h(2, [
-    r(Action),
-    t(' is movement in the '),
-    r(Value),
-    t(' space'),
-  ])
-)
-
-B.add(
-  h(2, [
-    r(Action),
-    t(' towards '),
-    r(Value),
-    t(' increases '),
     r(Quality),
+    t(' is '),
+    t('Action'),
+    t(' towards'),
+    r(Value),
   ])
 )
 
-Action.add(
+Quality.add(
   h(1, [
-    r(Action)
+    r(Quality)
   ]),
   A.render(),
-  B.render(),
 )
 
 // todo: consider adding statements
@@ -53,6 +41,5 @@ Action.add(
 // (4) Export
 export {
   A,
-  B,
-  Action
+  Quality
 }
