@@ -1,0 +1,14 @@
+{
+  "name": "kdl-parser",
+  "version": "1.0.0",
+  "description": "Parse KDL into AST",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Luka Dover",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^28.1.3"
+  }
+}
