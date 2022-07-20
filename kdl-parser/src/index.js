@@ -1,4 +1,11 @@
 
+function parseStatementValue(statement) {
+  return [{
+    type: 'text',
+    value: statement.trim()
+  }]
+}
+
 function parse(kdl) {
   const lines = kdl.split('\n');
   const children = []
@@ -16,6 +23,13 @@ function parse(kdl) {
           abbreviation: abbreviation ? abbreviation : null
         }
       )
+    } else if (line.match(/[0-9\.]+/)) {
+      const match = line.match(/([0-9\.]+):(.*)/)
+      children.push({
+        type: 'statement',
+        name: match[1],
+        value: parseStatementValue(match[2])
+      })
     }
 
   })

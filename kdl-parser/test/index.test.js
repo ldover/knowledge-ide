@@ -84,38 +84,26 @@ def Symbol as S
   })
 })
 
+describe('Parses statement', () => {
+  it('Parses a plain statement', () => {
+    const kdl0 = `1: Plain statement
+    `
+    const out = {
+      type: "root",
+      children: [
+        {
+          type: 'statement',
+          name: '1',
+          value: [
+            {
+              type: 'text',
+              value: 'Plain statement'
+            }
+          ]
+        },
+      ]
+    }
 
-test('adds 1 + 2 to equal 3', () => {
-  const kdl0 = `def Action as A
-
-1: {A} is universal unfolding
-`
-
-  const out = {
-    type: "root",
-    children: [
-      {
-        type: 'symbol',
-        name: 'Action',
-        abbreviation: 'A'
-      },
-      {
-        type: 'statement',
-        name: '1',
-        value: [
-          {
-            type: 'reference',
-            value: 'A'
-          },
-          {
-            type: 'text',
-            value: ' is universal unfolding'
-          }
-        ],
-        children: []
-      }
-    ]
-  }
-
-  expect(parse(kdl0)).toMatchObject(out);
-});
+    expect(parse(kdl0)).toMatchObject(out);
+  });
+})
