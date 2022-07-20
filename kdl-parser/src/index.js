@@ -1,9 +1,35 @@
-
 function parseStatementValue(statement) {
-  return [{
-    type: 'text',
-    value: statement.trim()
-  }]
+  let s = statement.trim()
+
+  const matches = [...s.matchAll(/\{(.*?)\}/g)];
+  if (!matches.length) {
+    return [{
+      type: 'text',
+      value: s
+    }]
+  } else {
+    let children = []
+
+    // Everything between matches is text node
+    let cursor = 0;
+    matches.forEach(match => {
+      if (match.index > cursor) {
+        // Create text node until the index of the match
+        children.push({
+          type: 'text',
+          value: s.substring(cursor, match.index)
+        })
+      }
+
+      cursor = match.index + match[0].length;
+      children.push({
+        type: 'reference',
+        value: match[1]
+      })
+    })
+
+    return children;
+  }
 }
 
 function parse(kdl) {

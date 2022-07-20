@@ -106,4 +106,58 @@ describe('Parses statement', () => {
 
     expect(parse(kdl0)).toMatchObject(out);
   });
+
+  it('Parses statement with reference', () => {
+    const kdl0 = `1: Plain statement {A}`
+    const out = {
+      type: "root",
+      children: [
+        {
+          type: 'statement',
+          name: '1',
+          value: [
+            {
+              type: 'text',
+              value: 'Plain statement '
+            },
+            {
+              type: 'reference',
+              value: 'A'
+            }
+          ]
+        },
+      ]
+    }
+
+    expect(parse(kdl0)).toMatchObject(out);
+  });
+
+  it('Parses statement with two references', () => {
+    const kdl0 = `1: {B} relates to {A}`
+    const out = {
+      type: "root",
+      children: [
+        {
+          type: 'statement',
+          name: '1',
+          value: [
+            {
+              type: 'reference',
+              value: 'B'
+            },
+            {
+              type: 'text',
+              value: ' relates to '
+            },
+            {
+              type: 'reference',
+              value: 'A'
+            }
+          ]
+        },
+      ]
+    }
+
+    expect(parse(kdl0)).toMatchObject(out);
+  });
 })
