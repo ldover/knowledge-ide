@@ -161,3 +161,41 @@ describe('Parses statement', () => {
     expect(parse(kdl0)).toMatchObject(out);
   });
 })
+
+
+describe('Parses nested statement', () => {
+  it('Parses one level deep, one statement broad', () => {
+    const kdl0 = `1: Plain statement
+1.1: Child statement
+    `
+    const out = {
+      type: "root",
+      children: [
+        {
+          type: 'statement',
+          name: '1',
+          value: [
+            {
+              type: 'text',
+              value: 'Plain statement'
+            }
+          ],
+          children: [
+            {
+              type: 'statement',
+              name: '1',
+              value: [
+                {
+                  type: 'text',
+                  value: 'Child statement'
+                }
+              ],
+            }
+          ]
+        },
+      ]
+    }
+
+    expect(parse(kdl0)).toMatchObject(out);
+  });
+})

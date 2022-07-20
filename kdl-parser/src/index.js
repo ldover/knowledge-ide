@@ -34,6 +34,7 @@ function parseStatementValue(statement) {
 
 function parse(kdl) {
   const lines = kdl.split('\n');
+  const statements = {}
   const children = []
   lines.forEach(line => {
     if (!line) return;
@@ -51,13 +52,26 @@ function parse(kdl) {
       )
     } else if (line.match(/[0-9\.]+/)) {
       const match = line.match(/([0-9\.]+):(.*)/)
-      children.push({
+      let name = match[1];
+      let value = parseStatementValue(match[2]);
+      let statement = {
         type: 'statement',
-        name: match[1],
-        value: parseStatementValue(match[2])
-      })
-    }
+        name,
+        value,
+        children: [],
+      };
 
+      const nested = name.includes('.');
+
+      // Goes only one level deep this one.
+      if (nested) {
+        const [parentName, childName] = name.split('.');
+        statements[parentName].children.push(statement); // Will error — should proactively show error (todo)
+      } else {
+        statements[name] = statement;
+        children.push(statement)
+      }
+    }
   })
 
 
