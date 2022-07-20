@@ -32,6 +32,32 @@ function parseStatementValue(statement) {
   }
 }
 
+function parseStatement(line) {
+  const match = line.match(/([0-9\.]+):(.*)/)
+  let name = match[1];
+  let value = parseStatementValue(match[2]);
+
+  const statement = {
+    type: 'statement',
+    name,
+    value,
+    children: [],
+  };
+
+  const nested = name.includes('.');
+  let parentName = null;
+  let childName = null;
+  if (nested) {
+    [parentName, childName] = name.split('.');
+    statement.name = childName;
+    statement.nested = true;
+    statement.parentName = parentName
+  }
+
+  return statement;
+}
+
+
 function parse(kdl) {
   const lines = kdl.split('\n');
   const statements = {}
@@ -51,24 +77,13 @@ function parse(kdl) {
         }
       )
     } else if (line.match(/[0-9\.]+/)) {
-      const match = line.match(/([0-9\.]+):(.*)/)
-      let name = match[1];
-      let value = parseStatementValue(match[2]);
-      let statement = {
-        type: 'statement',
-        name,
-        value,
-        children: [],
-      };
+      const statement = parseStatement(line);
 
-      const nested = name.includes('.');
-
-      // Goes only one level deep this one.
-      if (nested) {
-        const [parentName, childName] = name.split('.');
-        statements[parentName].children.push(statement); // Will error — should proactively show error (todo)
+      // Goes only one level deep (todo)
+      if (statement.nested) {
+        statements[statement.parentName].children.push(statement); // Will error — should proactively show error (todo)
       } else {
-        statements[name] = statement;
+        statements[statement.name] = statement;
         children.push(statement)
       }
     }
