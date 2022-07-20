@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 function parseStatementValue(statement) {
   let s = statement.trim()
 
@@ -96,4 +98,12 @@ function parse(kdl) {
   }
 }
 
-module.exports = {parse}
+function parseFile(path) {
+  const contents = fs.readFileSync(path, {encoding: 'utf-8'})
+  return parse(contents);
+}
+
+module.exports = {
+  parse,
+  parseFile
+}
