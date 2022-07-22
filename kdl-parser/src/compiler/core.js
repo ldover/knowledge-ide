@@ -44,10 +44,15 @@ class Statement {
   }
 
   render() {
-      return li(
-        p(this.value.map(c => c.render())),
-        this.children.length ? (new Statements(this.children)).render() : [],
-      )
+    let kids = [p(this.value.map(c => c.render()))]
+    if (this.children.length) {
+      kids = [
+        ...kids,
+        new Statements(this.children).render()
+      ]
+    }
+
+    return li(kids)
   }
 }
 
