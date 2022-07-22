@@ -3,7 +3,8 @@ const {compile,
   Statement,
   Symbol,
   Text,
-  Root
+  Root,
+  Statements
 } = require('../src/compiler/core');
 
 describe('Compiles a symbol', () => {
@@ -139,28 +140,33 @@ describe('Compiles root file', () => {
       type: "root",
       children: [
         {
-          type: 'statement',
-          name: '1',
-          value: [
+          type: 'statements',
+          children: [
             {
-              type: 'text',
-              value: 'Plain statement '
-            },
-            {
-              type: 'reference',
-              value: 'A'
+              type: 'statement',
+              name: '1',
+              value: [
+                {
+                  type: 'text',
+                  value: 'Plain statement '
+                },
+                {
+                  type: 'reference',
+                  value: 'A'
+                }
+              ]
             }
           ]
-        },
+        }
       ]
     }
-
 
     const out = compile(ast);
 
     expect(out).toBeInstanceOf(Root);
     expect(out.children).toBeInstanceOf(Array);
-    expect(out.children[0]).toBeInstanceOf(Statement);
+    expect(out.children[0]).toBeInstanceOf(Statements);
+    expect(out.children[0].children[0]).toBeInstanceOf(Statement);
   });
 
   it('Compiles a symbol without abbreviation', () => {

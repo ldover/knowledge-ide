@@ -1,21 +1,63 @@
+const {
+  paragraph: p,
+  heading: h,
+  text: t,
+  listItem: li,
+  list: l,
+  link
+} = require("mdast-builder");
+
 class Symbol {
   constructor(name, abbreviation) {
     this.name = name;
     this.abbreviation = abbreviation;
   }
+
+  render() {
+    return p(
+      t(`def ${this.name}` + (this.abbreviation ? ` := ${this.abbreviation}` : ''))
+    )
+  }
 }
 
+class Statements {
+  constructor(children) {
+    this.children = children;
+  }
+
+  render() {
+    return l(
+      'ordered',
+      this.children.map(c => c.render())
+    )
+  }
+}
+
+
 class Statement {
-  constructor(name, value, children = []) {
+  constructor(name, value, children = [], options = {}) {
     this.name = name;
     this.value = value;
+    this.nested = !!options.nested; // todo: I don't like separating this out arbitrarily
+    this.parentName = options.parentName ? options.parentName : null;
     this.children = children;
+  }
+
+  render() {
+      return li(
+        p(this.value.map(c => c.render())),
+        this.children.length ? (new Statements(this.children)).render() : [],
+      )
   }
 }
 
 class Reference {
   constructor(name) {
     this.name = name;
+  }
+
+  render() {
+    return link(`#${this.name}`, this.name)
   }
 
   exists(scope) {
@@ -27,11 +69,22 @@ class Text {
   constructor(value) {
     this.value = value;
   }
+
+  render() {
+    return t(this.value)
+  }
 }
 
 class Root {
   constructor(children) {
     this.children = children;
+  }
+
+  render() {
+    return {
+      type: 'root',
+      children: this.children.map(c => c.render())
+    }
   }
 }
 
@@ -40,6 +93,7 @@ class Root {
 //
 
 const compilers = {
+  statements: statementsCompiler,
   statement: statementCompiler,
   text: textCompiler,
   reference: referenceCompiler,
@@ -58,6 +112,7 @@ function compile(ast) {
 module.exports = {
   Symbol,
   Statement,
+  Statements,
   Reference,
   Root,
   Text,
@@ -75,11 +130,19 @@ function rootCompiler(ast) {
   return new Root(ast.children.map(c => compilers[c.type](c)));
 }
 
+function statementsCompiler(ast) {
+  console.assert(ast.type === 'statements')
+  return new Statements(ast.children.map(node => compilers[node.type](node)));
+}
+
 function statementCompiler(ast) {
   console.assert(ast.type === 'statement')
   const value = ast.value.map(node => compilers[node.type](node));
   const children = ast.children ? ast.children.map(c => statementCompiler(c)) : []
-  return new Statement(ast.name, value, children)
+  const options = {}
+  ast.nested && (options.nested = ast.nested);
+  ast.parentName && (options.parentName = ast.parentName);
+  return new Statement(ast.name, value, children, options)
 }
 
 function textCompiler(ast) {
