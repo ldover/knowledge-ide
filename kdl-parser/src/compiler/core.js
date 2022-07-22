@@ -29,9 +29,9 @@ class Text {
   }
 }
 
-class File {
-  constructor() {
-
+class Root {
+  constructor(children) {
+    this.children = children;
   }
 }
 
@@ -42,7 +42,9 @@ class File {
 const compilers = {
   statement: statementCompiler,
   text: textCompiler,
-  reference: referenceCompiler
+  reference: referenceCompiler,
+  symbol: symbolCompiler,
+  root: rootCompiler
 }
 
 function compile(ast) {
@@ -57,10 +59,21 @@ module.exports = {
   Symbol,
   Statement,
   Reference,
+  Root,
   Text,
   compile
 }
 
+function symbolCompiler(ast) {
+  console.assert(ast.type === 'symbol')
+
+  return new Symbol(ast.name, ast.abbreviation)
+}
+
+function rootCompiler(ast) {
+  console.assert(ast.type === 'symbol')
+  return new Root(ast.children.map(c => compilers[c.type](c)));
+}
 
 function statementCompiler(ast) {
   console.assert(ast.type === 'statement')

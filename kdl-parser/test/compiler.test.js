@@ -2,8 +2,38 @@ const {compile,
   Reference,
   Statement,
   Symbol,
-  Text
+  Text,
+  Root
 } = require('../src/compiler/core');
+
+describe('Compiles a symbol', () => {
+  it('Compiles a symbol with abbreviation', () => {
+    const ast = {
+      type: 'symbol',
+      name: 'Action',
+      abbreviation: 'A'
+    }
+
+    const out = compile(ast);
+
+    expect(out).toBeInstanceOf(Symbol);
+    expect(out.name).toEqual('Action');
+    expect(out.abbreviation).toEqual('A');
+  });
+
+  it('Compiles a symbol without abbreviation', () => {
+    const ast = {
+      type: 'symbol',
+      name: 'Action',
+      abbreviation: null
+    }
+
+    const out = compile(ast);
+
+    expect(out.name).toEqual('Action');
+    expect(out.abbreviation).toBeNull();
+  });
+})
 
 describe('Compiles a statement', () => {
   it('Compiles one plain statement without children', () => {
@@ -99,5 +129,50 @@ describe('Compiles a statement', () => {
     expect(out.value[0].value).toEqual('Plain statement ');
     expect(out.value[1]).toBeInstanceOf(Reference);
     expect(out.value[1].name).toEqual('A');
+  });
+})
+
+
+describe('Compiles root file', () => {
+  it('Compiles a simple root', () => {
+    const ast = {
+      type: "root",
+      children: [
+        {
+          type: 'statement',
+          name: '1',
+          value: [
+            {
+              type: 'text',
+              value: 'Plain statement '
+            },
+            {
+              type: 'reference',
+              value: 'A'
+            }
+          ]
+        },
+      ]
+    }
+
+
+    const out = compile(ast);
+
+    expect(out).toBeInstanceOf(Root);
+    expect(out.children).toBeInstanceOf(Array);
+    expect(out.children[0]).toBeInstanceOf(Statement);
+  });
+
+  it('Compiles a symbol without abbreviation', () => {
+    const ast = {
+      type: 'symbol',
+      name: 'Action',
+      abbreviation: null
+    }
+
+    const out = compile(ast);
+
+    expect(out.name).toEqual('Action');
+    expect(out.abbreviation).toBeNull();
   });
 })
