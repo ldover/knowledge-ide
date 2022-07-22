@@ -64,6 +64,10 @@ function parse(kdl) {
   const lines = kdl.split('\n');
   const statements = {}
   const children = []
+  const statementsRoot = {
+    type: 'statements',
+    children: []
+  }
   lines.forEach(line => {
     if (!line) return;
     line = line.trim();
@@ -86,11 +90,14 @@ function parse(kdl) {
         statements[statement.parentName].children.push(statement); // Will error — should proactively show error (todo)
       } else {
         statements[statement.name] = statement;
-        children.push(statement)
+        statementsRoot.children.push(statement)
       }
     }
   })
 
+  if (statementsRoot.children.length) {
+    children.push(statementsRoot)
+  }
 
   return {
     type: "root",

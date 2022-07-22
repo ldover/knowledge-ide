@@ -93,15 +93,20 @@ describe('Parses statement', () => {
       type: "root",
       children: [
         {
-          type: 'statement',
-          name: '1',
-          value: [
+          type: "statements",
+          children: [
             {
-              type: 'text',
-              value: 'Plain statement'
+              type: 'statement',
+              name: '1',
+              value: [
+                {
+                  type: 'text',
+                  value: 'Plain statement'
+                }
+              ]
             }
           ]
-        },
+        }
       ]
     }
 
@@ -114,19 +119,24 @@ describe('Parses statement', () => {
       type: "root",
       children: [
         {
-          type: 'statement',
-          name: '1',
-          value: [
+          type: 'statements',
+          children: [
             {
-              type: 'text',
-              value: 'Plain statement '
+              type: 'statement',
+              name: '1',
+              value: [
+                {
+                  type: 'text',
+                  value: 'Plain statement '
+                },
+                {
+                  type: 'reference',
+                  value: 'A'
+                }
+              ]
             },
-            {
-              type: 'reference',
-              value: 'A'
-            }
           ]
-        },
+        }
       ]
     }
 
@@ -139,23 +149,28 @@ describe('Parses statement', () => {
       type: "root",
       children: [
         {
-          type: 'statement',
-          name: '1',
-          value: [
+          type: 'statements',
+          children: [
             {
-              type: 'reference',
-              value: 'B'
-            },
-            {
-              type: 'text',
-              value: ' relates to '
-            },
-            {
-              type: 'reference',
-              value: 'A'
+              type: 'statement',
+              name: '1',
+              value: [
+                {
+                  type: 'reference',
+                  value: 'B'
+                },
+                {
+                  type: 'text',
+                  value: ' relates to '
+                },
+                {
+                  type: 'reference',
+                  value: 'A'
+                }
+              ]
             }
           ]
-        },
+        }
       ]
     }
 
@@ -173,14 +188,7 @@ describe('Parses nested statement', () => {
       type: "root",
       children: [
         {
-          type: 'statement',
-          name: '1',
-          value: [
-            {
-              type: 'text',
-              value: 'Plain statement'
-            }
-          ],
+          type: "statements",
           children: [
             {
               type: 'statement',
@@ -188,13 +196,24 @@ describe('Parses nested statement', () => {
               value: [
                 {
                   type: 'text',
-                  value: 'Child statement'
+                  value: 'Plain statement'
                 }
               ],
+              children: [
+                {
+                  type: 'statement',
+                  name: '1',
+                  value: [
+                    {
+                      type: 'text',
+                      value: 'Child statement'
+                    }
+                  ],
+                }
+              ]
             }
           ]
-        },
-      ]
+        }]
     }
 
     expect(parse(kdl0)).toMatchObject(out);
@@ -216,94 +235,99 @@ describe('Parser works for the entire KDL script', () => {
         abbreviation: 'Q'
       },
       {
-        type: 'statement',
-        name: '1',
-        value: [
-          {
-            type: 'reference',
-            value: 'A'
-          },
-          {
-            type: 'text',
-            value: ' in the limit converges towards '
-          },
-          {
-            type: 'reference',
-            value: 'Q'
-          }
-        ],
+        type: 'statements',
         children: [
           {
             type: 'statement',
             name: '1',
-            nested: true,
-            parentName: '1',
             value: [
               {
+                type: 'reference',
+                value: 'A'
+              },
+              {
                 type: 'text',
-                value: 'Child statement'
+                value: ' in the limit converges towards '
+              },
+              {
+                type: 'reference',
+                value: 'Q'
               }
             ],
-            children: []
+            children: [
+              {
+                type: 'statement',
+                name: '1',
+                nested: true,
+                parentName: '1',
+                value: [
+                  {
+                    type: 'text',
+                    value: 'Child statement'
+                  }
+                ],
+                children: []
+              },
+              {
+                type: 'statement',
+                name: '2',
+                nested: true,
+                parentName: '1',
+                value: [
+                  {
+                    type: 'text',
+                    value: 'Child statement 2'
+                  }
+                ],
+                children: []
+              }
+            ]
           },
           {
             type: 'statement',
             name: '2',
-            nested: true,
-            parentName: '1',
             value: [
               {
-                type: 'text',
-                value: 'Child statement 2'
-              }
-            ],
-            children: []
-          }
-        ]
-      },
-      {
-        type: 'statement',
-        name: '2',
-        value: [
-          {
-            type: 'reference',
-            value: 'Q'
-          },
-          {
-            type: 'text',
-            value: ' mediates '
-          },
-          {
-            type: 'reference',
-            value: 'A'
-          }
-        ],
-        children: [
-          {
-            type: 'statement',
-            name: '1',
-            nested: true,
-            parentName: '2',
-            value: [
+                type: 'reference',
+                value: 'Q'
+              },
               {
                 type: 'text',
-                value: 'Child statement'
-              }
-            ],
-            children: []
-          },
-          {
-            type: 'statement',
-            name: '2',
-            nested: true,
-            parentName: '2',
-            value: [
+                value: ' mediates '
+              },
               {
-                type: 'text',
-                value: 'Child statement 2'
+                type: 'reference',
+                value: 'A'
               }
             ],
-            children: []
+            children: [
+              {
+                type: 'statement',
+                name: '1',
+                nested: true,
+                parentName: '2',
+                value: [
+                  {
+                    type: 'text',
+                    value: 'Child statement'
+                  }
+                ],
+                children: []
+              },
+              {
+                type: 'statement',
+                name: '2',
+                nested: true,
+                parentName: '2',
+                value: [
+                  {
+                    type: 'text',
+                    value: 'Child statement 2'
+                  }
+                ],
+                children: []
+              }
+            ]
           }
         ]
       }
