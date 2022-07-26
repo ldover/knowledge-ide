@@ -25,7 +25,14 @@ describe('Parses the program in the script tag', () => {
     const mdl0 = `<script>
     import NoteA from './NoteA'
     import NoteB from './NoteB'
-</script>`
+</script>
+
+Testing a mdx {Note.render()}
+ 
+Testing a mdx {Note.render({ style: 'filter: grayscale(0.2)' })}
+ 
+Testing a mdx reference {Note} 
+`
     let actual = parse(mdl0);
     expect(actual.children[0].type).toEqual('Program')
   });
@@ -43,3 +50,18 @@ describe('Parses the program in the script tag', () => {
 })
 
 
+describe('Parses MDL specific nodes', () => {
+  it('Parses MDL node in the paragraph as mdxTextExpression', () => {
+    const mdl0 = `Text node {NoteA}`
+    let actual = parse(mdl0);
+    expect(actual.children[0].type).toEqual('paragraph')
+    expect(actual.children[0].children[1].type).toEqual('mdxTextExpression')
+  });
+
+  // TODO: the render() should probably always be in the new line — make a test for that
+  it('Parses MDL node at the beginning of sentence as mdxFlowExpression', () => {
+    const mdl0 = `{NoteA.render()}`
+    let actual = parse(mdl0);
+    expect(actual.children[0].type).toEqual('mdxFlowExpression')
+  });
+})
