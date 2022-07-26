@@ -100,7 +100,46 @@ describe('Compiles MDL files', () => {
     expect(outB.path).toEqual('./NoteB')
     expect(outB.title).toEqual('Note B')
     expect(outA.refs.get('NoteB')).toBe('./NoteB');
-  })
+  });
+
+  it('Compiles one comprehensive MDL file', () => {
+    const noteA = `# Comprehensive MD test
+## Subheading
+> Quote
+> Another line of quote
+
+~~How about strike~~ and **bold** and _italic_?
+
+How about thematic break —
+***
+
+How about a link to a cool website: [MisesInstitute](https://mises.org/).
+
+And a cool image showing what AI today is capable of: ![](https://pbs.twimg.com/media/FQXpklcXsAEuOhJ.png)
+
+Some code
+\`\`\`javascript
+  import {DalleE2} from './DalleE2';
+
+  {DalleE2.render()}
+\`\`\`
+
+And some inline code too \`Math.PI\`
+
+### That's a wrap
+`
+    let astA = parse(noteA);
+
+    const out = compile([
+      {
+        path: './NoteA',
+        ast: astA
+      },
+    ])
+
+    const outA = out[0];
+    expect(outA.refs.get('NoteB')).toBe('./NoteB');
+  });
 
   it('Renders MDAST from two simple MDL files', () => {
     const noteA = `<script>

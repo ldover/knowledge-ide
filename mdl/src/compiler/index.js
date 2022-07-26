@@ -1,11 +1,17 @@
 import {
-  paragraph as p,
+  paragraph,
   heading as h,
   text as t,
-  listItem as li,
-  list as l,
+  listItem,
+  list,
   link,
-  root,
+  blockquote,
+  code,
+  inlineCode,
+  image,
+  strong,
+  strike,
+  root, emphasis,
 } from "mdast-builder";
 
 /**
@@ -28,33 +34,6 @@ function compile(mdl) {
   })
 }
 
-class Heading {
-  constructor(depth, children) {
-    this.depth = depth;
-    this.children = children;
-  }
-
-  render() {
-    return h(this.depth, this.children.map(c => c.render()));
-  }
-}
-
-class Paragraph {
-  constructor(children) {
-    this.children = children;
-  }
-}
-
-class Text {
-  constructor(value) {
-    this.value = value;
-  }
-
-  render() {
-    return t(this.value);
-  }
-}
-
 function headingCompiler(node, root) {
   if (node.depth === 1) {
     if (root.title) {
@@ -62,9 +41,19 @@ function headingCompiler(node, root) {
     } else {
       root.title = node.children[0].value; // todo: here we assume one neat scenario of heading having only one text node, not a host of children of different types
     }
-
-    return new Heading(node.depth, node.children.map(n => Compilers[n.type](n, root)));
   }
+
+  return new Heading(node.depth, node.children.map(n => Compilers[n.type](n, root)));
+}
+
+function mdxTextExpressionCompiler(node, root) {
+  // Run the reference against root to check whether it matches
+  const statement = node.data.estree.body[0]; // todo: assumes one
+  console.assert(statement.type === 'ExpressionStatement');
+  const refName = statement.expression.callee.object.name;
+  if (!root.refs.has(refName)) throw new Error(`Variable not initialized: ${refName}`)
+
+  return new MdxTextExpression(statement.expression, root);
 }
 
 function mdxFlowExpressionCompiler(node, root) {
@@ -78,20 +67,32 @@ function mdxFlowExpressionCompiler(node, root) {
   return new MdxFlowExpression(statement.expression, root)
 }
 
-
-function paragraphCompiler(node, root) {
-  return new Paragraph(node.children.map(n => Compilers[n.type](n, root)))
-}
-
 function textCompiler(node, root) {
   return new Text(node.value)
 }
 
+function nodeWithChildrenCompiler(type, node, root) {
+  return new type(node.children.map(n => Compilers[n.type](n, root)))
+}
+
 let Compilers = {
   heading: headingCompiler,
-  paragraph: paragraphCompiler,
   text: textCompiler,
+  break: () => new Break(),
+  thematicBreak: () => new ThematicBreak(),
+  paragraph: (node, root) => nodeWithChildrenCompiler(Paragraph, node, root),
+  blockquote: (node, root) => nodeWithChildrenCompiler(Blockquote, node, root),
+  strong: (node, root) => nodeWithChildrenCompiler(Strong, node, root),
+  emphasis: (node, root) => nodeWithChildrenCompiler(Emphasis, node, root),
+  strike: (node, root) => nodeWithChildrenCompiler(Strike, node, root),
+  list: (node, root) => new List(node.children.map(n => Compilers[n.type](n, root)), node.ordered),
+  listItem: (node, root) => nodeWithChildrenCompiler(ListItem, node, root),
+  link: (node, root) => new Link(node.url, node.title, node.children.map(n => Compilers[n.type](n, root))),
+  image: (node, root) => new Image(node.url, node.title, node.alt, node.children ? node.children.map(n => Compilers[n.type](n, root)): []),
+  code: (node, root) => new Code(node.value, node.lang),
+  inlineCode: (node, root) => new InlineCode(node.value),
   mdxFlowExpression: mdxFlowExpressionCompiler,
+  mdxTextExpression: mdxTextExpressionCompiler,
 }
 
 function programCompiler(program, root) {
@@ -101,7 +102,7 @@ function programCompiler(program, root) {
       // See that it is in fact in scope
       const importedObj = root.scope.get(statement.source.value);
       if (!importedObj) {
-        throw new Error('Imported file npt found: ', specifier.source.value)
+        throw new Error('Imported file not found: ', specifier.source.value)
       }
 
       let identifier;
@@ -166,27 +167,25 @@ class Root {
   }
 }
 
-class mdxTextExpression {
-  constructor(node) {
-
+class MdxTextExpression {
+  constructor(expression, root) {
+    this.expression = expression;
+    this.root = root;
   }
 
-  _init() {
-    // Actually look up
-  }
-
+  // Becomes a MDAST link
+  // todo: worth thinking through if we should introduce another node so we can integrate with the UI better, or if we can structure the link in a way that we can derive everything we need on the Notebase UI side
   render() {
-    // EX — When {NoteA} as reference here look up root
-    const obj = this.root.refs[this.value];
-    // Then build a link such that we actually include that objects
-    // return link(
-    //   obj.title
-    //   obj.path
-    // )
+    const objName = this.expression.callee.object.name;
+    const obj = this.root.getObject(objName);
 
+    return link(
+      objName,
+      objName,
+      t(obj.title)
+    )
   }
 }
-
 
 class MdxFlowExpression {
   constructor(expression, root) {
@@ -200,6 +199,163 @@ class MdxFlowExpression {
     const propName = this.expression.callee.property.name;
     const obj = this.root.getObject(objName);
     return obj[propName].call(obj)
+  }
+}
+
+class List {
+  constructor(children, ordered) {
+    this.children = children;
+    this.ordered = ordered;
+  }
+
+  render() {
+    return list(
+      this.ordered,
+      this.children.map(c => c.render())
+    )
+  }
+}
+
+class ListItem {
+  constructor(children) {
+    this.children = children;
+  }
+
+  render() {
+    return listItem(this.children.map(c => c.render()))
+  }
+}
+
+class Heading {
+  constructor(depth, children) {
+    this.depth = depth;
+    this.children = children;
+  }
+
+  render() {
+    return h(this.depth, this.children.map(c => c.render()));
+  }
+}
+
+class Paragraph {
+  constructor(children) {
+    this.children = children;
+  }
+
+  render() {
+    return paragraph(this.children.map(c => c.render()));
+  }
+}
+
+class Text {
+  constructor(value) {
+    this.value = value;
+  }
+
+  render() {
+    return t(this.value);
+  }
+}
+
+class Strong {
+  constructor(children) {
+    this.children = children;
+  }
+
+  render() {
+    return strong(this.children.map(c => c.render()));
+  }
+}
+
+class Emphasis {
+  constructor(children) {
+    this.children = children;
+  }
+
+  render() {
+    return emphasis(this.children.map(c => c.render()));
+  }
+}
+
+
+class Strike {
+  constructor(children) {
+    this.children = children;
+  }
+
+  render() {
+    return strike(this.children.map(c => c.render()));
+  }
+}
+
+class Break {
+  render() {
+    return {
+      type: "break"
+    }
+  }
+}
+
+class ThematicBreak {
+  render() {
+    return {
+      type: "thematicBreak"
+    }
+  }
+}
+
+class Blockquote {
+  constructor(children) {
+    this.children = children;
+  }
+
+  render() {
+    return blockquote(this.children.map(c => c.render()));
+  }
+}
+
+class Image {
+  constructor(url, title = null, alt = null, children = []) {
+    this.url = url;
+    this.title = title;
+    this.children = children;
+  }
+
+  render() {
+    return image(this.url, this.title, this.alt, this.children.map(c => c.render()));
+  }
+}
+
+class Link {
+  constructor(url, title, children) {
+    this.url = url;
+    this.title = title;
+    this.children = children;
+  }
+
+  render() {
+    return link(this.url, this.title, this.children.map(c => c.render()));
+  }
+}
+
+class InlineCode {
+  constructor(value) {
+    this.value = value;
+  }
+
+  render() {
+    return inlineCode(this.value);
+  }
+}
+
+class Code {
+  constructor(value, lang = null) {
+    this.value = value;
+    this.lang = lang;
+  }
+
+  render() {
+    return code(this.lang, this.value);
   }
 }
 
