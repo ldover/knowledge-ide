@@ -44,4 +44,3 @@ export function parse(mdl) {
 }
 
 
-console.log(parse('# Test heading'))

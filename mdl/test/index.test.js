@@ -68,7 +68,7 @@ describe('Parses MDL specific nodes', () => {
 })
 
 describe('Compiles MDL files', () => {
-  it('does so and so', () => {
+  it('Compiles two simple MDL files', () => {
     const noteA = `<script>
       import NoteB from './NoteB'
   </script>
@@ -100,5 +100,66 @@ describe('Compiles MDL files', () => {
     expect(outB.path).toEqual('./NoteB')
     expect(outB.title).toEqual('Note B')
     expect(outA.refs.get('NoteB')).toBe('./NoteB');
+  })
+
+  it('Renders MDAST from two simple MDL files', () => {
+    const noteA = `<script>
+      import NoteB from './NoteB'
+  </script>
+# Note A
+{NoteB.render()}
+`
+    const noteB = `# Note B`
+
+    let astA = parse(noteA);
+    let astB = parse(noteB);
+
+    const out = compile([
+      {
+        path: './NoteA',
+        ast: astA
+      },
+      {
+        path: './NoteB',
+        ast: astB
+      }
+    ])
+
+    // Gives us a list of 2 roots
+    expect(out.length).toEqual(2);
+    // They come in exact order that we'd given it?
+    const outA = out[0];
+    const outB = out[1];
+    const outMDAST = outA.render()
+    expect(outMDAST).toMatchObject({
+      type: 'root',
+      children: [
+        {
+          type: 'heading',
+          depth: 1,
+          children: [
+            {
+              type: 'text',
+              value: 'Note A'
+            }
+          ]
+        },
+        {
+          type: 'root',
+          children: [
+            {
+              type: 'heading',
+              depth: 1,
+              children: [
+                {
+                  type: 'text',
+                  value: 'Note B'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    })
   })
 })

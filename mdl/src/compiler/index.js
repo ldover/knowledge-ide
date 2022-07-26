@@ -1,9 +1,19 @@
+import {
+  paragraph as p,
+  heading as h,
+  text as t,
+  listItem as li,
+  list as l,
+  link,
+  root,
+} from "mdast-builder";
+
 /**
  * Accepts MDL ASTs outputs objects
  * @param {Array} mdl
  */
 function compile(mdl) {
-  const scope = new Map();
+  const scope = new Map(); // Map<path, Root>
 
   // Build scope of all files
   mdl.forEach(({path, ast}) => {
@@ -23,6 +33,10 @@ class Heading {
     this.depth = depth;
     this.children = children;
   }
+
+  render() {
+    return h(this.depth, this.children.map(c => c.render()));
+  }
 }
 
 class Paragraph {
@@ -34,6 +48,10 @@ class Paragraph {
 class Text {
   constructor(value) {
     this.value = value;
+  }
+
+  render() {
+    return t(this.value);
   }
 }
 
@@ -48,14 +66,14 @@ function headingCompiler(node, root) {
     return new Heading(node.depth, node.children.map(n => Compilers[n.type](n, root)));
   }
 }
+
 function mdxFlowExpressionCompiler(node, root) {
   // Run the reference against root to check whether it matches
-  console.log(node)
   const statement = node.data.estree.body[0]; // todo: assumes one
   console.assert(statement.type === 'ExpressionStatement');
   const refName = statement.expression.callee.object.name;
   if (!root.refs.has(refName)) throw new Error(`Variable not initialized: ${refName}`)
-  if (!Reflect.has(root, statement.expression.callee.property.name)) throw new Error (`Root does not have property: ${statement.expression.callee.property.name}`)
+  if (!Reflect.has(root, statement.expression.callee.property.name)) throw new Error(`Root does not have property: ${statement.expression.callee.property.name}`)
 
   return new MdxFlowExpression(statement.expression, root)
 }
@@ -116,7 +134,6 @@ class Root {
   }
 
   init() {
-    let children = []
     // Search for program
     let program = this.ast.children.find(c => c.type === 'Program');
     if (program) {
@@ -129,11 +146,9 @@ class Root {
     }
 
     // Then compile all children
-    this.ast.children
+    this.children = this.ast.children
       .filter(n => n.type !== 'Program')
       .map(node => Compilers[node.type](node, this)) // Pass 'this' reference so sub-compilers can modify the root and run bottom-up checks
-
-    return children;
   }
 
   addRef(name, source) {
@@ -143,6 +158,11 @@ class Root {
   }
 
   render() {
+    return root(this.children.map(c => c.render()))
+  }
+
+  getObject(ref) {
+    return this.scope.get(this.refs.get(ref))
   }
 }
 
@@ -170,17 +190,17 @@ class mdxTextExpression {
 
 class MdxFlowExpression {
   constructor(expression, root) {
-    this.expression;
+    this.expression = expression;
     this.root = root;
   }
 
-  // render() {
-  //   // EX — When {NoteA.render()}, look up object
-  //   const obj = this.root.refs[this.value];
-  //   // Then build a link such that we actually include that objects
-  //   // Then return its render instead
-  //   return obj.render();
-  // }
+  render() {
+    // EX — When {NoteA.render()}, look up object
+    const objName = this.expression.callee.object.name;
+    const propName = this.expression.callee.property.name;
+    const obj = this.root.getObject(objName);
+    return obj[propName].call(obj)
+  }
 }
 
 export {
