@@ -131,7 +131,7 @@ function symbolCompiler(ast) {
 }
 
 function rootCompiler(ast) {
-  console.assert(ast.type === 'symbol')
+  console.assert(ast.type === 'root')
   return new Root(ast.children.map(c => compilers[c.type](c)));
 }
 

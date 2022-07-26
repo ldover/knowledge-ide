@@ -1,98 +1,189 @@
-import fs from "node:fs/promises";
-import {fromMarkdown} from "mdast-util-from-markdown";
-import {mdxExpression} from "micromark-extension-mdx-expression";
-import * as acorn from "acorn";
-import {mdxjsEsm} from "micromark-extension-mdxjs-esm";
-import {mdxExpressionFromMarkdown} from "mdast-util-mdx-expression";
-import {mdxjsEsmFromMarkdown} from "mdast-util-mdxjs-esm";
-import path from "path";
-import {remove} from "unist-util-remove";
+/**
+ * Accepts MDL ASTs outputs objects
+ * @param {Array} mdl
+ */
+function compile(mdl) {
+  const scope = new Map();
 
-
-async function compile(notePath) {
-
-  function _compile(tree, baseName) {
-    const classTemplate = (name, children) => `export const ${name.replace(' ', '')} = new Note(${compileChildren(children)});`
-
-    const extractImports = (tree) => {
-      if (tree.children[0].type === 'html') {
-        return tree.children["0"].value.substring(8, tree.children["0"].value.length - 9);
-      }
-
-      return '';
-    }
-
-    const fileTemplate = (tree, fileName, imports) => {
-      const baseImports = `import {Note} from './lib/core';`
-      imports = baseImports + (imports ? '\n' + imports : '') + '\n\n';
-      return `${imports}${classTemplate(fileName, tree)}`;
-    }
-
-// This function is outside the
-    function compileChildren() {
-      // Iterate over the children following
-      /**
-       * 1. Go through the top-level nodes i..N
-       * 2. When you find second level heading search ahead and include all the nodes until the next second level heading into the `NoteContent`
-       * 3. **Bonus:** When you encounter a line break or something stop the process and create NoteContent with gathered nodes so far. Then continue the search until encountering next second level heading
-       */
-
-      let compiled = [];
-      let foundChildren = [];
-      let nesting = false;
-      tree.children.forEach(child => {
-        if (child.type === 'heading' && child.depth === 2) {
-          if (nesting) {
-            // (1) Stop and create NoteContent
-            // (2) Put it into the compiled
-            nesting = false;
-            compiled.push(new NoteContent(foundChildren))
-            foundChildren = []
-          } else {
-            // (1) Start nesting
-            nesting = true;
-          }
-        }
-
-        if (child.type === "mdxFlowExpression") {
-          foundChildren.push(child.value)
-        } else if (child.type === 'mdxjsEsm') {
-          // skip imports
-        } else {
-          if (child.type === 'mdxTextExpression') {
-            // child.
-          }
-          foundChildren.push(JSON.stringify(child, null, 2));
-        }
-      })
-      return `[\n${compiled.join(',\n')}\n]`
-    }
-
-
-    let extractedScript = extractImports(tree);
-    remove(tree, 'html')
-    return fileTemplate(tree, baseName, extractedScript);
-  }
-
-  const noteContents = await fs.readFile(notePath, {
-    encoding: "utf-8"
-  });
-
-  const tree = fromMarkdown(noteContents, {
-    extensions: [mdxExpression({acorn, addResult: true}), mdxjsEsm({acorn, addResult: true})],
-    mdastExtensions: [mdxExpressionFromMarkdown, mdxjsEsmFromMarkdown]
+  // Build scope of all files
+  mdl.forEach(({path, ast}) => {
+    scope.set(path, new Root(path, ast, scope));
   })
 
-  const baseName = path.parse(notePath).name.replace(/\s/g, '');
-
-  const out = _compile(tree, baseName)
-
-  return {
-    id: baseName,
-    title: baseName,
-    tree,
-    out
-  };
+  // Now that we have the scope, init each file
+  return mdl.map(({path}) => {
+    const root = scope.get(path);
+    root.init()
+    return root;
+  })
 }
 
-export {compile}
+class Heading {
+  constructor(depth, children) {
+    this.depth = depth;
+    this.children = children;
+  }
+}
+
+class Paragraph {
+  constructor(children) {
+    this.children = children;
+  }
+}
+
+class Text {
+  constructor(value) {
+    this.value = value;
+  }
+}
+
+function headingCompiler(node, root) {
+  if (node.depth === 1) {
+    if (root.title) {
+      throw new Error('Cannot have multiple headings of depth 1')
+    } else {
+      root.title = node.children[0].value; // todo: here we assume one neat scenario of heading having only one text node, not a host of children of different types
+    }
+
+    return new Heading(node.depth, node.children.map(n => Compilers[n.type](n, root)));
+  }
+}
+function mdxFlowExpressionCompiler(node, root) {
+  // Run the reference against root to check whether it matches
+  console.log(node)
+  const statement = node.data.estree.body[0]; // todo: assumes one
+  console.assert(statement.type === 'ExpressionStatement');
+  const refName = statement.expression.callee.object.name;
+  if (!root.refs.has(refName)) throw new Error(`Variable not initialized: ${refName}`)
+  if (!Reflect.has(root, statement.expression.callee.property.name)) throw new Error (`Root does not have property: ${statement.expression.callee.property.name}`)
+
+  return new MdxFlowExpression(statement.expression, root)
+}
+
+
+function paragraphCompiler(node, root) {
+  return new Paragraph(node.children.map(n => Compilers[n.type](n, root)))
+}
+
+function textCompiler(node, root) {
+  return new Text(node.value)
+}
+
+let Compilers = {
+  heading: headingCompiler,
+  paragraph: paragraphCompiler,
+  text: textCompiler,
+  mdxFlowExpression: mdxFlowExpressionCompiler,
+}
+
+function programCompiler(program, root) {
+  // Basically handle the imports
+  program.body.forEach(statement => {
+    if (statement.type === 'ImportDeclaration') {
+      // See that it is in fact in scope
+      const importedObj = root.scope.get(statement.source.value);
+      if (!importedObj) {
+        throw new Error('Imported file npt found: ', specifier.source.value)
+      }
+
+      let identifier;
+      statement.specifiers.forEach(specifier => {
+        if (specifier.type === 'ImportDefaultSpecifier') {
+          identifier = specifier
+        } else {
+          throw new Error('Non default specifier not implemented')
+        }
+      })
+
+      root.addRef(identifier.local.name, statement.source.value)
+
+
+    } else {
+      console.warn('Statement type not supported:', statement.type);
+    }
+  })
+}
+
+class Root {
+  constructor(path, ast, scope) {
+    this.path = path;
+    this.ast = ast;
+    this.scope = scope;
+    this.refs = new Map(); // Map<name, source> — name is used in the MDL script as variable name, while source is actual file name
+
+    this.title = null;
+    this.children = [];
+  }
+
+  init() {
+    let children = []
+    // Search for program
+    let program = this.ast.children.find(c => c.type === 'Program');
+    if (program) {
+      try {
+        programCompiler(program, this);
+      } catch (err) {
+        console.error(`Failed to compile file: ${this.path}`); // todo: throw an error here and include error message from programCompiler
+        throw err;
+      }
+    }
+
+    // Then compile all children
+    this.ast.children
+      .filter(n => n.type !== 'Program')
+      .map(node => Compilers[node.type](node, this)) // Pass 'this' reference so sub-compilers can modify the root and run bottom-up checks
+
+    return children;
+  }
+
+  addRef(name, source) {
+    // todo: we'll probably have to compute based on absolute this.path of this Root
+    if (!this.scope.has(source)) throw new Error(`Source file not found in scope: ${name} (${source})`);
+    this.refs.set(name, source);
+  }
+
+  render() {
+  }
+}
+
+class mdxTextExpression {
+  constructor(node) {
+
+  }
+
+  _init() {
+    // Actually look up
+  }
+
+  render() {
+    // EX — When {NoteA} as reference here look up root
+    const obj = this.root.refs[this.value];
+    // Then build a link such that we actually include that objects
+    // return link(
+    //   obj.title
+    //   obj.path
+    // )
+
+  }
+}
+
+
+class MdxFlowExpression {
+  constructor(expression, root) {
+    this.expression;
+    this.root = root;
+  }
+
+  // render() {
+  //   // EX — When {NoteA.render()}, look up object
+  //   const obj = this.root.refs[this.value];
+  //   // Then build a link such that we actually include that objects
+  //   // Then return its render instead
+  //   return obj.render();
+  // }
+}
+
+export {
+  compile,
+  Root
+}

@@ -1,4 +1,5 @@
 import {parse} from '../src/parser/index';
+import {compile, Root} from "../src/compiler/index.js";
 
 describe('Parses simple MD', () => {
   it('Parses MD heading', () => {
@@ -10,7 +11,7 @@ describe('Parses simple MD', () => {
           type: 'heading',
           depth: 1,
           children: [
-            { type: 'text', value: 'Simple heading'}
+            {type: 'text', value: 'Simple heading'}
           ]
         },
       ]
@@ -64,4 +65,40 @@ describe('Parses MDL specific nodes', () => {
     let actual = parse(mdl0);
     expect(actual.children[0].type).toEqual('mdxFlowExpression')
   });
+})
+
+describe('Compiles MDL files', () => {
+  it('does so and so', () => {
+    const noteA = `<script>
+      import NoteB from './NoteB'
+  </script>
+# Note A
+{NoteB.render()}
+`
+    const noteB = `# Note B`
+
+    let astA = parse(noteA);
+    let astB = parse(noteB);
+
+    const out = compile([
+      {
+        path: './NoteA',
+        ast: astA
+      },
+      {
+        path: './NoteB',
+        ast: astB
+      }
+    ])
+
+    // Gives us a list of 2 roots
+    expect(out.length).toEqual(2);
+    // They come in exact order that we'd given it?
+    const outA = out[0];
+    const outB = out[1];
+    expect(outA).toBeInstanceOf(Root)
+    expect(outB.path).toEqual('./NoteB')
+    expect(outB.title).toEqual('Note B')
+    expect(outA.refs.get('NoteB')).toBe('./NoteB');
+  })
 })
