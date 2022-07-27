@@ -26,9 +26,10 @@
 
   function onRun() {
     const val = sEditor.getValue();
+    const file = sEditor.getFile();
     if (val) {
       const ast = parseMDL(val)
-      const root = compileMDL([{path: 'test.mdl', ast}])[0] // todo expand to multiple files
+      const root = compileMDL([{path: file.path, ast}])[0] // todo expand to multiple files
       note = root.render()
     }
   }

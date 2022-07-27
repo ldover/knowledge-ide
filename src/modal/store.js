@@ -1,5 +1,6 @@
 import {writable, get} from "svelte/store";
 import {sFileSystem} from "../store";
+import {VFile} from "vfile";
 
 const _sModal = writable({
   el: null,
@@ -24,8 +25,11 @@ export const sModal = {
       return window.alert('Cannot add file to file... this edge case not implemented')
     }
     if (!value) return window.alert('value invalid')
-    let filepath = [file.path, value + '.mdl'].join('/');
+    const newFile = new VFile({
+      path: `${file.path}/${value}${value.endsWith('.mdl') ? '' : '.mdl'}`,
+      value: '# Blank file'
+    })
     this.hide()
-    await sFileSystem.addFile(filepath)
+    sFileSystem.addFile(newFile)
   }
 }

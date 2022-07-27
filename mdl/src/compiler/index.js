@@ -102,7 +102,7 @@ function programCompiler(program, root) {
       // See that it is in fact in scope
       const importedObj = root.scope.get(statement.source.value);
       if (!importedObj) {
-        throw new Error('Imported file not found: ', specifier.source.value)
+        throw new Error('Imported file not found: ', statement.source.value)
       }
 
       let identifier;

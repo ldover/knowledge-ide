@@ -104,7 +104,9 @@ export const sEditor = {
   getValue: function() {
       const {view, file} = get(_sEditor);
       return view.state.toJSON().doc;
-
+  },
+  getFile: function() {
+    return get(_sEditor).file;
   },
   _setUpdateListener: function (el) {
     function _listener() {
@@ -231,13 +233,15 @@ export const sFileTree = derived(_sFileSystem, ($f) => {
   };
 
   files.forEach(file => {
-    const j = file.path.split('/').length;
-    file.path.split('/').reduce((r, name, i, a) => {
+    let parts = file.path.split('/');
+    const j = parts.length;
+    parts.reduce((r, name, i, a) => {
       if(!r[name]) {
         r[name] = {result: []};
         let isFile = i + 1 === j
         let obj = {
           name,
+          path: parts.slice(0, i + 1).join('/'),
           type: isFile ? 'file' : 'folder',
         };
         if (isFile) {
@@ -299,12 +303,23 @@ export const sFileSystem = {
 
     return walk(dir);
   },
-  addFile: async function (filepath) {
-    console.warn('not implemented')
+  /**
+   *
+   * @param {import('vfile').VFile} file
+   * @return {Promise<void>}
+   */
+  addFile: function (file) {
+    console.log('addFile', {file})
+    _sFileSystem.update(files => {
+      if (!files) {
+        files = []
+      }
+
+      return [...files, file]
+    })
   },
-  deleteFile: async function (file) {
-    // todo: implement
-    console.warn('not implemented')
+  deleteFile: function (file) {
+    _sFileSystem.update(files => files.filter(f => f !== file))
   },
   updateFile: async function (file, state) {
     console.warn('not implemented')
