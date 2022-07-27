@@ -1,14 +1,14 @@
 <script>
   import Folder from './Folder.svelte';
   import {onMount} from "svelte";
-  import {sEditor, sFileSystem} from "./store";
+  import {sEditor, sFileSystem, sFileTree} from "./store";
 
   let root;
 
   onMount(async () => {
-    const dir = await sFileSystem.init()
-    if (dir?.files) {
-      const firstFile = dir.files[0];
+    const files = await sFileSystem.init()
+    if (files?.length) {
+      const firstFile = files[0];
       sEditor.setFile(firstFile);
     }
   })
@@ -18,9 +18,9 @@
   }
 </script>
 
-{#if $sFileSystem}
+{#if $sFileTree}
     <div class="flex">
-        <Folder file={$sFileSystem} expanded on:click={onClick}/>
+        <Folder file={$sFileTree} expanded on:click={onClick}/>
         <div class="px-3"></div>
     </div>
 {/if}

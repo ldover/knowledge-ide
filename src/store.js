@@ -1,10 +1,11 @@
-import {get, writable} from "svelte/store";
+import {derived, get, writable} from "svelte/store";
 import {basicSetup, EditorView} from "codemirror";
 import {markdown, markdownLanguage} from "@codemirror/lang-markdown";
 import {languages} from "@codemirror/language-data";
 import {indentWithTab} from "@codemirror/commands"
 import {keymap} from "@codemirror/view"
 import {Strikethrough} from "@lezer/markdown";
+import {VFile} from 'vfile'
 
 import {syntaxTree} from "@codemirror/language"
 import {javascriptLanguage} from "@codemirror/lang-javascript"
@@ -58,13 +59,13 @@ function getImportAutocomplete(files) {
     const isImport = nodeBefore.name === 'VariableDefinition' && nodeBefore.parent.name === "ImportGroup";
 
     const options = files.map(file => {
-      let label = file.name.split('.')[0];
+      let label = file.basename.split('.')[0];
       const opt = {
         label: label,
         type: 'variable'
       }
       if (isImport) {
-        opt.apply = `${label}} from './${file.relativePath.split('.')[0]}'`
+        opt.apply = `${label}} from './unimplemented (todo)'`
       } else {
         opt.apply = `{${label}}`
       }
@@ -117,6 +118,10 @@ export const sEditor = {
 
     el.addEventListener('input', _listener)
   },
+  /**
+   *
+   * @param {import('vfile').VFile} file
+   */
   setFile: function (file) {
     _sEditor.update(state => {
 
@@ -176,7 +181,7 @@ export const sEditor = {
       // for code blocks, using @codemirror/language-data to
       // look up the appropriate dynamic import.
 
-      let files = sFileSystem.flatten();
+      let files = get(sFileSystem)
       console.log('allfiles', {files});
 
 
@@ -206,21 +211,11 @@ export const sEditor = {
 }
 
 const _sFileSystem = writable(null);
-export const sFileSystem = {
-  subscribe: _sFileSystem.subscribe,
-  init: async function () {
-    try {
-      // const dir = await fetch('http://localhost:8080')
-      //   .then(async (response) => {
-      //     if (!response.ok) {
-      //       let responseJson = await response.json();
-      //       throw responseJson.error;
-      //     }
-      //     return response;
-      //   })
-      //   .then((res) => res.json());
+export const sFileTree = derived(_sFileSystem, ($f) => {
+  // Turns file system to file tree that can be consumed
+  /*
 
-      const dir = {
+   const dir = {
         type: 'folder',
         name: 'src',
         path: '/src',
@@ -234,9 +229,66 @@ export const sFileSystem = {
           }
         ]
       }
-      console.log('fileTree.svelte', dir);
-      _sFileSystem.set(dir);
-      return dir;
+
+   */
+  const dir = {
+    type: 'folder',
+    name: '~',
+    path: '~', // todo remove redundant prop
+    files: []
+  }
+
+  if (!$f) return dir;
+
+  dir.files = [$f[0]]
+  return dir;
+
+  // todo: implement this algorithms
+  /*
+    Go through the vfiles and generate a tree:
+    1. Split each path —
+    2. take the last bit to be file name and everything else to be a folder
+    Start with shortest path?
+    Or perhaps do the set pattern — create a set for every folder, then simply throw files into that set?
+    And there are sets within sets for folders right
+
+    Then in the end collapse everything into a tree structure with arrays and so on (maybe sorted as well
+
+    So it's done in linear time
+   */
+
+
+})
+
+export const sFileSystem = {
+  subscribe: _sFileSystem.subscribe,
+  init: async function () {
+    try {
+      const file = new VFile({
+        path: '~/example.txt',
+        value: '# Alpha *braavo* charlie.'
+      })
+
+      console.log(file.path) // => '~/example.txt'
+      console.log(file.dirname) // => '~'
+
+      file.extname = '.mdl'
+
+      console.log(file.basename) // => 'example.mdl'
+
+
+      console.log(file.history) // => ['~/example.txt', '~/example.md']
+
+      file.message('Unexpected unknown word `braavo`, did you mean `bravo`?', {
+        line: 1,
+        column: 8
+      })
+
+      console.log(file.messages)
+
+      let initialState = [file];
+      _sFileSystem.set(initialState);
+      return initialState;
     } catch (err) {
       console.error(err);
     }
