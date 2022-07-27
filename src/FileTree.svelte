@@ -6,10 +6,11 @@
   let root;
 
   onMount(async () => {
-    const files = await sFileSystem.init()
-    if (files?.length) {
-      const firstFile = files[0];
-      sEditor.setFile(firstFile);
+    // todo: I don't like this implicit logic of returning files and active file and then loading up editor here
+    // Optimally CodeMirror.svelte looks up the filesystem store and loads itself up
+    const {files, file} = await sFileSystem.init()
+    if (file) {
+      sEditor.setFile(file);
     }
   })
 

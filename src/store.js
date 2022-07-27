@@ -111,13 +111,11 @@ export const sEditor = {
   _setUpdateListener: function (el) {
     function _listener() {
       const {view, file} = get(_sEditor);
-
-      let newContent = view.state.toJSON().doc;
-      // sFileSystem.updateFile(file, newContent) todo: implement
+      file.value = view.state.toJSON().doc; // Update VFile
+      sFileSystem.dump(); // todo: save on every change — maybe explicit save is better (Stackblitz pattern)
     }
 
-    // let listener = _.debounce(_listener, 500);
-
+    el.removeEventListener('input', _listener)
     el.addEventListener('input', _listener)
   },
   /**
@@ -136,7 +134,6 @@ export const sEditor = {
 
     // Set editor content
     let value = file.value || '';
-    console.log('setFile', {file, value})
     this._setValue(value);
   },
   _setValue: function (value) {
@@ -262,33 +259,74 @@ export const sFileTree = derived(_sFileSystem, ($f) => {
 
 export const sFileSystem = {
   subscribe: _sFileSystem.subscribe,
+  load: function() {
+      const fsString = localStorage.getItem('__kide.filesystem');
+      if (fsString) {
+        let fsObject = JSON.parse(fsString);
+        const files = fsObject.files.map(({path, value}) => new VFile({path, value}))
+        const file = fsObject.lastOpen ? files.find(f => f.path === fsObject.lastOpen) : null;
+
+        return {
+          lastOpen: file,
+          files
+        }
+      }
+
+      return null;
+  },
+  dump: function() {
+    const files = get(_sFileSystem)
+    const obj = {
+      lastOpen: sEditor.getFile().path,
+      files: files.map(file => ({
+        path: file.path,
+        value: file.toString()
+      }))
+    };
+    localStorage.setItem('__kide.filesystem', JSON.stringify(obj));
+  },
   init: async function () {
     try {
-      const file = new VFile({
+      let initialState = [];
+      let file = null;
+
+      const loaded = this.load();
+      if (loaded) {
+        initialState = loaded.files;
+        file = loaded.lastOpen;
+      }
+
+      const vfileMock = new VFile({
         path: '~/example.txt',
         value: '# Alpha *braavo* charlie.'
       })
 
-      console.log(file.path) // => '~/example.txt'
-      console.log(file.dirname) // => '~'
+      // console.log(file.path) // => '~/example.txt'
+      // console.log(file.dirname) // => '~'
+      //
+      // file.extname = '.mdl'
+      //
+      // console.log(file.basename) // => 'example.mdl'
+      //
+      //
+      // console.log(file.history) // => ['~/example.txt', '~/example.md']
+      //
+      // file.message('Unexpected unknown word `braavo`, did you mean `bravo`?', {
+      //   line: 1,
+      //   column: 8
+      // })
+      //
+      // console.log(file.messages)
 
-      file.extname = '.mdl'
+      if (!initialState.length) {
+        initialState.push(vfileMock)
+      }
 
-      console.log(file.basename) // => 'example.mdl'
-
-
-      console.log(file.history) // => ['~/example.txt', '~/example.md']
-
-      file.message('Unexpected unknown word `braavo`, did you mean `bravo`?', {
-        line: 1,
-        column: 8
-      })
-
-      console.log(file.messages)
-
-      let initialState = [file];
       _sFileSystem.set(initialState);
-      return initialState;
+      return {
+        files: initialState,
+        file
+      };
     } catch (err) {
       console.error(err);
     }
@@ -317,9 +355,13 @@ export const sFileSystem = {
 
       return [...files, file]
     })
+
+    this.dump();
   },
   deleteFile: function (file) {
-    _sFileSystem.update(files => files.filter(f => f !== file))
+    _sFileSystem.update(files => files.filter(f => f !== file));
+
+    this.dump();
   },
   updateFile: async function (file, state) {
     console.warn('not implemented')
