@@ -211,53 +211,49 @@ export const sEditor = {
 }
 
 const _sFileSystem = writable(null);
+/**
+ * Turns file system to file tree that is consumed by FileTree.svelte
+ */
 export const sFileTree = derived(_sFileSystem, ($f) => {
-  // Turns file system to file tree that can be consumed
-  /*
-
-   const dir = {
-        type: 'folder',
-        name: 'src',
-        path: '/src',
-        files: [
-          {
-            type: 'file',
-            name: 'test.mdl',
-            path: '/src/test.mdl',
-            relativePath: 'test.mdl',
-            value: '# Test'
-          }
-        ]
-      }
-
-   */
   const dir = {
     type: 'folder',
     name: '~',
-    path: '~', // todo remove redundant prop
     files: []
   }
 
   if (!$f) return dir;
 
-  dir.files = [$f[0]]
-  return dir;
+  let files = $f;
 
-  // todo: implement this algorithms
-  /*
-    Go through the vfiles and generate a tree:
-    1. Split each path —
-    2. take the last bit to be file name and everything else to be a folder
-    Start with shortest path?
-    Or perhaps do the set pattern — create a set for every folder, then simply throw files into that set?
-    And there are sets within sets for folders right
+  let result = [];
+  let level = {
+    result
+  };
 
-    Then in the end collapse everything into a tree structure with arrays and so on (maybe sorted as well
+  files.forEach(file => {
+    const j = file.path.split('/').length;
+    file.path.split('/').reduce((r, name, i, a) => {
+      if(!r[name]) {
+        r[name] = {result: []};
+        let isFile = i + 1 === j
+        let obj = {
+          name,
+          type: isFile ? 'file' : 'folder',
+        };
+        if (isFile) {
+          obj.value = file;
+        } else {
+          obj.files = r[name].result
+        }
 
-    So it's done in linear time
-   */
+        r.result.push(obj)
+      }
 
+      return r[name];
+    }, level)
+  })
 
+  return result[0];
 })
 
 export const sFileSystem = {

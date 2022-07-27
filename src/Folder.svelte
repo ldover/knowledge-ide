@@ -25,7 +25,7 @@
                     {#if file.files}
                         <svelte:self file={file} on:click/>
                     {:else}
-                        <File file={file} on:click/>
+                        <File file={file.value} on:click/>
                     {/if}
                 </li>
             {/each}
