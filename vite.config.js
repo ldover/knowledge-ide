@@ -1,13 +1,15 @@
 import { defineConfig } from 'vite'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 
-
+// https://vitejs.dev/config/
 export default defineConfig({
+  root: "src",
+  publicDir: "./public",
+  plugins: [svelte()],
+  server: {
+    port: 5433
+  },
   build: {
-    // generate manifest.json in outDir
-    manifest: true,
-    rollupOptions: {
-      // overwrite default .html entry
-      input: './notebaseJs/index.js'
-    }
+    outDir: './public',
   }
 })

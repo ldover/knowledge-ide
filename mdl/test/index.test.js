@@ -1,4 +1,4 @@
-import {parse} from '../src/parser/index';
+import {parse} from '../src';
 import {compile, Root} from "../src/compiler/index.js";
 
 describe('Parses simple MD', () => {

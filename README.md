@@ -1,2 +1,0 @@
-# Notebase
-Notes -> Codebase
