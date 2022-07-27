@@ -100,12 +100,17 @@ export const sEditor = {
     this._setUpdateListener(el)
     _sEditor.update(state => ({...state, el}));
   },
+  getValue: function() {
+      const {view, file} = get(_sEditor);
+      return view.state.toJSON().doc;
+
+  },
   _setUpdateListener: function (el) {
     function _listener() {
       const {view, file} = get(_sEditor);
 
       let newContent = view.state.toJSON().doc;
-      sFileSystem.updateFile(file, newContent)
+      // sFileSystem.updateFile(file, newContent) todo: implement
     }
 
     // let listener = _.debounce(_listener, 500);
@@ -123,7 +128,7 @@ export const sEditor = {
     })
 
     // Set editor content
-    let value = file.content || '';
+    let value = file.value || '';
     console.log('setFile', {file, value})
     this._setValue(value);
   },
@@ -205,16 +210,30 @@ export const sFileSystem = {
   subscribe: _sFileSystem.subscribe,
   init: async function () {
     try {
-      const dir = await fetch('http://localhost:8080')
-        .then(async (response) => {
-          if (!response.ok) {
-            let responseJson = await response.json();
-            throw responseJson.error;
-          }
-          return response;
-        })
-        .then((res) => res.json());
+      // const dir = await fetch('http://localhost:8080')
+      //   .then(async (response) => {
+      //     if (!response.ok) {
+      //       let responseJson = await response.json();
+      //       throw responseJson.error;
+      //     }
+      //     return response;
+      //   })
+      //   .then((res) => res.json());
 
+      const dir = {
+        type: 'folder',
+        name: 'src',
+        path: '/src',
+        files: [
+          {
+            type: 'file',
+            name: 'test.mdl',
+            path: '/src/test.mdl',
+            relativePath: 'test.mdl',
+            value: '# Test'
+          }
+        ]
+      }
       console.log('fileTree.svelte', dir);
       _sFileSystem.set(dir);
       return dir;
@@ -232,106 +251,16 @@ export const sFileSystem = {
 
     return walk(dir);
   },
-  getFile: async function (path) {
-    try {
-      const file = await fetch('http://localhost:8080/file/' + encodeURIComponent(path))
-        .then(async (response) => {
-          if (!response.ok) {
-            let responseJson = await response.json();
-            throw responseJson.error;
-          }
-          return response;
-        })
-        .then((res) => res.json());
-
-      return file
-    } catch (err) {
-      console.error(err);
-    }
-
-  },
   addFile: async function (filepath) {
-    console.log('addFile called with', {filepath})
-    try {
-      let bodyOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          filepath,
-        })
-      };
-      const response = await fetch('http://localhost:8080/add-file/' + encodeURIComponent(filepath), bodyOptions)
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          this.init(); // todo: just insert file so we don't have to do another fetch
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-
-      return response
-    } catch (err) {
-      console.error(err);
-    }
-
+    console.warn('not implemented')
   },
   deleteFile: async function (file) {
-    console.log('updateFile called with', {file})
-    try {
-      let bodyOptions = {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
-      console.log({bodyOptions})
-      const response = await fetch('http://localhost:8080/file/' + encodeURIComponent(file.path), bodyOptions)
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          this.init(); // todo: just insert file so we don't have to do another fetch
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-
-      return response
-    } catch (err) {
-      console.error(err);
-    }
+    // todo: implement
+    console.warn('not implemented')
   },
   updateFile: async function (file, state) {
-    console.log('updateFile called with', {file, state})
-    try {
-      let bodyOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          file,
-          content: state
-        })
-      };
-
-      console.log({bodyOptions})
-      const response = await fetch('http://localhost:8080/file/' + encodeURIComponent(file.path), bodyOptions)
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-
-      return response
-    } catch (err) {
-      console.error(err);
-    }
+    console.warn('not implemented')
+    // todo: implement
   },
 
 }

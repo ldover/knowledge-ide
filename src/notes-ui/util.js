@@ -30,7 +30,7 @@ export const Components = {
   'system': System,
   'heading': Heading,
   'paragraph': Paragraph,
-  'note': Note,
+  'root': Note,
   'link': Link,
   'listItem': ListItem,
   'list': List,

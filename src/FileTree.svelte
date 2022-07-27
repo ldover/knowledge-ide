@@ -9,14 +9,12 @@
     const dir = await sFileSystem.init()
     if (dir?.files) {
       const firstFile = dir.files[0];
-      const firstFileFull = await sFileSystem.getFile(firstFile.path);
-      sEditor.setFile(firstFileFull);
+      sEditor.setFile(firstFile);
     }
   })
 
   async function onClick(e) {
-    const file = await sFileSystem.getFile(e.detail.path)
-    sEditor.setFile(file)
+    sEditor.setFile(e.detail)
   }
 </script>
 

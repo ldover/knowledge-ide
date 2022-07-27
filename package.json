@@ -39,6 +39,7 @@
     "micromark-extension-mdx-expression": "^1.0.3",
     "micromark-extension-mdxjs-esm": "^1.0.3",
     "sirv-cli": "^1.0.0",
-    "unist-util-map": "^3.1.1"
+    "unist-util-map": "^3.1.1",
+    "vfile": "^5.3.4"
   }
 }
