@@ -58,7 +58,7 @@ function mdxTextExpressionCompiler(node, root) {
   // Run the reference against root to check whether it matches
   const statement = node.data.estree.body[0]; // todo: assumes one
   console.assert(statement.type === 'ExpressionStatement');
-  const refName = statement.expression.callee.object.name;
+  const refName = statement.expression.name;
   if (!root.refs.has(refName)) throw new Error(`Variable not initialized: ${refName}`)
 
   return new MdxTextExpression(statement.expression, root);
@@ -184,11 +184,11 @@ class MdxTextExpression {
   // Becomes a MDAST link
   // todo: worth thinking through if we should introduce another node so we can integrate with the UI better, or if we can structure the link in a way that we can derive everything we need on the Notebase UI side
   render() {
-    const objName = this.expression.callee.object.name;
+    const objName = this.expression.name;
     const obj = this.root.getObject(objName);
 
     return link(
-      objName,
+      obj.path,
       objName,
       t(obj.title)
     )

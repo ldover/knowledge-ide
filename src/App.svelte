@@ -38,7 +38,7 @@
           // const file1 = compiledFiles.find(f => f.path === file.path);
           note = file.data.compiled.render()
       } catch (err) {
-        console.log('compilation error', file)
+        console.log('compilation error', file, err)
         file.messages.forEach(m => banners.add('error', m))
       }
     }
