@@ -7,8 +7,8 @@
   import {Node} from "./notes-ui"
   import {parse as parseMDL, compile as compileMDL} from "../mdl/src/index"
   import {parse as parseKDL} from "../kdl/src/index"
-  import {onMount} from "svelte";
   import {sEditor, sFileSystem} from "./store";
+  import {banners} from "./banner/store";
 
   console.log({parseMDL, parseKDL})
 
@@ -25,17 +25,22 @@
   }
 
   function onRun() {
+    banners.clear();
     const file = sEditor.getFile();
+    file.value = sEditor.getValue();
     const files = sFileSystem.getFiles();
     if (file.value) {
+      parseMDL(files)
 
-      // Todo: accept VFile interface
-      // todo: perhaps expand to multiple files
-      const parsedFiles = parseMDL(files)
-      const compiledFiles = compileMDL(files) // todo expand to multiple files
-      console.log('compiled', {compiledFiles})
-      const file1 = compiledFiles.find(f => f.path === file.path);
-      note = file1.data.compiled.render()
+      try {
+          compileMDL(files)
+          // console.log('compiled', {compiledFiles})
+          // const file1 = compiledFiles.find(f => f.path === file.path);
+          note = file.data.compiled.render()
+      } catch (err) {
+        console.log('compilation error', file)
+        file.messages.forEach(m => banners.add('error', m))
+      }
     }
   }
 

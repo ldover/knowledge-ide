@@ -30,8 +30,12 @@ function compile(files) {
   // Now that we have the scope, init each file
   files.forEach(file => {
     const root = scope.get(file.path);
-    root.init()
-    file.data.compiled = root;
+    try {
+      root.init()
+      file.data.compiled = root;
+    } catch (err) {
+      file.fail(err)
+    }
     return root;
   })
 
@@ -106,7 +110,7 @@ function programCompiler(program, root) {
       // See that it is in fact in scope
       const importedObj = root.scope.get(statement.source.value);
       if (!importedObj) {
-        throw new Error('Imported file not found: ', statement.source.value)
+        throw new Error(`Imported file not found: "${statement.source.value}"`)
       }
 
       let identifier;
