@@ -13,25 +13,29 @@ import {
   strike,
   root, emphasis,
 } from "mdast-builder";
+import {VFile} from "vfile";
 
 /**
  * Accepts MDL ASTs outputs objects
- * @param {Array} mdl
+ * @param {VFile[]} files
  */
-function compile(mdl) {
+function compile(files) {
   const scope = new Map(); // Map<path, Root>
 
   // Build scope of all files
-  mdl.forEach(({path, ast}) => {
-    scope.set(path, new Root(path, ast, scope));
+  files.forEach(file => {
+    scope.set(file.path, new Root(file.path, file.data.parsed, scope));
   })
 
   // Now that we have the scope, init each file
-  return mdl.map(({path}) => {
-    const root = scope.get(path);
+  files.forEach(file => {
+    const root = scope.get(file.path);
     root.init()
+    file.data.compiled = root;
     return root;
   })
+
+  return files;
 }
 
 function headingCompiler(node, root) {

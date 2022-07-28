@@ -25,12 +25,16 @@
   }
 
   function onRun() {
-    const val = sEditor.getValue();
     const file = sEditor.getFile();
-    if (val) {
-      const ast = parseMDL(val)
-      const root = compileMDL([{path: file.path, ast}])[0] // todo expand to multiple files
-      note = root.render()
+    if (file.value) {
+
+      // Todo: accept VFile interface
+      // todo: perhaps expand to multiple files
+      const ast = parseMDL(file.value)
+      file.data.parsed = ast;
+      const file1 = compileMDL([file])[0] // todo expand to multiple files
+      console.log('compiled', {file, file1})
+      note = file1.data.compiled.render()
     }
   }
 

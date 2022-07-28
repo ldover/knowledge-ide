@@ -105,6 +105,10 @@ export const sEditor = {
       const {view, file} = get(_sEditor);
       return view.state.toJSON().doc;
   },
+  /**
+   *
+   * @return {VFile}
+   */
   getFile: function() {
     return get(_sEditor).file;
   },
