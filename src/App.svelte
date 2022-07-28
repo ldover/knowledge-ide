@@ -52,7 +52,7 @@
         <CodeMirror/>
     </div>
     <Resizer/>
-    <div class="h-full h-fullvw w-4/12">
+    <div class="h-full h-fullvw w-4/12 p-3">
         <Node node={note} />
     </div>
     <div class="absolute top-0 right-0 m-3">
