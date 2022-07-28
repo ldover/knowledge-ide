@@ -30,22 +30,28 @@ function compile(files) {
   // Now that we have the scope, init each file
   files.forEach(file => {
     const root = scope.get(file.path);
-    try {
-      root.init()
-      file.data.compiled = root;
-    } catch (err) {
-      file.fail(err)
-    }
+    root.init()
+    file.data.compiled = root;
     return root;
   })
 
   return files;
 }
 
+
+export class CompilerError extends Error {
+  constructor(message, loc = null, node = null) {
+    super(message);
+    this.name = "CompilerError";
+    this.loc = loc;
+    this.node = node;
+  }
+}
+
 function headingCompiler(node, root) {
   if (node.depth === 1) {
     if (root.title) {
-      throw new Error('Cannot have multiple headings of depth 1')
+      throw new CompilerError('Cannot have multiple headings of depth 1', node.position, node)
     } else {
       root.title = node.children[0].value; // todo: here we assume one neat scenario of heading having only one text node, not a host of children of different types
     }
@@ -59,7 +65,7 @@ function mdxTextExpressionCompiler(node, root) {
   const statement = node.data.estree.body[0]; // todo: assumes one
   console.assert(statement.type === 'ExpressionStatement');
   const refName = statement.expression.name;
-  if (!root.refs.has(refName)) throw new Error(`Variable not initialized: ${refName}`)
+  if (!root.refs.has(refName)) throw new CompilerError(`Variable not initialized: ${refName}`, node.position, node)
 
   return new MdxTextExpression(statement.expression, root);
 }
@@ -69,7 +75,7 @@ function mdxFlowExpressionCompiler(node, root) {
   const statement = node.data.estree.body[0]; // todo: assumes one
   console.assert(statement.type === 'ExpressionStatement');
   const refName = statement.expression.callee.object.name;
-  if (!root.refs.has(refName)) throw new Error(`Variable not initialized: ${refName}`)
+  if (!root.refs.has(refName)) throw new CompilerError(`Variable not initialized: ${refName}`, node.position, node)
   if (!Reflect.has(root, statement.expression.callee.property.name)) throw new Error(`Root does not have property: ${statement.expression.callee.property.name}`)
 
   return new MdxFlowExpression(statement.expression, root)
@@ -110,7 +116,10 @@ function programCompiler(program, root) {
       // See that it is in fact in scope
       const importedObj = root.scope.get(statement.source.value);
       if (!importedObj) {
-        throw new Error(`Imported file not found: "${statement.source.value}"`)
+        throw new CompilerError(`Imported file not found: "${statement.source.value}"`, {
+          start: statement.start,
+          end: statement.start,
+        })
       }
 
       let identifier;
@@ -118,7 +127,10 @@ function programCompiler(program, root) {
         if (specifier.type === 'ImportDefaultSpecifier') {
           identifier = specifier
         } else {
-          throw new Error('Non default specifier not implemented')
+          throw new CompilerError('Non default specifier not implemented', {
+            start: statement.start,
+            end: statement.start,
+          })
         }
       })
 
@@ -146,12 +158,7 @@ class Root {
     // Search for program
     let program = this.ast.children.find(c => c.type === 'Program');
     if (program) {
-      try {
-        programCompiler(program, this);
-      } catch (err) {
-        console.error(`Failed to compile file: ${this.path}`); // todo: throw an error here and include error message from programCompiler
-        throw err;
-      }
+      programCompiler(program, this);
     }
 
     // Then compile all children
@@ -162,7 +169,7 @@ class Root {
 
   addRef(name, source) {
     // todo: we'll probably have to compute based on absolute this.path of this Root
-    if (!this.scope.has(source)) throw new Error(`Source file not found in scope: ${name} (${source})`);
+    if (!this.scope.has(source)) throw new CompilerError(`Source file not found in scope: ${name} (${source})`);
     this.refs.set(name, source);
   }
 

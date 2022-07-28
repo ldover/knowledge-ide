@@ -9,6 +9,7 @@
   import {parse as parseKDL} from "../kdl/src/index"
   import {sEditor, sFileSystem} from "./store";
   import {banners} from "./banner/store";
+  import {CompilerError} from "../mdl/src/compiler";
 
   console.log({parseMDL, parseKDL})
 
@@ -38,8 +39,13 @@
           // const file1 = compiledFiles.find(f => f.path === file.path);
           note = file.data.compiled.render()
       } catch (err) {
-        console.log('compilation error', file, err)
-        file.messages.forEach(m => banners.add('error', m))
+        if (err instanceof CompilerError) {
+            console.log('compilation error', file, err)
+            banners.add('error', err.message, err.loc)
+            file.message(err.message, err.loc)
+        } else {
+            throw err;
+        }
       }
     }
   }

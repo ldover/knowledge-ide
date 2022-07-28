@@ -1,7 +1,18 @@
 <script>
     export let banner;
 
-    $: formattedMessage = `[${banner.type.toUpperCase()}]: ${banner.message}${banner.loc ? `(${banner.loc.line}:${banner.loc.column})` : ''}`
+    const formatLocation = (loc) => {
+      if (!loc) return '';
+      if (typeof loc.start === 'number') {
+        return ` (position ${loc.start}:${loc.end})`;
+      } else if (typeof loc.start === "object" && typeof loc.start.line === "number") {
+        return ` (line ${loc.start.line}, column ${loc.start.column})`
+      }
+
+      return '';
+    }
+    $: formattedMessage = `[${banner.type.toUpperCase()}]: ${banner.message}${formatLocation(banner.loc)}`
+
 </script>
 
 
