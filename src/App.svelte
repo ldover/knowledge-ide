@@ -8,7 +8,7 @@
   import {parse as parseMDL, compile as compileMDL} from "../mdl/src/index"
   import {parse as parseKDL} from "../kdl/src/index"
   import {onMount} from "svelte";
-  import {sEditor} from "./store";
+  import {sEditor, sFileSystem} from "./store";
 
   console.log({parseMDL, parseKDL})
 
@@ -26,14 +26,15 @@
 
   function onRun() {
     const file = sEditor.getFile();
+    const files = sFileSystem.getFiles();
     if (file.value) {
 
       // Todo: accept VFile interface
       // todo: perhaps expand to multiple files
-      const ast = parseMDL(file.value)
-      file.data.parsed = ast;
-      const file1 = compileMDL([file])[0] // todo expand to multiple files
-      console.log('compiled', {file, file1})
+      const parsedFiles = parseMDL(files)
+      const compiledFiles = compileMDL(files) // todo expand to multiple files
+      console.log('compiled', {compiledFiles})
+      const file1 = compiledFiles.find(f => f.path === file.path);
       note = file1.data.compiled.render()
     }
   }

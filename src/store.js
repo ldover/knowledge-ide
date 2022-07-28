@@ -263,6 +263,13 @@ export const sFileTree = derived(_sFileSystem, ($f) => {
 
 export const sFileSystem = {
   subscribe: _sFileSystem.subscribe,
+  /**
+   *
+   * @return {VFile[]}
+   */
+  getFiles: function() {
+    return get(_sFileSystem)
+  },
   load: function() {
       const fsString = localStorage.getItem('__kide.filesystem');
       if (fsString) {

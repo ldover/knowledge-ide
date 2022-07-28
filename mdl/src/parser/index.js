@@ -9,38 +9,45 @@ import {map} from 'unist-util-map'
 
 /**
  * Piggy back on MDX extensions
- * @param mdl
+ * @param {import('vfile').VFile[]} files
  */
-export function parse(mdl) {
-  const tree = fromMarkdown(mdl, {
-    extensions: [
-      mdxExpression({acorn, addResult: true}),
-      mdxjsEsm({acorn, addResult: true})
-    ],
-    mdastExtensions: [
-      mdxExpressionFromMarkdown,
-      mdxjsEsmFromMarkdown
-    ]
+export function parse(files) {
+  function _parseFile(file) {
+    const tree = fromMarkdown(file, {
+      extensions: [
+        mdxExpression({acorn, addResult: true}),
+        mdxjsEsm({acorn, addResult: true})
+      ],
+      mdastExtensions: [
+        mdxExpressionFromMarkdown,
+        mdxjsEsmFromMarkdown
+      ]
+    })
+
+    // Modify tree to get to MDL AST
+    return map(tree, (node) => {
+      if (node.type === 'html') {
+        let scriptContent = node.value.substring(8, node.value.length - 9).trim();
+
+        const parser = new Parser({
+          ecmaVersion: 2016,
+          sourceType: "module"
+        }, scriptContent)
+
+        return parser.parse()
+      } else {
+        return node;
+      }
+    })
+
+  }
+
+
+  files.forEach(file => {
+    file.data.parsed = _parseFile(file);
   })
 
-  // Modify tree to get to MDL AST
-
-  const next = map(tree, (node) => {
-    if (node.type === 'html') {
-      let scriptContent = node.value.substring(8, node.value.length - 9).trim();
-
-      const parser = new Parser({
-        ecmaVersion: 2016,
-        sourceType: "module"
-      }, scriptContent)
-
-      return parser.parse()
-    } else {
-      return node;
-    }
-  })
-
-  return next;
+  return files;
 }
 
 
