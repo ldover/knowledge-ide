@@ -1,8 +1,6 @@
 <script>
   export let node;
   export let root;
-
-  console.log('Statement', {node})
 </script>
 
 

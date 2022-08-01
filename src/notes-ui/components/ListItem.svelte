@@ -1,6 +1,5 @@
 <script>
   export let node;
-  console.log('ListItem', node)
 </script>
 
 <li>

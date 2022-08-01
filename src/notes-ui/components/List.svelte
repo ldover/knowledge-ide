@@ -1,8 +1,6 @@
 <script>
   export let node;
 
-  console.log('List', node)
-
 </script>
 
 {#if node.ordered}

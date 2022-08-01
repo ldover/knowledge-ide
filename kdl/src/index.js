@@ -1,3 +1,5 @@
+import {compile} from './compiler/core.js'
+
 function parseStatementValue(statement) {
   let s = statement.trim()
 
@@ -77,4 +79,5 @@ function parse(kdl) {
 
 export {
   parse,
+  compile
 }

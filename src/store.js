@@ -78,7 +78,6 @@ function getImportAutocomplete(files) {
       options: options,
       // validFor: /^[\w$]*$/
     };
-    console.log({completion})
     return completion
   }
 
@@ -185,8 +184,6 @@ export const sEditor = {
       // look up the appropriate dynamic import.
 
       let files = get(sFileSystem)
-      console.log('allfiles', {files});
-
 
       let importAutocomplete = getImportAutocomplete(files)
 
@@ -204,7 +201,6 @@ export const sEditor = {
         parent: el
       });
 
-      console.log({editorView})
       return {
         ...state,
         view: editorView
@@ -358,7 +354,6 @@ export const sFileSystem = {
    * @return {Promise<void>}
    */
   addFile: function (file) {
-    console.log('addFile', {file})
     _sFileSystem.update(files => {
       if (!files) {
         files = []

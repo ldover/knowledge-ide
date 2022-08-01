@@ -12,7 +12,7 @@
     },
     {
       name: 'Rename',
-      onClick: () => console.log('Rename')
+      onClick: () => window.alert('not implemented')
     },
 
     {

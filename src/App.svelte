@@ -6,12 +6,11 @@
   import Resizer from "./Resizer.svelte";
   import {Node} from "./notes-ui"
   import {parse as parseMDL, compile as compileMDL} from "../mdl/src/index"
-  import {parse as parseKDL} from "../kdl/src/index"
+  import {parse as parseKDL, compile as compileKDL} from "../kdl/src/index"
   import {sEditor, sFileSystem} from "./store";
   import {banners} from "./banner/store";
   import {CompilerError} from "../mdl/src/compiler";
-
-  console.log({parseMDL, parseKDL})
+  import {getFileType} from "./util";
 
   let note = {
     type: "root",
@@ -30,28 +29,50 @@
     const file = sEditor.getFile();
     file.value = sEditor.getValue();
     const files = sFileSystem.getFiles();
-    if (file.value) {
-      parseMDL(files)
 
-      try {
-          compileMDL(files)
+    const parsers = {
+      mdl: () => {
+        const mdlFiles = files.filter(f => getFileType(f) === 'mdl');
+        console.log('parseMDL files')
+        parseMDL(mdlFiles);
+
+        try {
+          compileMDL(mdlFiles)
           // console.log('compiled', {compiledFiles})
           // const file1 = compiledFiles.find(f => f.path === file.path);
           note = file.data.compiled.render()
-      } catch (err) {
-        if (err instanceof CompilerError) {
+        } catch (err) {
+          if (err instanceof CompilerError) {
             console.log('compilation error', file, err)
             banners.add('error', err.message, err.loc)
             file.message(err.message, err.loc)
-        } else {
+          } else {
             throw err;
+          }
         }
+      },
+      kdl: () => {
+        // parseKDL
+        const ast = parseKDL(file.value)
+        const compiled = compileKDL(ast)
+        console.log(compiled.render())
+        note = compiled.render();
+        // window.alert('Nothing to render here really')
       }
+    }
+
+    const fileType = getFileType(file)
+    console.log({fileType})
+    if (!fileType) {
+        return window.alert('Specify one of the supported extensions: .mdl, .kdl.')
+    }
+
+    if (file.value) {
+      parsers[fileType]();
     }
   }
 
   $: noteName = $sEditor.file?.name?.split('.')[0];
-  $: console.log({noteName, file: $sEditor.file})
 </script>
 
 <div class="w-full flex h-full overflow-x-hidden">
