@@ -8,50 +8,26 @@ import {
 } from "mdast-builder";
 
 class Symbol {
-  constructor(name, abbreviation) {
+  constructor(name, longName) {
     this.name = name;
-    this.abbreviation = abbreviation;
+    this.longName = longName;
   }
 
   render() {
     return p(
-      t(`def ${this.name}` + (this.abbreviation ? ` := ${this.abbreviation}` : ''))
-    )
-  }
-}
-
-class Statements {
-  constructor(children) {
-    this.children = children;
-  }
-
-  render() {
-    return l(
-      'ordered',
-      this.children.map(c => c.render())
+      t(`symbol ${this.name}` + (this.longName ? ` as ${this.longName}` : ''))
     )
   }
 }
 
 class Statement {
-  constructor(name, value, children = [], options = {}) {
+  constructor(name, value = []) {
     this.name = name;
     this.value = value;
-    this.nested = !!options.nested; // todo: I don't like separating this out arbitrarily
-    this.parentName = options.parentName ? options.parentName : null;
-    this.children = children;
   }
 
   render() {
-    let kids = [p(this.value.map(c => c.render()))]
-    if (this.children.length) {
-      kids = [
-        ...kids,
-        new Statements(this.children).render()
-      ]
-    }
-
-    return li(kids)
+    return p(this.value.map(c => c.render()))
   }
 }
 
@@ -97,7 +73,6 @@ class Root {
 //
 
 const compilers = {
-  statements: statementsCompiler,
   statement: statementCompiler,
   text: textCompiler,
   reference: referenceCompiler,
@@ -116,7 +91,7 @@ function compile(ast) {
 function symbolCompiler(ast) {
   console.assert(ast.type === 'symbol')
 
-  return new Symbol(ast.name, ast.abbreviation)
+  return new Symbol(ast.name, ast.longName)
 }
 
 function rootCompiler(ast) {
@@ -124,19 +99,10 @@ function rootCompiler(ast) {
   return new Root(ast.children.map(c => compilers[c.type](c)));
 }
 
-function statementsCompiler(ast) {
-  console.assert(ast.type === 'statements')
-  return new Statements(ast.children.map(node => compilers[node.type](node)));
-}
-
 function statementCompiler(ast) {
   console.assert(ast.type === 'statement')
   const value = ast.value.map(node => compilers[node.type](node));
-  const children = ast.children ? ast.children.map(c => statementCompiler(c)) : []
-  const options = {}
-  ast.nested && (options.nested = ast.nested);
-  ast.parentName && (options.parentName = ast.parentName);
-  return new Statement(ast.name, value, children, options)
+  return new Statement(ast.name, value)
 }
 
 function textCompiler(ast) {
@@ -155,7 +121,6 @@ function referenceCompiler(ast) {
 export {
   Symbol,
   Statement,
-  Statements,
   Reference,
   Root,
   Text,

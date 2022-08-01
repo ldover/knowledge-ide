@@ -4,50 +4,51 @@ import {compile,
   Symbol,
   Text,
   Root,
-  Statements
 } from '../src/compiler/core'
 
 describe('Compiles a symbol', () => {
-  it('Compiles a symbol with abbreviation', () => {
+  it('Compiles a symbol with long name specifier', () => {
     const ast = {
       type: 'symbol',
-      name: 'Action',
-      abbreviation: 'A'
+      name: 'A',
+      longName: 'Action'
     }
+
 
     const out = compile(ast);
 
     expect(out).toBeInstanceOf(Symbol);
-    expect(out.name).toEqual('Action');
-    expect(out.abbreviation).toEqual('A');
+    expect(out.name).toEqual('A');
+    expect(out.longName).toEqual('Action');
   });
 
-  it('Compiles a symbol without abbreviation', () => {
+  it('Compiles a symbol without a long name specifier', () => {
     const ast = {
       type: 'symbol',
-      name: 'Action',
-      abbreviation: null
+      name: 'A',
+      longName: null
     }
 
     const out = compile(ast);
 
-    expect(out.name).toEqual('Action');
-    expect(out.abbreviation).toBeNull();
+    expect(out.name).toEqual('A');
+    expect(out.longName).toBeNull();
   });
 })
 
 describe('Compiles a statement', () => {
   it('Compiles one plain statement without children', () => {
     const ast = {
-      type: 'statement',
+      type: "statement",
       name: '1',
       value: [
         {
           type: 'text',
-          value: 'Plain statement'
+          value: 'Plain statement',
         }
       ]
     }
+
 
     const out = compile(ast);
 
@@ -57,54 +58,6 @@ describe('Compiles a statement', () => {
     expect(out.value.length).toEqual(1);
     expect(out.value[0]).toBeInstanceOf(Text);
     expect(out.value[0].value).toEqual('Plain statement');
-  });
-
-  it('Compiles one plain statement with children', () => {
-    const ast = {
-      type: 'statement',
-      name: '1',
-      value: [
-        {
-          type: 'text',
-          value: 'Plain statement'
-        }
-      ],
-      children: [
-        {
-          type: 'statement',
-          name: '1',
-          nested: true,
-          parentName: '1',
-          value: [
-            {
-              type: 'text',
-              value: 'Child statement'
-            }
-          ],
-          children: []
-        },
-        {
-          type: 'statement',
-          name: '2',
-          nested: true,
-          parentName: '1',
-          value: [
-            {
-              type: 'text',
-              value: 'Child statement 2'
-            }
-          ],
-          children: []
-        }
-      ]
-
-    }
-
-    const out = compile(ast);
-
-    expect(out.children).toBeInstanceOf(Array);
-    expect(out.children.length).toEqual(2);
-    expect(out.children[0]).toBeInstanceOf(Statement);
   });
 
   it('Compiles one compound statement', () => {
@@ -140,21 +93,16 @@ describe('Compiles root file', () => {
       type: "root",
       children: [
         {
-          type: 'statements',
-          children: [
+          type: 'statement',
+          name: '1',
+          value: [
             {
-              type: 'statement',
-              name: '1',
-              value: [
-                {
-                  type: 'text',
-                  value: 'Plain statement '
-                },
-                {
-                  type: 'reference',
-                  value: 'A'
-                }
-              ]
+              type: 'text',
+              value: 'Plain statement '
+            },
+            {
+              type: 'reference',
+              value: 'A'
             }
           ]
         }
@@ -165,20 +113,6 @@ describe('Compiles root file', () => {
 
     expect(out).toBeInstanceOf(Root);
     expect(out.children).toBeInstanceOf(Array);
-    expect(out.children[0]).toBeInstanceOf(Statements);
-    expect(out.children[0].children[0]).toBeInstanceOf(Statement);
-  });
-
-  it('Compiles a symbol without abbreviation', () => {
-    const ast = {
-      type: 'symbol',
-      name: 'Action',
-      abbreviation: null
-    }
-
-    const out = compile(ast);
-
-    expect(out.name).toEqual('Action');
-    expect(out.abbreviation).toBeNull();
+    expect(out.children[0]).toBeInstanceOf(Statement);
   });
 })
