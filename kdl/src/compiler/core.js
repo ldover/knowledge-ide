@@ -27,7 +27,7 @@ class Statement {
   }
 
   render() {
-    return p(this.value.map(c => c.render()))
+    return p([t(`statement ${this.name} := `), ...this.value.map(c => c.render())])
   }
 }
 
