@@ -2,15 +2,15 @@ import {parse} from '../src';
 
 describe('Parses symbol', () => {
   it('Works with one line', () => {
-    const kdl0 = `def Action as A
+    const kdl0 = `symbol A as Action
     `
     const out = {
       type: "root",
       children: [
         {
           type: 'symbol',
-          name: 'Action',
-          abbreviation: 'A'
+          name: 'A',
+          longName: 'Action'
         },
       ]
     }
@@ -19,15 +19,15 @@ describe('Parses symbol', () => {
   });
 
   it('Works without abbreviation', () => {
-    const kdl0 = `def Action
+    const kdl0 = `symbol A
     `
     const out = {
       type: "root",
       children: [
         {
           type: 'symbol',
-          name: 'Action',
-          abbreviation: null
+          name: 'A',
+          longName: null
         },
       ]
     }
@@ -36,73 +36,43 @@ describe('Parses symbol', () => {
   });
 
   it('Works with two symbol definitions', () => {
-    const kdl0 = `def Action as A
-def Symbol as S
+    const kdl0 = `symbol A as Action
+symbol S as Symbol
     `
     const out = {
       type: "root",
       children: [
         {
           type: 'symbol',
-          name: 'Action',
-          abbreviation: 'A'
+          longName: 'Action',
+          name: 'A'
         },
         {
           type: 'symbol',
-          name: 'Symbol',
-          abbreviation: 'S'
+          longName: 'Symbol',
+          name: 'S'
         },
       ]
     }
 
     expect(parse(kdl0)).toMatchObject(out);
   });
-
-  it('Handles blank lines, whitespace and spaces', () => {
-    const kdl0 = `   
-    def   Action  as  A 
-
-        def Symbol as S
-    `
-    const out = {
-      type: "root",
-      children: [
-        {
-          type: 'symbol',
-          name: 'Action',
-          abbreviation: 'A'
-        },
-        {
-          type: 'symbol',
-          name: 'Symbol',
-          abbreviation: 'S'
-        },
-      ]
-    }
-
-    expect(parse(kdl0)).toMatchObject(out);
-  })
 })
 
 describe('Parses statement', () => {
   it('Parses a plain statement', () => {
-    const kdl0 = `1: Plain statement
+    const kdl0 = `statement 1 := Plain statement
     `
     const out = {
       type: "root",
       children: [
         {
-          type: "statements",
-          children: [
+          type: "statement",
+          name: '1',
+          value: [
             {
-              type: 'statement',
-              name: '1',
-              value: [
-                {
-                  type: 'text',
-                  value: 'Plain statement'
-                }
-              ]
+              type: 'text',
+              value: 'Plain statement',
             }
           ]
         }
@@ -113,27 +83,22 @@ describe('Parses statement', () => {
   });
 
   it('Parses statement with reference', () => {
-    const kdl0 = `1: Plain statement {A}`
+    const kdl0 = `statement 1 := Plain statement {A}`
     const out = {
       type: "root",
       children: [
         {
-          type: 'statements',
-          children: [
+          type: "statement",
+          name: '1',
+          value: [
             {
-              type: 'statement',
-              name: '1',
-              value: [
-                {
-                  type: 'text',
-                  value: 'Plain statement '
-                },
-                {
-                  type: 'reference',
-                  value: 'A'
-                }
-              ]
+              type: 'text',
+              value: 'Plain statement ',
             },
+            {
+              type: 'reference',
+              value: 'A',
+            }
           ]
         }
       ]
@@ -143,76 +108,29 @@ describe('Parses statement', () => {
   });
 
   it('Parses statement with two references', () => {
-    const kdl0 = `1: {B} relates to {A}`
+    const kdl0 = `statement 2 := {B} relates to {A}`
     const out = {
       type: "root",
       children: [
         {
-          type: 'statements',
-          children: [
+          type: "statement",
+          name: '2',
+          value: [
             {
-              type: 'statement',
-              name: '1',
-              value: [
-                {
-                  type: 'reference',
-                  value: 'B'
-                },
-                {
-                  type: 'text',
-                  value: ' relates to '
-                },
-                {
-                  type: 'reference',
-                  value: 'A'
-                }
-              ]
+              type: 'reference',
+              value: 'B',
+            },
+            {
+              type: 'text',
+              value: ' relates to ',
+            },
+            {
+              type: 'reference',
+              value: 'A',
             }
           ]
         }
       ]
-    }
-
-    expect(parse(kdl0)).toMatchObject(out);
-  });
-})
-
-
-describe('Parses nested statement', () => {
-  it('Parses one level deep, one statement broad', () => {
-    const kdl0 = `1: Plain statement
-1.1: Child statement
-    `
-    const out = {
-      type: "root",
-      children: [
-        {
-          type: "statements",
-          children: [
-            {
-              type: 'statement',
-              name: '1',
-              value: [
-                {
-                  type: 'text',
-                  value: 'Plain statement'
-                }
-              ],
-              children: [
-                {
-                  type: 'statement',
-                  name: '1',
-                  value: [
-                    {
-                      type: 'text',
-                      value: 'Child statement'
-                    }
-                  ],
-                }
-              ]
-            }
-          ]
-        }]
     }
 
     expect(parse(kdl0)).toMatchObject(out);
@@ -225,108 +143,47 @@ describe('Parser works for the entire KDL script', () => {
     children: [
       {
         type: 'symbol',
-        name: 'Action',
-        abbreviation: 'A'
+        longName: 'Action',
+        name: 'A'
       },
       {
         type: 'symbol',
-        name: 'Quality',
-        abbreviation: 'Q'
+        longName: 'Quality',
+        name: 'Q'
       },
       {
-        type: 'statements',
-        children: [
+        type: "statement",
+        name: '1',
+        value: [
           {
-            type: 'statement',
-            name: '1',
-            value: [
-              {
-                type: 'reference',
-                value: 'A'
-              },
-              {
-                type: 'text',
-                value: ' in the limit converges towards '
-              },
-              {
-                type: 'reference',
-                value: 'Q'
-              }
-            ],
-            children: [
-              {
-                type: 'statement',
-                name: '1',
-                nested: true,
-                parentName: '1',
-                value: [
-                  {
-                    type: 'text',
-                    value: 'Child statement'
-                  }
-                ],
-                children: []
-              },
-              {
-                type: 'statement',
-                name: '2',
-                nested: true,
-                parentName: '1',
-                value: [
-                  {
-                    type: 'text',
-                    value: 'Child statement 2'
-                  }
-                ],
-                children: []
-              }
-            ]
+            type: 'reference',
+            value: 'A',
           },
           {
-            type: 'statement',
-            name: '2',
-            value: [
-              {
-                type: 'reference',
-                value: 'Q'
-              },
-              {
-                type: 'text',
-                value: ' mediates '
-              },
-              {
-                type: 'reference',
-                value: 'A'
-              }
-            ],
-            children: [
-              {
-                type: 'statement',
-                name: '1',
-                nested: true,
-                parentName: '2',
-                value: [
-                  {
-                    type: 'text',
-                    value: 'Child statement'
-                  }
-                ],
-                children: []
-              },
-              {
-                type: 'statement',
-                name: '2',
-                nested: true,
-                parentName: '2',
-                value: [
-                  {
-                    type: 'text',
-                    value: 'Child statement 2'
-                  }
-                ],
-                children: []
-              }
-            ]
+            type: 'text',
+            value: ' in the limit converges towards ',
+          },
+          {
+            type: 'reference',
+            value: 'Q',
+          }
+        ]
+      },
+      {
+        type: "statement",
+        name: '2',
+        value: [
+          {
+            type: 'reference',
+            value: 'Q',
+          },
+          {
+            type: 'text',
+            value: ' mediates ',
+          },
+          {
+            type: 'reference',
+            value: 'A',
           }
         ]
       }
@@ -335,16 +192,17 @@ describe('Parser works for the entire KDL script', () => {
 
 
   it('Parses two defs and and 2 top-level statements', () => {
-    const kdl0 = `def Action as A
-def Quality as Q
+    const kdl0 = `symbol A as Action
+symbol Q as Quality
 
-1: {A} in the limit converges towards {Q}
-  1.1: Child statement
-  1.2: Child statement 2
-2: {Q} mediates {A}
-  2.1: Child statement
-  2.2: Child statement 2
-    `
+statement 1 := {A} in the limit converges towards {Q}
+statement 2 := {Q} mediates {A}
+ 
+proof 1 {
+  statement 1.1 := proof statement 1
+  statement 1.2 := proof statement 2
+} 
+`
 
     let actual = parse(kdl0);
     expect(actual).toMatchObject(out);
