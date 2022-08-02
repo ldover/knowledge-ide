@@ -8,6 +8,12 @@ import {
 } from '../src/compiler/core'
 import {VFile} from "vfile";
 
+// Wrapper
+function compileVFile(ast) {
+  return compile([createVFile('./test.kdl', ast)])[0].data.compiled;
+}
+
+
 function createVFile(path, ast) {
   const file = new VFile({
     path: path,
@@ -22,7 +28,7 @@ function createVFile(path, ast) {
 
 describe('Compiles a symbol', () => {
   it('Compiles a symbol with long name specifier', () => {
-    const file = createVFile('./test.kdl', {
+    const compiledRoot = compileVFile({
       type: 'root',
       children: [
         {
@@ -32,10 +38,6 @@ describe('Compiles a symbol', () => {
         }
       ]
     })
-
-    const vfile = compile([file])[0];
-    expect(vfile).toBeInstanceOf(VFile);
-    const compiledRoot = vfile.data.compiled
 
     expect(compiledRoot).toBeInstanceOf(Root);
     let symbol = compiledRoot.symbol;
@@ -48,97 +50,176 @@ describe('Compiles a symbol', () => {
     expect(compiledRoot.children[0]).toBe(symbol);
   });
 
-  // it('Compiles a symbol without a long name specifier', () => {
-  //   const ast = {
-  //     type: 'symbol',
-  //     name: 'A',
-  //     longName: null
-  //   }
-  //
-  //   const out = compile(ast);
-  //
-  //   expect(out.name).toEqual('A');
-  //   expect(out.longName).toBeNull();
-  // });
+  it('Compiles a symbol without a long name specifier', () => {
+    const ast = {
+      type: 'root',
+      children: [{
+        type: 'symbol',
+        name: 'A',
+        longName: null
+      }]
+    }
+
+    const out = compileVFile(ast);
+
+    expect(out.symbol.name).toEqual('A');
+    expect(out.symbol.longName).toBeNull();
+  });
+
+  it('Throws an error with multiple defined symbols', () => {
+    const ast = {
+      type: 'root',
+      children: [
+        {
+          type: 'symbol',
+          name: 'A',
+          longName: null
+        },
+        {
+          type: 'symbol',
+          name: 'B',
+          longName: null
+        }
+      ]
+    }
+
+    expect(() => {
+      compileVFile(ast);
+    }).toThrow()
+  })
 })
-//
-// describe('Compiles a statement', () => {
-//   it('Compiles one plain statement without children', () => {
-//     const ast = {
-//       type: "statement",
-//       name: '1',
-//       value: [
-//         {
-//           type: 'text',
-//           value: 'Plain statement',
-//         }
-//       ]
-//     }
-//
-//
-//     const out = compile(ast);
-//
-//     expect(out).toBeInstanceOf(Statement);
-//     expect(out.name).toEqual('1');
-//     expect(out.value).toBeInstanceOf(Array);
-//     expect(out.value.length).toEqual(1);
-//     expect(out.value[0]).toBeInstanceOf(Text);
-//     expect(out.value[0].value).toEqual('Plain statement');
-//   });
-//
-//   it('Compiles one compound statement', () => {
-//     const ast = {
-//       type: 'statement',
-//       name: '1',
-//       value: [
-//         {
-//           type: 'text',
-//           value: 'Plain statement '
-//         },
-//         {
-//           type: 'reference',
-//           value: 'A'
-//         }
-//       ]
-//     }
-//
-//     const out = compile(ast);
-//
-//     expect(out.value.length).toEqual(2);
-//     expect(out.value[0]).toBeInstanceOf(Text);
-//     expect(out.value[0].value).toEqual('Plain statement ');
-//     expect(out.value[1]).toBeInstanceOf(Reference);
-//     expect(out.value[1].name).toEqual('A');
-//   });
-// })
-//
-//
-// describe('Compiles root file', () => {
-//   it('Compiles a simple root', () => {
-//     const ast = {
-//       type: "root",
-//       children: [
-//         {
-//           type: 'statement',
-//           name: '1',
-//           value: [
-//             {
-//               type: 'text',
-//               value: 'Plain statement '
-//             },
-//             {
-//               type: 'reference',
-//               value: 'A'
-//             }
-//           ]
-//         }
-//       ]
-//     }
-//
-//     const out = compile(ast);
-//
-//     expect(out).toBeInstanceOf(Root);
-//     expect(out.children).toBeInstanceOf(Array);
-//     expect(out.children[0]).toBeInstanceOf(Statement);
-//   });
-// })
+
+describe('Compiles a statement', () => {
+  it('Compiles one plain statement without children', () => {
+    const ast = {
+      type: 'root',
+      children: [
+
+        {
+          type: "statement",
+          name: '1',
+          value: [
+            {
+              type: 'text',
+              value: 'Plain statement',
+            }
+          ]
+        }
+      ]
+    }
+
+
+    const out = compileVFile(ast);
+    const statement = out.statements[0];
+
+    expect(statement).toBeInstanceOf(Statement);
+    expect(statement.name).toEqual('1');
+    expect(statement.value).toBeInstanceOf(Array);
+    expect(statement.value.length).toEqual(1);
+    expect(statement.value[0]).toBeInstanceOf(Text);
+    expect(statement.value[0].value).toEqual('Plain statement');
+  });
+
+  it('Compiles one compound statement', () => {
+    const ast = {
+      type: 'root',
+      children: [
+        {
+          type: 'symbol',
+          name: 'A',
+          longName: null
+        },
+        {
+          type: 'statement',
+          name: '1',
+          value: [
+            {
+              type: 'text',
+              value: 'Plain statement '
+            },
+            {
+              type: 'reference',
+              symbol: 'A'
+            }
+          ]
+        }
+      ]
+    }
+    const out = compileVFile(ast).statements[0];
+
+    expect(out.value.length).toEqual(2);
+    expect(out.value[0]).toBeInstanceOf(Text);
+    expect(out.value[0].value).toEqual('Plain statement ');
+    expect(out.value[1]).toBeInstanceOf(Reference);
+    expect(out.value[1].symbol).toEqual('A');
+  });
+})
+
+describe('Compiles multiple KDL files', () => {
+  it('Compiles two KDL files w/ imports', () => {
+    const fileY = createVFile('./Y.kdl', {
+        type: 'root',
+        children: [
+          {
+            type: 'symbol',
+            name: 'Y'
+          },
+          {
+            type: "statement",
+            name: '1',
+            value: [
+              {
+                type: 'text',
+                value: 'Plain statement',
+              }
+            ]
+          }
+        ]
+      }
+    )
+
+    const fileX = createVFile('./X.kdl', {
+        type: 'root',
+        children: [
+          {
+            type: 'import',
+            value: 'Y',
+            url: './Y.kdl'
+          },
+          {
+            type: 'symbol',
+            name: 'X'
+          },
+          {
+            type: "statement",
+            name: '1',
+            value: [
+              {
+                type: 'text',
+                value: 'State ',
+              },
+              {
+                type: 'reference',
+                symbol: 'X'
+              },
+              {
+                type: 'text',
+                value: ' in relation to ',
+              },
+              {
+                type: 'reference',
+                symbol: 'Y'
+              },
+            ]
+          }
+        ]
+      }
+    )
+
+    const out = compile([fileX, fileY]);
+    const rootX = out[0].data.compiled;
+    expect(rootX.refs.has('Y')).toBeTruthy();
+    expect(rootX.refs.has('X')).toBeTruthy();
+    expect(rootX.refs.get('Y')).toEqual('./Y.kdl');
+  });
+})

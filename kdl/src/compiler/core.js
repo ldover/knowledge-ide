@@ -41,15 +41,13 @@ class Statement {
 
 class Reference {
   constructor(symbol, statement = null) {
-    this.name = name;
+    this.symbol = symbol;
+    this.statement = statement;
   }
 
   render() {
-    return link(`#${this.name}`, this.name)
-  }
-
-  exists(scope) {
-    return scope.has(name);
+    const path = `${this.symbol}${this.statement ? ':' + this.statement : ''}`
+    return link(`#${path}`, path)
   }
 }
 
@@ -190,7 +188,7 @@ function referenceCompiler(ast, root) {
 
   let path = root.refs.has(ast.symbol);
   if (!path) {
-    throw CompilerError('Reference failed to compile, variable not initialized: ' + ast.symbol )
+    throw new CompilerError('Reference failed to compile, variable not initialized: ' + ast.symbol )
   }
 
   // todo: check for statement at compile time as well
