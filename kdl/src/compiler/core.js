@@ -7,6 +7,14 @@ import {
   link
 } from "mdast-builder";
 
+function getFileType(file) {
+  // try to infer type
+  if (file.path.endsWith('.mdl')) return 'mdl';
+  if (file.path.endsWith('.kdl')) return 'kdl';
+
+  return null;
+}
+
 class Symbol {
   constructor(name, longName) {
     this.name = name;
@@ -32,7 +40,7 @@ class Statement {
 }
 
 class Reference {
-  constructor(name) {
+  constructor(symbol, statement = null) {
     this.name = name;
   }
 
@@ -56,8 +64,55 @@ class Text {
 }
 
 class Root {
-  constructor(children) {
-    this.children = children;
+  constructor(path, ast, scope) {
+    this.path = path;
+    this.ast = ast;
+    this.scope = scope;
+    this.refs = new Map(); // Map<name, source> — name is used in the MDL script as variable name, while source is actual file name
+
+    this.children = [];
+
+    this.symbol = null;
+    this.statements = [];
+    this.proofs = [];
+  }
+
+  init() {
+    this.ast.children.forEach(c => {
+      if (c.type === 'import') {
+        this._processImport(c)
+      } else if (c.type === 'symbol') {
+        if (this.symbol) throw CompilerError('Symbol already declared: cannot yet two symbols per file');
+        this.symbol = new Symbol(c.name, c.longName)
+        this.refs.set(c.name, this.path)
+        this.children.push(this.symbol)
+      } else if (c.type === 'statement') {
+        const statement = statementCompiler(c, this);
+        this.children.push(statement);
+        this.refs.set(c.name, this.path)
+        this.statements.push(statement);
+      } else if (c.type === 'proof') {
+        throw CompilerError('proof compiler not yet implemented')
+      } else {
+        throw CompilerError('Unknown node: ' + c.type)
+      }
+    })
+  }
+
+  _processImport(statement) {
+    console.assert(statement.type === 'import');
+    // See that it is in fact in scope
+    const importedObj = this.scope.get(statement.url);
+    if (!importedObj) {
+      throw new CompilerError(`Imported file not found: "${statement.url}"`)
+    }
+
+    this.addRef(statement.value, statement.url)
+  }
+
+  addRef(name, source) {
+    if (!this.scope.has(source)) throw new CompilerError(`Source file not found in scope: ${name} (${source})`);
+    this.refs.set(name, source);
   }
 
   render() {
@@ -76,32 +131,51 @@ const compilers = {
   statement: statementCompiler,
   text: textCompiler,
   reference: referenceCompiler,
-  symbol: symbolCompiler,
-  root: rootCompiler
 }
 
-function compile(ast) {
-  // if (ast.type !== 'root') throw Error('Invalid AST: top level should be of type `root`');
-  const compiler = compilers[ast.type];
-  if (!compiler) throw Error('No compiler found for node of type: ' + ast.type);
 
-  return compiler(ast);
+export class CompilerError extends Error {
+  constructor(message, loc = null, node = null) {
+    super(message);
+    this.name = "CompilerError";
+    this.loc = loc;
+    this.node = node;
+  }
 }
 
-function symbolCompiler(ast) {
-  console.assert(ast.type === 'symbol')
+/**
+ * KDL AST of each file should be at file.data.parsed
+ * @param {VFile[]} files
+ */
+function compile(files) {
+  const scope = new Map(); // Map<path, Root>
 
-  return new Symbol(ast.name, ast.longName)
+  // Build scope of all files
+  files.forEach(file => {
+    const type = getFileType(file);
+    let rootObj;
+    if (type !== 'kdl') {
+      throw new Error('Unsupported file type: ' + file.path);
+    }
+
+    rootObj = new Root(file.path, file.data.parsed, scope)
+
+    scope.set(file.path, rootObj);
+  })
+
+  // Now that we have the scope, init each KDL file
+  files.forEach(file => {
+    const root = scope.get(file.path);
+    root.init()
+    file.data.compiled = root;
+  })
+
+  return files;
 }
 
-function rootCompiler(ast) {
-  console.assert(ast.type === 'root')
-  return new Root(ast.children.map(c => compilers[c.type](c)));
-}
-
-function statementCompiler(ast) {
+function statementCompiler(ast, root) {
   console.assert(ast.type === 'statement')
-  const value = ast.value.map(node => compilers[node.type](node));
+  const value = ast.value.map(node => compilers[node.type](node, root));
   return new Statement(ast.name, value)
 }
 
@@ -111,10 +185,17 @@ function textCompiler(ast) {
   return new Text(ast.value);
 }
 
-function referenceCompiler(ast) {
+function referenceCompiler(ast, root) {
   console.assert(ast.type === 'reference')
 
-  return new Reference(ast.value);
+  let path = root.refs.has(ast.symbol);
+  if (!path) {
+    throw CompilerError('Reference failed to compile, variable not initialized: ' + ast.symbol )
+  }
+
+  // todo: check for statement at compile time as well
+  let statement = ast.statement ? ast.statement : null;
+  return new Reference(ast.symbol, statement);
 }
 
 

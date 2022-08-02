@@ -15,8 +15,8 @@ proof 1 {
 `
 
     let actual = parse(kdl0);
-    const out = compile(actual);
+    // const out = compile(actual);
 
-    const mdast = out.render();
+    // const mdast = out.render();
   })
 })
