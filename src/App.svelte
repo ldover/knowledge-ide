@@ -32,12 +32,11 @@
 
     const parsers = {
       mdl: () => {
-        const mdlFiles = files.filter(f => getFileType(f) === 'mdl');
-        console.log('parseMDL files')
-        parseMDL(mdlFiles);
+        console.log('parse files', files)
+        parseMDL(files);
 
         try {
-          compileMDL(mdlFiles)
+          compileMDL(files)
           // console.log('compiled', {compiledFiles})
           // const file1 = compiledFiles.find(f => f.path === file.path);
           note = file.data.compiled.render()

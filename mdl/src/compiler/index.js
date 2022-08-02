@@ -15,6 +15,8 @@ import {
 } from "mdast-builder";
 import {VFile} from "vfile";
 
+import {compile as compileKDL} from '../../../kdl/src/compiler/core';
+
 /**
  * Accepts MDL ASTs outputs objects
  * @param {VFile[]} files
@@ -24,18 +26,38 @@ function compile(files) {
 
   // Build scope of all files
   files.forEach(file => {
-    scope.set(file.path, new Root(file.path, file.data.parsed, scope));
+    const type = getFileType(file);
+    let rootObj;
+    if (type === 'mdl') {
+      rootObj = new Root(file.path, file.data.parsed, scope)
+    } else if (type === 'kdl') {
+      rootObj = compileKDL(file.data.parsed) // todo: expand KDL root to support same interface as MDL Root (VFile)
+    } else {
+      throw new CompilerError('Unsupported file type: ' + file.path);
+    }
+
+    scope.set(file.path, rootObj);
   })
 
-  // Now that we have the scope, init each file
+  // Now that we have the scope, init each MDL file
   files.forEach(file => {
     const root = scope.get(file.path);
-    root.init()
+    if (getFileType(file) === 'mdl') {
+      root.init()
+    }
     file.data.compiled = root;
-    return root;
   })
 
   return files;
+}
+
+
+export function getFileType(file) {
+  // try to infer type
+  if (file.path.endsWith('.mdl')) return 'mdl';
+  if (file.path.endsWith('.kdl')) return 'kdl';
+
+  return null;
 }
 
 

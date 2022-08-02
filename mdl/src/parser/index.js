@@ -7,6 +7,10 @@ import * as acorn  from "acorn";
 import {Parser} from "acorn";
 import {map} from 'unist-util-map'
 
+import {parse as parseKDL} from '../../../kdl/src/index.js'
+import {getFileType} from "../compiler/index.js";
+
+
 /**
  * Piggy back on MDX extensions
  * @param {import('vfile').VFile[]} files
@@ -44,7 +48,13 @@ export function parse(files) {
 
 
   files.forEach(file => {
-    file.data.parsed = _parseFile(file);
+    if (getFileType(file) === 'mdl') {
+      file.data.parsed = _parseFile(file);
+    } else if (getFileType(file) === 'kdl') {
+      file.data.parsed = parseKDL(file.value)
+    } else {
+      throw new Error('Unsupported file type: ' + file.path);
+    }
   })
 
   return files;
