@@ -83,7 +83,7 @@ describe('Parses statement', () => {
             },
             {
               type: 'reference',
-              value: 'A',
+              symbol: 'A',
             }
           ]
         }
@@ -104,7 +104,7 @@ describe('Parses statement', () => {
           value: [
             {
               type: 'reference',
-              value: 'B',
+              symbol: 'B',
             },
             {
               type: 'text',
@@ -112,7 +112,7 @@ describe('Parses statement', () => {
             },
             {
               type: 'reference',
-              value: 'A',
+              symbol: 'A',
             }
           ]
         }
@@ -121,6 +121,40 @@ describe('Parses statement', () => {
 
     expect(parse(kdl0)).toMatchObject(out);
   });
+
+  it('Parses statement with a statement reference', () => {
+    const kdl0 = `statement 2 := If {B:2} then {A}`
+    const out = {
+      type: "root",
+      children: [
+        {
+          type: "statement",
+          name: '2',
+          value: [
+            {
+              type: 'text',
+              value: 'If ',
+            },
+            {
+              type: 'reference',
+              symbol: 'B',
+              statement: '2',
+            },
+            {
+              type: 'text',
+              value: ' then ',
+            },
+            {
+              type: 'reference',
+              symbol: 'A',
+            }
+          ]
+        }
+      ]
+    }
+
+    expect(parse(kdl0)).toMatchObject(out);
+  })
 })
 
 

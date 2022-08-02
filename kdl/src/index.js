@@ -24,10 +24,19 @@ function parseStatementValue(statement) {
       }
 
       cursor = match.index + match[0].length;
-      children.push({
-        type: 'reference',
-        value: match[1]
-      })
+      if (match[1].includes(':')) {
+        const subMatch = match[1].match(/(.+):(.+)/)
+        children.push({
+          type: 'reference',
+          symbol: subMatch[1],
+          statement: subMatch[2],
+        })
+      } else {
+        children.push({
+          type: 'reference',
+          symbol: match[1]
+        })
+      }
     })
 
     return children;
