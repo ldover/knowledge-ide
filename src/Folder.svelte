@@ -23,9 +23,9 @@
             {#each file.files as file}
                 <li>
                     {#if file.files}
-                        <svelte:self file={file} on:click/>
+                        <svelte:self file={file}/>
                     {:else}
-                        <File file={file.value} on:click/>
+                        <File file={file.value}/>
                     {/if}
                 </li>
             {/each}

@@ -55,6 +55,7 @@
       const f = $sFileSystem.find(f => f.path === fullpath);
       if (f) {
         sEditor.setFile(f);
+        onRun()
       }
     }
   }

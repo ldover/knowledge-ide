@@ -10,11 +10,11 @@
 
 </script>
 
-<a on:click={() => dispatch('click', file)}
+<a
    on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
    class:text-red-500={file === $sEditor.file}
    class="flex items-center"
-   href="javascript:;"><span class="material-symbols-sharp text-gray-400">description</span>{file.basename}
+   href="#/{file.path.replace('~/', '')}"><span class="material-symbols-sharp text-gray-400">description</span>{file.basename}
 </a>
 
 <style>
