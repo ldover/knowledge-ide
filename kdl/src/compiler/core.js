@@ -40,14 +40,18 @@ class Statement {
 }
 
 class Reference {
-  constructor(symbol, statement = null) {
+  constructor(symbol, statement = null, root) {
     this.symbol = symbol;
     this.statement = statement;
+    this.root = root;
   }
 
   render() {
-    const path = `${this.symbol}${this.statement ? ':' + this.statement : ''}`
-    return link(`#${path}`, path)
+    const title = `${this.symbol}${this.statement ? ':' + this.statement : ''}`
+    console.log('render()', {reference: this, root: this.root});
+    const filepath = this.root.refs.get(this.symbol);
+    const obj = this.root.scope.get(filepath);
+    return obj.ref(title);
   }
 }
 
@@ -115,7 +119,11 @@ class Root {
 
   ref(title = null) {
     title = title || this.symbol.name;
-    return link(this.path, title, t(title));
+    return {
+      type: 'reference',
+      url:`#/${this.path.replace('~/', '')}`, // todo: I'm building in this assumption of files starting with "~/" which is only true atm
+      title
+    }
   }
 
 
@@ -203,7 +211,7 @@ function referenceCompiler(ast, root) {
 
   // todo: check for statement at compile time as well
   let statement = ast.statement ? ast.statement : null;
-  return new Reference(ast.symbol, statement);
+  return new Reference(ast.symbol, statement, root);
 }
 
 

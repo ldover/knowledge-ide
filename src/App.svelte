@@ -11,9 +11,12 @@
   import {banners} from "./banner/store";
   import {CompilerError} from "../mdl/src/compiler";
   import {getFileType} from "./util";
+  import {onMount} from "svelte";
 
-  let note = null
+  let note = null;
+  let file = null;
 
+  sFileSystem.init()
 
   function process(files) {
     console.log('parse files', files)
@@ -41,12 +44,33 @@
         throw err;
       }
     }
-
-
   }
 
   $: noteName = $sEditor.file?.name?.split('.')[0];
+
+  function onHashChange() {
+    let path = window.location.hash.slice(2);
+    if (path) {
+      const fullpath = `~/${path}`
+      const f = $sFileSystem.find(f => f.path === fullpath);
+      if (f) {
+        sEditor.setFile(f);
+      }
+    }
+  }
+
+  function onEditorMount(e) {
+    sEditor.init(e.detail);
+  }
+
+  onMount(() => {
+    if (window.location.hash) {
+      onHashChange();
+    }
+  })
 </script>
+
+<svelte:window on:hashchange={onHashChange} />
 
 <div class="w-full flex h-full overflow-x-hidden">
     <div class="w-3/12 bg-gray-100 overflow-x-auto">
@@ -54,7 +78,7 @@
     </div>
     <Resizer/>
     <div class="w-5/12 h-fullvw">
-        <CodeMirror/>
+        <CodeMirror on:mount={onEditorMount}/>
     </div>
     <Resizer/>
     <div class="h-full h-fullvw w-4/12 p-3">

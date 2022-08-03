@@ -5,14 +5,14 @@
   import {banners} from "./banner/store";
   import Banner from "./banner/Banner.svelte";
 
+  import {createEventDispatcher} from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
   let el;
 
-  onMount(async () => {
-    sEditor.init(el);
-    const {files, file} = await sFileSystem.init()
-    if (file) {
-      sEditor.setFile(file);
-    }
+  onMount(() => {
+    dispatch('mount', el)
   })
 
 

@@ -191,7 +191,12 @@ class Root {
 
   ref(title = null) {
     title = title || this.title;
-    return link(this.path, title, t(title));
+    return {
+      type: 'reference',
+      url:`#/${this.path}`,
+      title
+    }
+
   }
 
   getObject(ref) {

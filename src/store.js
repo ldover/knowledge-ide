@@ -129,9 +129,10 @@ export const sEditor = {
     _sEditor.update(state => {
 
       // Update current file before we switch
-      // if (state.file) {
-      //   sFileSystem.updateFile(file, state.view.state.toJSON().doc)
-      // }
+      if (state.file && state.view.state) {
+        state.file.value = state.view.state.toJSON().doc
+      }
+
       return {...state, file}
     })
 
@@ -292,10 +293,11 @@ export const sFileSystem = {
     };
     localStorage.setItem('__kide.filesystem', JSON.stringify(obj));
   },
-  init: async function () {
+  init: function () {
+    let files = [];
+    let file = null;
     try {
       let initialState = [];
-      let file = null;
 
       const loaded = this.load();
       if (loaded) {
@@ -308,35 +310,20 @@ export const sFileSystem = {
         value: '# Alpha *braavo* charlie.'
       })
 
-      // console.log(file.path) // => '~/example.txt'
-      // console.log(file.dirname) // => '~'
-      //
-      // file.extname = '.mdl'
-      //
-      // console.log(file.basename) // => 'example.mdl'
-      //
-      //
-      // console.log(file.history) // => ['~/example.txt', '~/example.md']
-      //
-      // file.message('Unexpected unknown word `braavo`, did you mean `bravo`?', {
-      //   line: 1,
-      //   column: 8
-      // })
-      //
-      // console.log(file.messages)
-
       if (!initialState.length) {
         initialState.push(vfileMock)
       }
 
       _sFileSystem.set(initialState);
-      return {
-        files: initialState,
-        file
-      };
+      files = initialState;
     } catch (err) {
       console.error(err);
     }
+
+    return {
+      files,
+      file
+    };
   },
   flatten: function () {
     const dir = get(_sFileSystem);

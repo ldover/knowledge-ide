@@ -2,7 +2,7 @@
   export let node;
 </script>
 
-<a href="#/{node.url}"
+<a href="{node.url}"
    class="reference">
     {node.title}
 </a>
