@@ -25,9 +25,9 @@ export const sContextMenu = {
   hide: function () {
     _sContextMenu.update(state => ({...state, file: null, visible: false}))
   },
-  onNew: async function() {
+  onNew: async function(type = 'file') {
     const {file} = get(_sContextMenu);
-    sModal.show(file);
+    sModal.show(file, type);
     this.hide();
   },
   onDelete: async function() {

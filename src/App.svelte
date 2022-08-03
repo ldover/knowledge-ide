@@ -29,7 +29,8 @@
     banners.clear();
     const file = sEditor.getFile();
     file.value = sEditor.getValue();
-    const files = sFileSystem.getFiles();
+    const files = sFileSystem.getFiles()
+      .filter(f => !f.basename?.startsWith('.') && ['.kdl', '.mdl'].includes(f.extname));
 
     try {
       // Abstract everything away in the process method

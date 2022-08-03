@@ -8,14 +8,19 @@
   /** @type {import('vfile').VFile} */
   export let file;
 
+  $: hidden = file.basename && file.basename.startsWith('.');
+
 </script>
 
-<a
-   on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
-   class:text-red-500={file === $sEditor.file}
-   class="flex items-center"
-   href="#/{file.path.replace('~/', '')}"><span class="material-symbols-sharp text-gray-400">description</span>{file.basename}
-</a>
+{#if !hidden}
+  <a
+    on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
+    class:text-red-500={file === $sEditor.file}
+    class="flex items-center"
+    href="#/{file.path.replace('~/', '')}"><span
+    class="material-symbols-sharp text-gray-400">description</span>{file.basename}
+  </a>
+{/if}
 
 <style>
 </style>

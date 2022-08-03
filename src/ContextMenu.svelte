@@ -11,6 +11,12 @@
       }
     },
     {
+      name: 'New Folder',
+      onClick: () => {
+        sContextMenu.onNew('folder');
+      }
+    },
+    {
       name: 'Rename',
       onClick: () => window.alert('not implemented')
     },
