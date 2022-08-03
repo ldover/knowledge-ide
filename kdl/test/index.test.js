@@ -1,4 +1,5 @@
 import {parse} from '../src';
+import {computeAbsolutePath} from "../src/util.js";
 
 describe('Parses symbol', () => {
   it('Works with one line', () => {
@@ -189,6 +190,42 @@ use A of './Action.kdl'
     expect(parse(kdl)).toMatchObject(out);
   })
 })
+
+describe('Compute absolute url from relative', () => {
+  it('works with a simple case', () => {
+    const res = computeAbsolutePath('~/X.kdl', './Y.kdl')
+    expect(res).toEqual('~/Y.kdl')
+
+  })
+
+  it('fails when beyond bound', () => {
+    const res = computeAbsolutePath('~/X.kdl', '../Y.kdl')
+    expect(res).toBeNull()
+  })
+
+  it('works with a more complex cases', () => {
+    const res = computeAbsolutePath('~/src/X.kdl', '../Y.kdl')
+    const res2 = computeAbsolutePath('~/src/deep/deep2/X.kdl', '../../Y.kdl')
+    expect(res).toEqual('~/Y.kdl')
+    expect(res2).toEqual('~/src/Y.kdl')
+  })
+
+  it('works with a more complex case', () => {
+    const res = computeAbsolutePath('~/src/X.kdl', '../Y.kdl')
+    expect(res).toEqual('~/Y.kdl')
+  })
+
+  it('finds forward folder', () => {
+    const res = computeAbsolutePath('~/X.kdl', './src/Y.kdl')
+    expect(res).toEqual('~/src/Y.kdl')
+  })
+
+  it('finds deep forward folder', () => {
+    const res = computeAbsolutePath('~/X.kdl', './src/deep2/Y.kdl')
+    expect(res).toEqual('~/src/deep2/Y.kdl')
+  })
+})
+
 
 // describe('Parser works for the entire KDL script', () => {
 //   const out = {

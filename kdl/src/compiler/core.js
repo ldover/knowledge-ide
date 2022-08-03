@@ -6,6 +6,7 @@ import {
   list as l,
   link
 } from "mdast-builder";
+import {computeAbsolutePath} from "../util.js";
 
 function getFileType(file) {
   // try to infer type
@@ -104,16 +105,17 @@ class Root {
   _processImport(statement) {
     console.assert(statement.type === 'import');
     // See that it is in fact in scope
-    const importedObj = this.scope.get(statement.url);
+
+    const path = computeAbsolutePath(this.path, statement.url);
+    const importedObj = this.scope.get(path);
     if (!importedObj) {
       throw new CompilerError(`Imported file not found: "${statement.url}"`)
     }
 
-    this.addRef(statement.value, statement.url)
+    this.addRef(statement.value, path)
   }
 
   addRef(name, source) {
-    if (!this.scope.has(source)) throw new CompilerError(`Source file not found in scope: ${name} (${source})`);
     this.refs.set(name, source);
   }
 

@@ -8,7 +8,8 @@
 
 {#if $sFileTree}
     <div class="flex">
-        <Folder file={$sFileTree}/>
+        <Folder file={$sFileTree}
+                expanded={true}/>
         <div class="px-3"></div>
     </div>
 {/if}

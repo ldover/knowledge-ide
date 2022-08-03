@@ -16,6 +16,7 @@ import {
 import {VFile} from "vfile";
 
 import {Root as KDLRoot} from '../../../kdl/src/compiler/core';
+import {computeAbsolutePath} from "../../../kdl/src/util.js";
 
 /**
  * Accepts MDL ASTs outputs objects
@@ -119,7 +120,9 @@ function programCompiler(program, root) {
   program.body.forEach(statement => {
     if (statement.type === 'ImportDeclaration') {
       // See that it is in fact in scope
-      const importedObj = root.scope.get(statement.source.value);
+      const path = computeAbsolutePath(root.path, statement.source.value);
+
+      const importedObj = root.scope.get(path);
       if (!importedObj) {
         throw new CompilerError(`Imported file not found: "${statement.source.value}"`, {
           start: statement.start,
@@ -139,9 +142,7 @@ function programCompiler(program, root) {
         }
       })
 
-      root.addRef(identifier.local.name, statement.source.value)
-
-
+      root.addRef(identifier.local.name, path)
     } else {
       console.warn('Statement type not supported:', statement.type);
     }
@@ -173,8 +174,6 @@ class Root {
   }
 
   addRef(name, source) {
-    // todo: we'll probably have to compute based on absolute this.path of this Root
-    if (!this.scope.has(source)) throw new CompilerError(`Source file not found in scope: ${name} (${source})`);
     this.refs.set(name, source);
   }
 
