@@ -199,25 +199,6 @@ class Root {
   }
 }
 
-class MdxTextExpression {
-  constructor(expression, root) {
-    this.expression = expression;
-    this.root = root;
-  }
-
-  // Becomes a MDAST link
-  // todo: worth thinking through if we should introduce another node so we can integrate with the UI better, or if we can structure the link in a way that we can derive everything we need on the Notebase UI side
-  render() {
-    const objName = this.expression.name;
-    const obj = this.root.getObject(objName);
-
-    return link(
-      obj.path,
-      objName,
-      t(obj.title)
-    )
-  }
-}
 
 class MdxFlowExpression {
   constructor(expression, root) {
@@ -229,7 +210,7 @@ class MdxFlowExpression {
     // EX — When {NoteA.render()}, look up object
     if (this.expression.type === 'Identifier') {
       const obj = this.root.getObject(this.expression.name);
-      return link(obj.path, obj.title, t(obj.title))
+      return obj.ref()
     } else if (this.expression.type === 'CallExpression') {
       return this._processCallExpression(this.expression)
     }

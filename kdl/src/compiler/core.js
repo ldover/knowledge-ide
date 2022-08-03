@@ -113,6 +113,16 @@ class Root {
     this.refs.set(name, source);
   }
 
+  ref(title = null) {
+    title = title || this.symbol.name;
+    return link(this.path, title, t(title));
+  }
+
+
+  get(statementName) {
+    return this.statements.find(s => s.name === statementName);
+  }
+
   render() {
     return {
       type: 'root',
