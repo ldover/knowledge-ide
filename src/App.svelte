@@ -24,57 +24,35 @@
     ]
   }
 
+
+  function process(files) {
+    console.log('parse files', files)
+
+    parseMDL(files);
+    compileMDL(files)
+  }
+
   function onRun() {
     banners.clear();
     const file = sEditor.getFile();
     file.value = sEditor.getValue();
     const files = sFileSystem.getFiles();
 
-    const parsers = {
-      mdl: () => {
-        console.log('parse files', files)
-        parseMDL(files);
-
-        try {
-          compileMDL(files)
-          // console.log('compiled', {compiledFiles})
-          // const file1 = compiledFiles.find(f => f.path === file.path);
-          note = file.data.compiled.render()
-        } catch (err) {
-          if (err instanceof CompilerError) {
-            console.log('compilation error', file, err)
-            banners.add('error', err.message, err.loc)
-            file.message(err.message, err.loc)
-          } else {
-            throw err;
-          }
-        }
-      },
-      kdl: () => {
-        // parseKDL
-        const filesKDL = files.filter(f => getFileType(f) === 'kdl');
-        filesKDL.forEach((file) => {
-          file.data.parsed = parseKDL(file.value)
-        })
-
-        const compiled = compileKDL(filesKDL)
-        console.log('compiledKDL', {compiled, file})
-        if (file.data.compiled) {
-            console.log(file.data.compiled.render())
-            note = file.data.compiled.render()
-        }
+    try {
+      // Abstract everything away in the process method
+      process(files)
+      note = file.data.compiled.render()
+    } catch(err) {
+      if (err instanceof CompilerError) {
+        console.log('compilation error', file, err)
+        banners.add('error', err.message, err.loc)
+        file.message(err.message, err.loc)
+      } else {
+        throw err;
       }
     }
 
-    const fileType = getFileType(file)
-    console.log({fileType})
-    if (!fileType) {
-        return window.alert('Specify one of the supported extensions: .mdl, .kdl.')
-    }
 
-    if (file.value) {
-      parsers[fileType]();
-    }
   }
 
   $: noteName = $sEditor.file?.name?.split('.')[0];
