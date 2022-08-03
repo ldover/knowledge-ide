@@ -220,8 +220,8 @@ describe('Compute absolute url from relative', () => {
     expect(res).toEqual('~/src/Y.kdl')
   })
 
-  it('finds deep forward folder', () => {
-    const res = computeAbsolutePath('~/X.kdl', './src/deep2/Y.kdl')
+  it('finds backwards and forward folder', () => {
+    const res = computeAbsolutePath('~/src/deep/X.kdl', '../deep2/Y.kdl')
     expect(res).toEqual('~/src/deep2/Y.kdl')
   })
 })
