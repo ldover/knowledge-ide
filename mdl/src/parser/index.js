@@ -49,7 +49,7 @@ export function parse(files) {
 
   files.forEach(file => {
     if (getFileType(file) === 'mdl') {
-      file.data.parsed = _parseFile(file);
+      file.data.parsed = _parseFile(file.value);
     } else if (getFileType(file) === 'kdl') {
       file.data.parsed = parseKDL(file.value)
     } else {

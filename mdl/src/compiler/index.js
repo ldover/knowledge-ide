@@ -80,23 +80,8 @@ function headingCompiler(node, root) {
   return new Heading(node.depth, node.children.map(n => Compilers[n.type](n, root)));
 }
 
-function mdxTextExpressionCompiler(node, root) {
-  // Run the reference against root to check whether it matches
-  const statement = node.data.estree.body[0]; // todo: assumes one
-  console.assert(statement.type === 'ExpressionStatement');
-  const refName = statement.expression.name;
-  if (!root.refs.has(refName)) throw new CompilerError(`Variable not initialized: ${refName}`, node.position, node)
-
-  return new MdxTextExpression(statement.expression, root);
-}
-
 function mdxFlowExpressionCompiler(node, root) {
-  // Run the reference against root to check whether it matches
-  const statement = node.data.estree.body[0]; // todo: assumes one
-  console.assert(statement.type === 'ExpressionStatement');
-  const refName = statement.expression.callee.object.name;
-  if (!root.refs.has(refName)) throw new CompilerError(`Variable not initialized: ${refName}`, node.position, node)
-  if (!Reflect.has(root, statement.expression.callee.property.name)) throw new Error(`Root does not have property: ${statement.expression.callee.property.name}`)
+  const statement = node.data.estree.body[0]; // todo: assumes one statement
 
   return new MdxFlowExpression(statement.expression, root)
 }
@@ -126,7 +111,7 @@ let Compilers = {
   code: (node, root) => new Code(node.value, node.lang),
   inlineCode: (node, root) => new InlineCode(node.value),
   mdxFlowExpression: mdxFlowExpressionCompiler,
-  mdxTextExpression: mdxTextExpressionCompiler,
+  mdxTextExpression: mdxFlowExpressionCompiler,
 }
 
 function programCompiler(program, root) {
@@ -193,8 +178,20 @@ class Root {
     this.refs.set(name, source);
   }
 
-  render() {
-    return root(this.children.map(c => c.render()))
+  render(options = {}) {
+    const renderHeading = 'heading' in options ? options.heading : true;
+    let renderChildren = [...this.children];
+
+    if (!renderHeading) {
+      renderChildren = renderChildren.filter(n => !(n instanceof Heading && n.depth === 1));
+    }
+
+    return root(renderChildren.map(c => c.render()))
+  }
+
+  ref(title = null) {
+    title = title || this.title;
+    return link(this.path, title, t(title));
   }
 
   getObject(ref) {
@@ -230,10 +227,40 @@ class MdxFlowExpression {
 
   render() {
     // EX — When {NoteA.render()}, look up object
-    const objName = this.expression.callee.object.name;
-    const propName = this.expression.callee.property.name;
+    if (this.expression.type === 'Identifier') {
+      const obj = this.root.getObject(this.expression.name);
+      return link(obj.path, obj.title, t(obj.title))
+    } else if (this.expression.type === 'CallExpression') {
+      return this._processCallExpression(this.expression)
+    }
+  }
+
+  _processCallExpression(expression) {
+    function _processArgs(argExpression) {
+      const processors = {
+        ObjectExpression: function (x) {
+          let obj = {};
+          x.properties.forEach(node => {
+            obj[node.key.name] = node.value.value;
+          })
+
+          return obj;
+        },
+        Literal: function (x) {
+          return x.value;
+        }
+      }
+
+      return argExpression.map(argItem => {
+        return processors[argItem.type](argItem)
+      })
+    }
+
+    const objName = expression.callee.object.name;
+    const propName = expression.callee.property.name;
     const obj = this.root.getObject(objName);
-    return obj[propName].call(obj)
+    const args = expression.arguments.length ? _processArgs(expression.arguments) : [];
+    return obj[propName].call(obj, ...args)
   }
 }
 
