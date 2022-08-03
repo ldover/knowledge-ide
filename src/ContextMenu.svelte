@@ -5,7 +5,7 @@
 
   const options = [
     {
-      name: 'New',
+      name: 'New File',
       onClick: () => {
         sContextMenu.onNew();
       }

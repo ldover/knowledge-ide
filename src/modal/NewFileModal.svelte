@@ -1,6 +1,29 @@
 <script>
   import {clickOutside} from "../util";
   import {sModal} from "./store";
+  import {afterUpdate} from "svelte";
+
+  $: visible = $sModal.visible;
+  let prevVisible;
+
+  let inputEl;
+
+  afterUpdate(() => {
+    if (visible === prevVisible) return;
+    if (visible) {
+      inputEl.focus()
+    }
+
+    prevVisible = visible;
+  })
+
+  function onKeyUp(ev) {
+    if (ev.key === 'Enter') {
+      sModal.onNew()
+    } else if (ev.key=== 'Escape') {
+      sModal.hide()
+    }
+  }
 
 </script>
 
@@ -9,22 +32,24 @@
 
     <div use:clickOutside
          on:outclick={() => sModal.hide()}
-         class="p-3 shadow-md bg-white rounded-md">
-      <div class="flex flex-col">
-        <div class="text-lg">New {$sModal.type}</div>
+         class="modal shadow-md bg-white rounded-md rounded-sm">
+      <div class="flex flex-col w-full">
+        <div class="w-full text-center bg-gray-300">
+          New {$sModal.type}
+        </div>
         <input type="text"
-               bind:this={$sModal.inputEl}
-               class="border border-gray-300 rounded-md p-2 w-full my-3"
+               bind:this={inputEl}
+               on:keyup={onKeyUp}
+               placeholder="Name"
+               class="border outline-none w-full px-2"
                bind:value={$sModal.value}
         />
-        <button class="bg-teal-700 text-white"
-                on:click={() => sModal.onNew()}>
-          Submit
-        </button>
       </div>
     </div>
 </div>
 
 <style lang="scss">
-
+  .modal {
+    width: 400px;
+  }
 </style>

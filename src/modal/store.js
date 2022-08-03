@@ -15,7 +15,6 @@ export const sModal = {
   set: _sModal.set,
   show: function (file, type) {
     _sModal.update(state => {
-      state.inputEl?.focus();
       return {...state, file: file, type: type, visible: true}
     })
 
