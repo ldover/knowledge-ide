@@ -59,13 +59,10 @@ function parseStatement(line) {
 function parse(kdl) {
   const lines = kdl.split('\n');
   const children = []
-  let symbol;
   lines.forEach(line => {
     if (!line) return;
 
     if (line.startsWith('symbol')) {
-      if (symbol) throw Error('There can be only one symbol per file, but two or more were found.');
-      symbol = true;
       const parts = line.split(' ').filter(part => part && part !== ' ');
       const [_, name, _2, longName] = parts;
       children.push(

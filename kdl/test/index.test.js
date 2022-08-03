@@ -34,15 +34,6 @@ describe('Parses symbol', () => {
 
     expect(parse(kdl0)).toMatchObject(out);
   });
-
-  it('Throws error when it seems two top-level symbols in a file', () => {
-    const kdl0 = `symbol A as Action
-symbol S as Symbol
-`
-    expect(() => {
-      parse(kdl0)
-    }).toThrow('There can be only one symbol per file, but two or more were found.');
-  });
 })
 
 describe('Parses statement', () => {

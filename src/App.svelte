@@ -52,11 +52,17 @@
       },
       kdl: () => {
         // parseKDL
-        const ast = parseKDL(file.value)
-        const compiled = compileKDL(ast)
-        console.log(compiled.render())
-        note = compiled.render();
-        // window.alert('Nothing to render here really')
+        const filesKDL = files.filter(f => getFileType(f) === 'kdl');
+        filesKDL.forEach((file) => {
+          file.data.parsed = parseKDL(file.value)
+        })
+
+        const compiled = compileKDL(filesKDL)
+        console.log('compiledKDL', {compiled, file})
+        if (file.data.compiled) {
+            console.log(file.data.compiled.render())
+            note = file.data.compiled.render()
+        }
       }
     }
 
