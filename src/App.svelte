@@ -12,17 +12,7 @@
   import {CompilerError} from "../mdl/src/compiler";
   import {getFileType} from "./util";
 
-  let note = {
-    type: "root",
-    children: [
-      {
-        type: 'paragraph',
-        children: [
-          {type: 'text', value: 'Empty file'}
-        ]
-      }
-    ]
-  }
+  let note = null
 
 
   function process(files) {
@@ -68,7 +58,11 @@
     </div>
     <Resizer/>
     <div class="h-full h-fullvw w-4/12 p-3">
-        <Node node={note} />
+      {#if note}
+        <Node node={note}/>
+      {:else}
+        (1) Add file (2) Press "Run"
+      {/if}
     </div>
     <div class="absolute top-0 right-0 m-3">
         <button class="px-16 text-lg bg-green-600 text-white" on:click={onRun}>Run</button>
