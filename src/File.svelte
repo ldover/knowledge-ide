@@ -10,15 +10,21 @@
 
   $: hidden = file.basename && file.basename.startsWith('.');
 
+  const getIcon = (extname) => {
+    if (['.png', 'jpg'].includes(extname)) return 'image'
+    return 'description'
+  }
 </script>
 
 {#if !hidden}
   <a
     on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
-    class:text-red-500={file === $sEditor.file}
+    class:text-red-300={file === $sEditor.file}
     class="flex items-center"
-    href="#/{file.path.replace('~/', '')}"><span
-    class="material-symbols-sharp text-gray-400">description</span>{file.basename}
+    href="#/{file.path.replace('~/', '')}">
+    <span class="material-symbols-sharp text-gray-200">
+      {getIcon(file.extname)}
+    </span>{file.basename}
   </a>
 {/if}
 

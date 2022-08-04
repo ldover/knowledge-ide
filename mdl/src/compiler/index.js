@@ -217,7 +217,7 @@ class LocalImage {
   ref(title = null) {
     return {
       type: 'reference',
-      url:`#/${this.path}`,
+      url:`#/${this.path.replace('~/', '')}`, // todo: I'm building in this assumption of files starting with "~/" which is only true atm
       title: this.path,
     }
   }

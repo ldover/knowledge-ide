@@ -63,7 +63,7 @@
          class="flex items-center cursor-pointer"
          on:click={toggle}>
         <span class="material-symbols-sharp">{expanded ? 'expand_more' : 'chevron_right'}</span>
-        <span class="material-symbols-sharp text-gray-600">folder</span>{file.name}
+        <span class="material-symbols-sharp text-teal-200">folder</span>{file.name}
     </div>
     {#if expanded}
         <ul class=ml-6>

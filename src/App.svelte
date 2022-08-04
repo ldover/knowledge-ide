@@ -73,16 +73,16 @@
 
 <svelte:window on:hashchange={onHashChange} />
 
-<div class="w-full flex h-full overflow-x-hidden">
-    <div class="w-3/12 bg-gray-100 overflow-x-auto">
+<div class="w-full flex h-full overflow-y-hidden overflow-x-hidden">
+    <div class="w-3/12 bg-gray-600 text-white overflow-x-auto">
         <FileTree/>
     </div>
     <Resizer/>
-    <div class="w-5/12 h-fullvw">
+    <div class="w-5/12 h-fullvw overflow-y-auto">
         <CodeMirror on:mount={onEditorMount}/>
     </div>
     <Resizer/>
-    <div class="h-full h-fullvw w-4/12 p-3">
+    <div class="h-fullvw w-4/12 p-3 overflow-y-auto">
       {#if note}
         <Node node={note}/>
       {:else}
@@ -100,6 +100,7 @@
 <style lang="scss">
   .h-fullvw {
     height: 100vh;
+    max-height: 100vh;
   }
 
 </style>
