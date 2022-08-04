@@ -338,7 +338,6 @@ export const sFileSystem = {
   /**
    *
    * @param {import('vfile').VFile} file
-   * @return {Promise<void>}
    */
   addFile: function (file) {
     _sFileSystem.update(files => {

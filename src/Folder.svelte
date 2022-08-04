@@ -1,16 +1,63 @@
 <script>
   import File from './File.svelte';
   import {sContextMenu} from "./context-menu/store";
+  import {onMount} from "svelte";
+  import {sFileSystem} from "./store";
+  import {VFile} from "vfile";
 
   export let expanded = false;
   export let file;
+
+  let folderEl;
+
+  // Converts the image into a data URI
+  const readImage = async (file) => {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.addEventListener('load', (event) => {
+        console.log('loaded', event, {result: event.target.result})
+        resolve(event.target.result)
+      });
+
+      reader.readAsDataURL(file);
+    })
+  }
+
+  onMount(() => {
+    // Event listener for dragging the image over the div
+    folderEl.addEventListener('dragover', (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      // Style the drag-and-drop as a "copy file" operation.
+      event.dataTransfer.dropEffect = 'copy';
+    });
+
+    // Event listener for dropping the image inside the div
+    folderEl.addEventListener('drop', async (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      let fileList = event.dataTransfer.files;
+
+      let fileName = fileList[0].name;
+      console.log('dropping', {fileName})
+
+      const img = await readImage(fileList[0]);
+
+      const vfile = new VFile({
+        path: [file.path, fileName].join('/'),
+        value: img
+      });
+      console.log('created vfile', {vfile})
+      sFileSystem.addFile(vfile)
+    })
+  })
 
   function toggle() {
     expanded = !expanded;
   }
 </script>
 
-<div>
+<div bind:this={folderEl}>
     <div on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
          class:expanded
          class="flex items-center cursor-pointer"
