@@ -217,7 +217,7 @@ class MdxFlowExpression {
     } else if (obj.ref) {
       return obj.ref()
     } else {
-      throw CompilerError('Could not process expression')
+      throw new CompilerError('Could not process expression')
     }
   }
 

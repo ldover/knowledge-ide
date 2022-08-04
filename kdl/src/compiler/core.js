@@ -30,13 +30,19 @@ class Symbol {
 }
 
 class Statement {
-  constructor(name, value = []) {
+  constructor(name, value = [], root) {
     this.name = name;
     this.value = value;
+    this.root = root;
   }
 
   render() {
     return p([t(`statement ${this.name} := `), ...this.value.map(c => c.render())])
+  }
+
+  ref(title = null) {
+    title = title || `${this.root.symbol.name}:${this.name}`
+    return this.root.ref(title)
   }
 }
 
@@ -85,7 +91,7 @@ class Root {
       if (c.type === 'import') {
         this._processImport(c)
       } else if (c.type === 'symbol') {
-        if (this.symbol) throw CompilerError('Symbol already declared: cannot yet two symbols per file');
+        if (this.symbol) throw new CompilerError('Symbol already declared: cannot yet two symbols per file');
         this.symbol = new Symbol(c.name, c.longName)
         this.refs.set(c.name, this.path)
         this.children.push(this.symbol)
@@ -95,9 +101,9 @@ class Root {
         this.refs.set(c.name, this.path)
         this.statements.push(statement);
       } else if (c.type === 'proof') {
-        throw CompilerError('proof compiler not yet implemented')
+        throw new CompilerError('proof compiler not yet implemented')
       } else {
-        throw CompilerError('Unknown node: ' + c.type)
+        throw new CompilerError('Unknown node: ' + c.type)
       }
     })
   }
@@ -194,7 +200,7 @@ function compile(files) {
 function statementCompiler(ast, root) {
   console.assert(ast.type === 'statement')
   const value = ast.value.map(node => compilers[node.type](node, root));
-  return new Statement(ast.name, value)
+  return new Statement(ast.name, value, root)
 }
 
 function textCompiler(ast) {
