@@ -141,13 +141,34 @@ Note A content`
 
     parse([fileA, fileB])
     const out = compile([fileA, fileB])
-    console.log()
 
     const rootB = fileB.data.compiled;
     const rendered = rootB.render();
-    expect(rendered.children[1].type).toEqual('link');
-  })
+    expect(rendered.children[1].type).toEqual('reference');
+  });
 
+  it ('It renders a KDL statement', () => {
+    const kdlA = `symbol A as Action
+statement 1 := state {A}
+`
+    const noteB = `<script>
+    import A from './Action.kdl'
+</script>
+# Note B
+{A.get('1').render()}
+`
+
+    const fileA = createVFile('./Action.kdl', kdlA);
+    const fileB = createVFile('./NoteB.mdl', noteB);
+
+    parse([fileA, fileB])
+    const out = compile([fileA, fileB])
+
+    const rootB = fileB.data.compiled;
+    const rendered = rootB.render();
+    expect(rendered.children[1].type).toEqual('paragraph');
+    expect(rendered.children[1].children[0].value).toEqual('statement 1 := ');
+  })
 });
 
 

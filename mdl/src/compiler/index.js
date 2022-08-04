@@ -17,6 +17,7 @@ import {VFile} from "vfile";
 
 import {Root as KDLRoot} from '../../../kdl/src/compiler/core';
 import {computeAbsolutePath} from "../../../kdl/src/util.js";
+import {toJs} from "estree-util-to-js";
 
 /**
  * Accepts MDL ASTs outputs objects
@@ -82,9 +83,7 @@ function headingCompiler(node, root) {
 }
 
 function mdxFlowExpressionCompiler(node, root) {
-  const statement = node.data.estree.body[0]; // todo: assumes one statement
-
-  return new MdxFlowExpression(statement.expression, root)
+  return new MdxFlowExpression(node.data.estree, root)
 }
 
 function textCompiler(node, root) {
@@ -205,47 +204,42 @@ class Root {
 
 
 class MdxFlowExpression {
-  constructor(expression, root) {
-    this.expression = expression;
+  constructor(estree, root) {
+    this.estree = estree;
     this.root = root;
   }
 
   render() {
-    // EX — When {NoteA.render()}, look up object
-    if (this.expression.type === 'Identifier') {
-      const obj = this.root.getObject(this.expression.name);
+
+    const obj = this._processEstree(this.estree)
+    if ('type' in obj) { // if mdast node
+      return obj;
+    } else if (obj.ref) {
       return obj.ref()
-    } else if (this.expression.type === 'CallExpression') {
-      return this._processCallExpression(this.expression)
+    } else {
+      throw CompilerError('Could not process expression')
     }
   }
 
-  _processCallExpression(expression) {
-    function _processArgs(argExpression) {
-      const processors = {
-        ObjectExpression: function (x) {
-          let obj = {};
-          x.properties.forEach(node => {
-            obj[node.key.name] = node.value.value;
-          })
-
-          return obj;
-        },
-        Literal: function (x) {
-          return x.value;
-        }
-      }
-
-      return argExpression.map(argItem => {
-        return processors[argItem.type](argItem)
-      })
+  _processEstree(expression) {
+    // Build scope of imported objects
+    let scope = {};
+    for (let [name, path] of this.root.refs.entries()) {
+      scope[name] = this.root.scope.get(path);
     }
 
-    const objName = expression.callee.object.name;
-    const propName = expression.callee.property.name;
-    const obj = this.root.getObject(objName);
-    const args = expression.arguments.length ? _processArgs(expression.arguments) : [];
-    return obj[propName].call(obj, ...args)
+    const handlers = {
+      Identifier: (node, state) => {
+        if (node.name in scope) {
+          state.write(`scope["${node.name}"]`)
+        } else {
+          state.write(node.name)
+        }
+      }
+    }
+
+    const jsString = toJs(this.estree, {handlers});
+    return eval(jsString.value);
   }
 }
 
