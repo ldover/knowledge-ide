@@ -7,11 +7,11 @@ describe('KDL renders to MDAST properly', () => {
 
 statement 1 := {A} in the limit converges towards {Q}
 statement 2 := {Q} mediates {A}
- 
-proof 1 {
+
+proof §1 {
   statement 1.1 := proof statement 1
   statement 1.2 := proof statement 2
-} 
+}
 `
 
     let actual = parse(kdl0);

@@ -149,6 +149,127 @@ describe('Parses statement', () => {
   })
 })
 
+describe('Parses proofs statements', () => {
+  it('Parses a simple proof statement', () => {
+    const kdl = `proof §1 {
+\tstatement 1.1 := state something
+}`
+    const out = {
+      type: "root",
+      children: [
+        {
+          type: 'proof',
+          statementReference: '1',
+          statements: [
+            {
+              type: "statement",
+              name: '1.1',
+              value: [
+                {
+                  type: 'text',
+                  value: 'state something',
+                },
+              ]
+            }
+          ]
+        }
+      ]
+    }
+
+    expect(parse(kdl)).toMatchObject(out);
+  });
+
+  it('Parses a multi-statement proof statement', () => {
+    const kdl = `proof §1 {
+\tstatement 1.1 := state something
+\tstatement 1.2 := state something else
+}`
+    const out = {
+      type: "root",
+      children: [
+        {
+          type: 'proof',
+          statementReference: '1',
+          statements: [
+            {
+              type: "statement",
+              name: '1.1',
+              value: [
+                {
+                  type: 'text',
+                  value: 'state something',
+                },
+              ]
+            },
+            {
+              type: "statement",
+              name: '1.2',
+              value: [
+                {
+                  type: 'text',
+                  value: 'state something else',
+                },
+              ]
+            }
+
+          ]
+        }
+      ]
+    }
+
+    expect(parse(kdl)).toMatchObject(out);
+  });
+
+  it('Parses multiple proof statements', () => {
+    const kdl = `proof §1 {
+\tstatement 1.1 := state something
+}
+
+proof §2 {
+\tstatement 2.1 := state something
+}
+`
+    const out = {
+      type: "root",
+      children: [
+        {
+          type: 'proof',
+          statementReference: '1',
+          statements: [
+            {
+              type: "statement",
+              name: '1.1',
+              value: [
+                {
+                  type: 'text',
+                  value: 'state something',
+                },
+              ]
+            },
+          ]
+        },
+        {
+          type: 'proof',
+          statementReference: '2',
+          statements: [
+            {
+              type: "statement",
+              name: '2.1',
+              value: [
+                {
+                  type: 'text',
+                  value: 'state something',
+                },
+              ]
+            },
+          ]
+        }
+      ]
+    }
+
+    expect(parse(kdl)).toMatchObject(out);
+  })
+})
 
 describe("Imports work", () => {
   it('Parses an import statement', () => {

@@ -58,11 +58,44 @@ function parseStatement(line) {
 
 function parse(kdl) {
   const lines = kdl.split('\n');
-  const children = []
+  const children = [];
+  let parsingProof = false;
+  let proof = {
+    statementReference: null,
+    statements: [],
+  }
+
   lines.forEach(line => {
     if (!line) return;
 
-    if (line.startsWith('symbol')) {
+    if (line.startsWith('proof')) {
+      parsingProof = true
+      let match = line.match(/proof\s+§(.+?)\s+\{/);
+      if (!match || !match[1]) {
+        throw new Error("Parser failed to parse proof: " + line)
+      }
+
+      proof.statementReference = match[1];
+      return;
+    } else if (parsingProof && line.startsWith('}')) {
+      parsingProof = false;
+      children.push({
+        type: 'proof',
+        ...proof
+      })
+
+      proof.statementReference = null;
+      proof.statements = [];
+      return;
+    }
+
+    if (parsingProof) {
+      line = line.trim();
+      if (line.startsWith('statement')) {
+        const statement = parseStatement(line);
+        proof.statements.push(statement)
+      }
+    } else if (line.startsWith('symbol')) {
       const parts = line.split(' ').filter(part => part && part !== ' ');
       const [_, name, _2, longName] = parts;
       children.push(
