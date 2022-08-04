@@ -8,7 +8,6 @@ import {Parser} from "acorn";
 import {map} from 'unist-util-map'
 
 import {parse as parseKDL} from '../../../kdl/src/index.js'
-import {getFileType} from "../compiler/index.js";
 
 
 /**
@@ -48,10 +47,12 @@ export function parse(files) {
 
 
   files.forEach(file => {
-    if (getFileType(file) === 'mdl') {
+    if (file.extname === '.mdl') {
       file.data.parsed = _parseFile(file.value);
-    } else if (getFileType(file) === 'kdl') {
+    } else if (file.extname === '.kdl') {
       file.data.parsed = parseKDL(file.value)
+    } else if (['.png', '.jpg'].includes(file.extname)) {
+      // Do nothing (maybe in the future use AI to parse image into a specific AST tree objects and relations)
     } else {
       throw new Error('Unsupported file type: ' + file.path);
     }

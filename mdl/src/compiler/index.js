@@ -28,12 +28,14 @@ function compile(files) {
 
   // Build scope of all files
   files.forEach(file => {
-    const type = getFileType(file);
+    const type = file.extname
     let rootObj;
-    if (type === 'mdl') {
+    if (type === '.mdl') {
       rootObj = new Root(file.path, file.data.parsed, scope)
-    } else if (type === 'kdl') {
+    } else if (type === '.kdl') {
       rootObj =  new KDLRoot(file.path, file.data.parsed, scope)
+    } else if (['.png', '.jpg'].includes(file.extname)) {
+      rootObj = new LocalImage(file.path, file.value)
     } else {
       throw new CompilerError('Unsupported file type: ' + file.path);
     }
@@ -49,15 +51,6 @@ function compile(files) {
   })
 
   return files;
-}
-
-
-export function getFileType(file) {
-  // try to infer type
-  if (file.path.endsWith('.mdl')) return 'mdl';
-  if (file.path.endsWith('.kdl')) return 'kdl';
-
-  return null;
 }
 
 
@@ -202,6 +195,33 @@ class Root {
   }
 }
 
+class LocalImage {
+  constructor(path, url) {
+    this.path = path;
+    this.url = url;
+  }
+
+  init() {
+
+  }
+
+  render(options = {}) {
+    return {
+      type: 'notebase-image',
+      path: this.path,
+      url: this.url,
+      props: options
+    }
+  }
+
+  ref(title = null) {
+    return {
+      type: 'reference',
+      url:`#/${this.path}`,
+      title: this.path,
+    }
+  }
+}
 
 class MdxFlowExpression {
   constructor(estree, root) {
@@ -402,5 +422,6 @@ class Code {
 
 export {
   compile,
-  Root
+  Root,
+  LocalImage
 }

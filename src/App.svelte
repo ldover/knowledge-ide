@@ -10,7 +10,6 @@
   import {sEditor, sFileSystem} from "./store";
   import {banners} from "./banner/store";
   import {CompilerError} from "../mdl/src/compiler";
-  import {getFileType} from "./util";
   import {onMount} from "svelte";
 
   let note = null;
@@ -30,7 +29,7 @@
     const file = sEditor.getFile();
     file.value = sEditor.getValue();
     const files = sFileSystem.getFiles()
-      .filter(f => !f.basename?.startsWith('.') && ['.kdl', '.mdl'].includes(f.extname));
+      .filter(f => !f.basename?.startsWith('.') && ['.kdl', '.mdl', '.png', '.jpg'].includes(f.extname));
 
     try {
       // Abstract everything away in the process method

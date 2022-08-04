@@ -8,13 +8,6 @@ import {
 } from "mdast-builder";
 import {computeAbsolutePath} from "../util.js";
 
-function getFileType(file) {
-  // try to infer type
-  if (file.path.endsWith('.mdl')) return 'mdl';
-  if (file.path.endsWith('.kdl')) return 'kdl';
-
-  return null;
-}
 
 class Symbol {
   constructor(name, longName) {
@@ -176,9 +169,9 @@ function compile(files) {
 
   // Build scope of all files
   files.forEach(file => {
-    const type = getFileType(file);
+    const type = file.extname;
     let rootObj;
-    if (type !== 'kdl') {
+    if (type !== '.kdl') {
       throw new Error('Unsupported file type: ' + file.path);
     }
 

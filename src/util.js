@@ -18,10 +18,3 @@ export function clickOutside(node) {
   }
 }
 
-export function getFileType(file) {
-  // try to infer type
-  if (file.path.endsWith('.mdl')) return 'mdl';
-  if (file.path.endsWith('.kdl')) return 'kdl';
-
-  return null;
-}

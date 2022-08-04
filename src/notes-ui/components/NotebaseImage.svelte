@@ -2,7 +2,7 @@
   export let node;
 </script>
 
-<img src="{node.url}" alt="{node.title}" {...node.props}/>
+<img src="{node.url}" alt="{node.path}" {...node.props}/>
 
 <style>
     img {
