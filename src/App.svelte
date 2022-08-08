@@ -82,7 +82,7 @@
         <CodeMirror on:mount={onEditorMount}/>
     </div>
     <Resizer/>
-    <div class="h-fullvw w-4/12 p-3 overflow-y-auto">
+    <div class="h-fullvw w-4/12 px-8 py-3 overflow-y-auto">
       {#if note}
         <Node node={note}/>
       {:else}

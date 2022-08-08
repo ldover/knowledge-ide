@@ -20,6 +20,7 @@
 
     ol {
         list-style: decimal;
+        @apply pl-8;
     }
 
     ol, ul {

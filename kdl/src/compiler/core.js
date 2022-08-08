@@ -39,6 +39,21 @@ class Statement {
   }
 }
 
+class Proof {
+  constructor(statement, statements = [], root) {
+    this.statement = statement;
+    this.statements = statements;
+    this.root = root;
+  }
+
+  render() {
+    return l('unordered', [
+      li(t(`proof §${this.statement.name}`)),
+      l('ordered', this.statements.map(statement => li(statement.render())))
+    ])
+  }
+}
+
 class Reference {
   constructor(symbol, statement = null, root) {
     this.symbol = symbol;
@@ -91,10 +106,11 @@ class Root {
       } else if (c.type === 'statement') {
         const statement = statementCompiler(c, this);
         this.children.push(statement);
-        this.refs.set(c.name, this.path)
         this.statements.push(statement);
       } else if (c.type === 'proof') {
-        throw new CompilerError('proof compiler not yet implemented')
+        const proof = proofCompiler(c, this);
+        this.proofs.push(proof);
+        this.children.push(proof);
       } else {
         throw new CompilerError('Unknown node: ' + c.type)
       }
@@ -193,7 +209,15 @@ function compile(files) {
 function statementCompiler(ast, root) {
   console.assert(ast.type === 'statement')
   const value = ast.value.map(node => compilers[node.type](node, root));
+  root.addRef(ast.name, root.path)
   return new Statement(ast.name, value, root)
+}
+
+function proofCompiler(ast, root) {
+  console.assert(ast.type === 'proof')
+  const statements = ast.statements.map(node => statementCompiler(node, root));
+  const statement = root.get(ast.statementReference);
+  return new Proof(statement, statements, root)
 }
 
 function textCompiler(ast) {
@@ -222,5 +246,6 @@ export {
   Reference,
   Root,
   Text,
+  Proof,
   compile
 }

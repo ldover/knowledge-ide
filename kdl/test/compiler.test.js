@@ -5,6 +5,7 @@ import {
   Symbol,
   Text,
   Root,
+  Proof,
 } from '../src/compiler/core'
 import {VFile} from "vfile";
 
@@ -153,6 +154,58 @@ describe('Compiles a statement', () => {
     expect(out.value[1]).toBeInstanceOf(Reference);
     expect(out.value[1].symbol).toEqual('A');
   });
+})
+
+describe('Compiles a proof', () => {
+  const ast = {
+    type: "root",
+    children: [
+      {
+        type: "statement",
+        name: '1',
+        value: [
+          {
+            type: 'text',
+            value: 'state something',
+          },
+        ]
+      },
+      {
+        type: 'proof',
+        statementReference: '1',
+        statements: [
+          {
+            type: "statement",
+            name: '1.1',
+            value: [
+              {
+                type: 'text',
+                value: 'state something',
+              },
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  it('Compiles a simple proof', () => {
+    const out = compileVFile(ast)
+    const proof = out.children[1];
+
+    expect(proof).toBeInstanceOf(Proof)
+    expect(proof.statement).toBe(out.children[0])
+    expect(proof.statements.length).toEqual(1);
+    expect(proof.statements[0]).toBeInstanceOf(Statement);
+  })
+
+  it('Renders a simple proof', () => {
+    const out = compileVFile(ast)
+    const proof = out.children[1];
+    const mdast = proof.render();
+
+    expect(mdast).toBeTruthy()
+  })
 })
 
 describe('Compiles multiple KDL files', () => {
