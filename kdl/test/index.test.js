@@ -39,7 +39,7 @@ describe('Parses symbol', () => {
 
 describe('Parses statement', () => {
   it('Parses a plain statement', () => {
-    const kdl0 = `statement 1 := Plain statement
+    const kdl0 = `statement 1 := (Plain statement)
     `
     const out = {
       type: "root",
@@ -61,7 +61,7 @@ describe('Parses statement', () => {
   });
 
   it('Parses statement with reference', () => {
-    const kdl0 = `statement 1 := Plain statement {A}`
+    const kdl0 = `statement 1 := (Plain statement {A})`
     const out = {
       type: "root",
       children: [
@@ -86,7 +86,7 @@ describe('Parses statement', () => {
   });
 
   it('Parses statement with two references', () => {
-    const kdl0 = `statement 2 := {B} relates to {A}`
+    const kdl0 = `statement 2 := ({B} relates to {A})`
     const out = {
       type: "root",
       children: [
@@ -115,7 +115,7 @@ describe('Parses statement', () => {
   });
 
   it('Parses statement with a statement reference', () => {
-    const kdl0 = `statement 2 := If {B:2} then {A}`
+    const kdl0 = `statement 2 := (If {B:2} then {A})`
     const out = {
       type: "root",
       children: [
@@ -152,7 +152,7 @@ describe('Parses statement', () => {
 describe('Parses proofs statements', () => {
   it('Parses a simple proof statement', () => {
     const kdl = `proof §1 {
-\tstatement 1.1 := state something
+\tstatement 1.1 := (state something)
 }`
     const out = {
       type: "root",
@@ -181,8 +181,8 @@ describe('Parses proofs statements', () => {
 
   it('Parses a multi-statement proof statement', () => {
     const kdl = `proof §1 {
-\tstatement 1.1 := state something
-\tstatement 1.2 := state something else
+\tstatement 1.1 := (state something)
+\tstatement 1.2 := (state something else)
 }`
     const out = {
       type: "root",
@@ -222,11 +222,11 @@ describe('Parses proofs statements', () => {
 
   it('Parses multiple proof statements', () => {
     const kdl = `proof §1 {
-\tstatement 1.1 := state something
+\tstatement 1.1 := (state something)
 }
 
 proof §2 {
-\tstatement 2.1 := state something
+\tstatement 2.1 := (state something)
 }
 `
     const out = {
@@ -311,111 +311,38 @@ use A of './Action.kdl'
     expect(parse(kdl)).toMatchObject(out);
   })
 })
-
-describe('Compute absolute url from relative', () => {
-  it('works with a simple case', () => {
-    const res = computeAbsolutePath('~/X.kdl', './Y.kdl')
-    expect(res).toEqual('~/Y.kdl')
-
-  })
-
-  it('fails when beyond bound', () => {
-    const res = computeAbsolutePath('~/X.kdl', '../Y.kdl')
-    expect(res).toBeNull()
-  })
-
-  it('works with a more complex cases', () => {
-    const res = computeAbsolutePath('~/src/X.kdl', '../Y.kdl')
-    const res2 = computeAbsolutePath('~/src/deep/deep2/X.kdl', '../../Y.kdl')
-    expect(res).toEqual('~/Y.kdl')
-    expect(res2).toEqual('~/src/Y.kdl')
-  })
-
-  it('works with a more complex case', () => {
-    const res = computeAbsolutePath('~/src/X.kdl', '../Y.kdl')
-    expect(res).toEqual('~/Y.kdl')
-  })
-
-  it('finds forward folder', () => {
-    const res = computeAbsolutePath('~/X.kdl', './src/Y.kdl')
-    expect(res).toEqual('~/src/Y.kdl')
-  })
-
-  it('finds backwards and forward folder', () => {
-    const res = computeAbsolutePath('~/src/deep/X.kdl', '../deep2/Y.kdl')
-    expect(res).toEqual('~/src/deep2/Y.kdl')
-  })
-})
-
-
-// describe('Parser works for the entire KDL script', () => {
-//   const out = {
-//     type: "root",
-//     children: [
-//       {
-//         type: 'symbol',
-//         longName: 'Action',
-//         name: 'A'
-//       },
-//       {
-//         type: 'symbol',
-//         longName: 'Quality',
-//         name: 'Q'
-//       },
-//       {
-//         type: "statement",
-//         name: '1',
-//         value: [
-//           {
-//             type: 'reference',
-//             value: 'A',
-//           },
-//           {
-//             type: 'text',
-//             value: ' in the limit converges towards ',
-//           },
-//           {
-//             type: 'reference',
-//             value: 'Q',
-//           }
-//         ]
-//       },
-//       {
-//         type: "statement",
-//         name: '2',
-//         value: [
-//           {
-//             type: 'reference',
-//             value: 'Q',
-//           },
-//           {
-//             type: 'text',
-//             value: ' mediates ',
-//           },
-//           {
-//             type: 'reference',
-//             value: 'A',
-//           }
-//         ]
-//       }
-//     ]
-//   }
 //
+// describe('Compute absolute url from relative', () => {
+//   it('works with a simple case', () => {
+//     const res = computeAbsolutePath('~/X.kdl', './Y.kdl')
+//     expect(res).toEqual('~/Y.kdl')
 //
-//   it('Parses two defs and and 2 top-level statements', () => {
-//     const kdl0 = `symbol A as Action
-// symbol Q as Quality
+//   })
 //
-// statement 1 := {A} in the limit converges towards {Q}
-// statement 2 := {Q} mediates {A}
+//   it('fails when beyond bound', () => {
+//     const res = computeAbsolutePath('~/X.kdl', '../Y.kdl')
+//     expect(res).toBeNull()
+//   })
 //
-// proof 1 {
-//   statement 1.1 := proof statement 1
-//   statement 1.2 := proof statement 2
-// }
-// `
+//   it('works with a more complex cases', () => {
+//     const res = computeAbsolutePath('~/src/X.kdl', '../Y.kdl')
+//     const res2 = computeAbsolutePath('~/src/deep/deep2/X.kdl', '../../Y.kdl')
+//     expect(res).toEqual('~/Y.kdl')
+//     expect(res2).toEqual('~/src/Y.kdl')
+//   })
 //
-//     let actual = parse(kdl0);
-//     expect(actual).toMatchObject(out);
-//   });
+//   it('works with a more complex case', () => {
+//     const res = computeAbsolutePath('~/src/X.kdl', '../Y.kdl')
+//     expect(res).toEqual('~/Y.kdl')
+//   })
+//
+//   it('finds forward folder', () => {
+//     const res = computeAbsolutePath('~/X.kdl', './src/Y.kdl')
+//     expect(res).toEqual('~/src/Y.kdl')
+//   })
+//
+//   it('finds backwards and forward folder', () => {
+//     const res = computeAbsolutePath('~/src/deep/X.kdl', '../deep2/Y.kdl')
+//     expect(res).toEqual('~/src/deep2/Y.kdl')
+//   })
 // })
