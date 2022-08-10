@@ -1,6 +1,7 @@
 import {derived, get, writable} from "svelte/store";
 import {basicSetup, EditorView} from "codemirror";
 import {markdown, markdownLanguage} from "@codemirror/lang-markdown";
+import {knowledgeLanguage, knowledge} from 'codemirror-lang-knowledge';
 import {languages} from "@codemirror/language-data";
 import {indentWithTab} from "@codemirror/commands"
 import {keymap} from "@codemirror/view"
@@ -138,9 +139,9 @@ export const sEditor = {
 
     // Set editor content
     let value = file.value || '';
-    this._setValue(value);
+    this._setValue(value, file);
   },
-  _setValue: function (value) {
+  _setValue: function (value, file) {
     const {el, view} = get(_sEditor);
     view?.destroy();
 
@@ -179,7 +180,6 @@ export const sEditor = {
         }
       }, {dark: false})
 
-      console.log({myTheme})
       // The Markdown parser will dynamically load parsers
       // for code blocks, using @codemirror/language-data to
       // look up the appropriate dynamic import.
@@ -188,17 +188,30 @@ export const sEditor = {
 
       let importAutocomplete = getImportAutocomplete(files)
 
-      let editorView = new EditorView({
-        doc: value,
-        extensions: [
-          basicSetup,
-          myTheme,
-          keymap.of([indentWithTab]),
+      let extensions = [
+        basicSetup,
+        myTheme,
+        keymap.of([indentWithTab]),
+      ];
+
+      if (file.extname === '.mdl') {
+        extensions = [
+          ...extensions,
           importAutocomplete.javascript, // Autocomplete for JS (within script tag)
           importAutocomplete.markdown, // Autocomplete for markdown (works within MD-like body) // todo: does not work within curly brackets
-          EditorView.lineWrapping,
           markdown({codeLanguages: languages, extensions: [Strikethrough, getCodeBraceExtension()]}),
-        ],
+          EditorView.lineWrapping,
+        ]
+      } else if (file.extname === '.kdl') {
+        extensions = [
+          ...extensions,
+          knowledge(),
+        ]
+      }
+
+      let editorView = new EditorView({
+        doc: value,
+        extensions,
         parent: el
       });
 
