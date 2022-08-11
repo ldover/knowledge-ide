@@ -15,8 +15,7 @@ export function parse(kdl) {
     })
   } while (cursor.next())
 
-// console.log(nodes)
-  const nodeTypes = new Set(['Program', 'ProofDeclaration', 'StatementDeclaration', 'StatementName', 'SymbolDeclaration', 'SymbolName', 'SymbolLongName', 'Identifier', 'ProofBody', 'StatementValue', 'Text', 'Reference', 'CompoundReference'])
+  const nodeTypes = new Set(['Program', 'ProofDeclaration', 'StatementDeclaration', 'StatementName', 'SymbolDeclaration', 'SymbolName', 'SymbolLongName', 'Identifier', 'ProofBody', 'StatementValue', 'Text', 'Reference', 'CompoundReference', 'ImportDeclaration', 'String'])
   const filteredNodes = nodes.filter(n => nodeTypes.has(n.name));
 
   function createNode(node, nodes) {
@@ -105,7 +104,7 @@ function toKdlAST(ast) {
       return {
         type: 'import',
         value: node.children.find(n => n.name === 'Identifier').value,
-        url: node.children.find(n => n.name === 'String').value,
+        url: node.children.find(n => n.name === 'String').value.replace(/["']/g, ''),
       }
     },
   }
