@@ -11,7 +11,7 @@ import {VFile} from 'vfile'
 import {syntaxTree} from "@codemirror/language"
 import {javascriptLanguage} from "@codemirror/lang-javascript"
 import {tags as t} from "@lezer/highlight";
-
+import {computeRelativePath} from "../kdl/src/util";
 /**
  * This is nowhere near bulletproof code
  * @return
@@ -52,21 +52,28 @@ function getCodeBraceExtension() {
 
 }
 
-function getImportAutocomplete(files) {
+/**
+ * Computes autocomplete data, like relative imports from the source file specified.
+ * @param {VFile} sourceFile
+ * @param {VFile[]} files
+ * @return {{markdown: Extension, javascript: Extension}}
+ */
+function getImportAutocomplete(sourceFile, files) {
   function completeFromFiles(context) {
     let tree = syntaxTree(context.state);
     let nodeBefore = tree.resolveInner(context.pos, -1)
     let from = /\./.test(nodeBefore.name) ? nodeBefore.to : nodeBefore.from
-    const isImport = nodeBefore.name === 'VariableDefinition' && nodeBefore.parent.name === "ImportGroup";
+    const isImport = nodeBefore.name === 'VariableDefinition' && nodeBefore.parent.name === "ImportDeclaration";
+    console.log({isImport, nodeBeforeName: nodeBefore.name, nodeBeforeParentName: nodeBefore.parent.name})
 
     const options = files.map(file => {
-      let label = file.basename.split('.')[0];
+      let label = file.stem;
       const opt = {
         label: label,
         type: 'variable'
       }
       if (isImport) {
-        opt.apply = `${label}} from './unimplemented (todo)'`
+        opt.apply = `${label} from '${computeRelativePath(sourceFile.path, file.path)}'`
       } else {
         opt.apply = `{${label}}`
       }
@@ -165,7 +172,6 @@ export const sEditor = {
         },
         ".ͼj": {
           color: '#CD5654',
-          fontWeight: '400',
         },
         ".ͼ7": {
           fontSize: '20px',
@@ -186,7 +192,7 @@ export const sEditor = {
 
       let files = get(sFileSystem)
 
-      let importAutocomplete = getImportAutocomplete(files)
+      let importAutocomplete = getImportAutocomplete(file, files)
 
       let extensions = [
         basicSetup,

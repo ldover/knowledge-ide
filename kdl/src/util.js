@@ -35,3 +35,29 @@ export function computeAbsolutePath(absoluteUrl, relativeUrl) {
     .concat(addParts)
     .join('/')
 }
+
+export function computeRelativePath(from, to) {
+  const url0Parts = from.split('/');
+  const url1Parts = to.split('/');
+
+  let j;
+
+  // Don't check the file at the end, hence url1Parts.length - 1 (solves edge case when from === to)
+  for (let i = 0; i < url1Parts.length - 1; i++) {
+    if (url0Parts[i] === url1Parts[i]) {
+      j = i;
+    } else {
+      break;
+    }
+  }
+
+  if (j === undefined) throw new Error('Invalid paths share no common folder');
+
+  const url0PartsTrimmed = url0Parts.slice(j + 1);
+  const url1PartsTrimmed = url1Parts.slice(j + 1);
+
+  let backwardsPath = url0PartsTrimmed.length - 1 > 0 ? [...Array(url0PartsTrimmed.length - 1 )].map(() => '..').join('/') : '.'
+  let forwardsPath = url1PartsTrimmed.join('/');
+
+  return [backwardsPath, forwardsPath].join('/');
+}
