@@ -55,7 +55,7 @@ function toKdlAST(ast) {
     Program: function (node) {
       return {
         type: 'root',
-        children: node.children.map(n => this[n.name](n))
+        children: node.children ? node.children.map(n => this[n.name](n)) : [],
       };
     },
     SymbolDeclaration: function (node) {
