@@ -1,4 +1,4 @@
-import {knowledgeLanguage} from "codemirror-lang-knowledge";
+import {knowledgeLanguage} from "@knowledge/codemirror-lang-knowledge";
 
 
 export function parse(kdl) {

@@ -1,5 +1,5 @@
-import {compile} from  '../src/compiler/core';
-import {parse} from  "../src";
+import {compile} from '../src/compiler/core.js';
+import {parse} from "../src/index.js";
 
 describe('KDL renders to MDAST properly', () => {
   it('Testing with a simple file', () => {

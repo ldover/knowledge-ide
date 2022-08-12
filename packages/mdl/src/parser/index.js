@@ -7,7 +7,7 @@ import * as acorn  from "acorn";
 import {Parser} from "acorn";
 import {map} from 'unist-util-map'
 
-import {parse as parseKDL} from '../../../kdl/src/index.js'
+import {parse as parseKDL} from '@knowledge/kdl'
 
 
 /**

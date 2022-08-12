@@ -1,0 +1,25 @@
+{
+  "name": "@knowledge/kdl",
+  "version": "0.0.1",
+  "description": "",
+  "exports": "./src/index.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules ../node_modules/.bin/jest"
+  },
+  "author": "Luka Dover",
+  "license": "ISC",
+  "engines": {
+    "node": ">=14.16"
+  },
+  "devDependencies": {
+    "jest": "^28.1.3"
+  },
+  "dependencies": {
+    "mdast-builder": "^1.1.1",
+    "@knowledge/codemirror-lang-knowledge": "0.0.1"
+  }
+}

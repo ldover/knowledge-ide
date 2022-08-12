@@ -6,7 +6,7 @@ import {
   list as l,
   link
 } from "mdast-builder";
-import {computeAbsolutePath} from "../util.js";
+import {computeAbsolutePath} from "@knowledge/common";
 
 
 class Symbol {

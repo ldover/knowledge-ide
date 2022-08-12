@@ -15,8 +15,8 @@ import {
 } from "mdast-builder";
 import {VFile} from "vfile";
 
-import {Root as KDLRoot} from '../../../kdl/src/compiler/core';
-import {computeAbsolutePath} from "../../../kdl/src/util.js";
+import {Root as KDLRoot} from '@knowledge/kdl';
+import {computeAbsolutePath} from "@knowledge/common";
 import {toJs} from "estree-util-to-js";
 
 /**

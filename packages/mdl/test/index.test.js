@@ -1,4 +1,4 @@
-import {parse} from '../src';
+import {parse} from '../src/index.js';
 import {compile, Root} from "../src/compiler/index.js";
 import {VFile} from "vfile";
 

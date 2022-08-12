@@ -5,11 +5,10 @@
   import NewFileModal from "./modal/NewFileModal.svelte";
   import Resizer from "./Resizer.svelte";
   import {Node} from "./notes-ui"
-  import {parse as parseMDL, compile as compileMDL} from "../mdl/src/index"
-  import {parse as parseKDL, compile as compileKDL} from "../kdl/src/index"
+  import {parse as parseMDL, compile as compileMDL} from "@knowledge/mdl"
   import {sEditor, sFileSystem} from "./store";
   import {banners} from "./banner/store";
-  import {CompilerError} from "../mdl/src/compiler";
+  import {CompilerError} from "@knowledge/mdl";
   import {onMount} from "svelte";
 
   let note = null;
@@ -25,6 +24,8 @@
   }
 
   function onRun() {
+    // return;
+
     banners.clear();
     const file = sEditor.getFile();
     file.value = sEditor.getValue();

@@ -1,7 +1,7 @@
 import {derived, get, writable} from "svelte/store";
 import {basicSetup, EditorView} from "codemirror";
 import {markdown, markdownLanguage} from "@codemirror/lang-markdown";
-import {knowledgeLanguage, knowledge} from 'codemirror-lang-knowledge';
+import {knowledgeLanguage, knowledge} from '@knowledge/codemirror-lang-knowledge';
 import {languages} from "@codemirror/language-data";
 import {indentWithTab} from "@codemirror/commands"
 import {keymap} from "@codemirror/view"
@@ -11,7 +11,7 @@ import {VFile} from 'vfile'
 import {syntaxTree} from "@codemirror/language"
 import {javascriptLanguage} from "@codemirror/lang-javascript"
 import {tags as t} from "@lezer/highlight";
-import {computeRelativePath} from "../kdl/src/util";
+import {computeRelativePath} from "@knowledge/common";
 /**
  * This is nowhere near bulletproof code
  * @return
@@ -64,7 +64,6 @@ function getImportAutocomplete(sourceFile, files) {
     let nodeBefore = tree.resolveInner(context.pos, -1)
     let from = /\./.test(nodeBefore.name) ? nodeBefore.to : nodeBefore.from
     const isImport = nodeBefore.name === 'VariableDefinition' && nodeBefore.parent.name === "ImportDeclaration";
-    console.log({isImport, nodeBeforeName: nodeBefore.name, nodeBeforeParentName: nodeBefore.parent.name})
 
     const options = files.map(file => {
       let label = file.stem;

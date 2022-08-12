@@ -6,7 +6,7 @@ import {
   Text,
   Root,
   Proof,
-} from '../src/compiler/core'
+} from '../src/compiler/core.js'
 import {VFile} from "vfile";
 
 // Wrapper
