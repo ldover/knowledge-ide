@@ -1,0 +1,263 @@
+# Symbols
+
+symbol A as Action
+
+==>
+
+Program(SymbolDeclaration(symbol,SymbolName(Identifier),as,SymbolLongName(Identifier)))
+
+# Symbols without long name
+
+symbol A
+
+==>
+
+Program(SymbolDeclaration(symbol,SymbolName(Identifier)))
+
+# Multiple symbols
+
+symbol A as Action
+symbol B as Ball
+
+==>
+
+Program(SymbolDeclaration(symbol,SymbolName(Identifier),as,SymbolLongName(Identifier)),SymbolDeclaration(symbol,SymbolName(Identifier),as,SymbolLongName(Identifier)))
+
+# Statements
+
+statement 1 := (state something)
+
+==>
+
+Program(
+  StatementDeclaration(
+    statement,
+    StatementName(NumericalIdentifier),
+    StatementValue(Text)
+  )
+)
+
+# Statements with reference
+
+statement 1 := (state {A})
+
+==>
+
+Program(
+  StatementDeclaration(
+    statement,
+    StatementName(NumericalIdentifier),
+    StatementValue(Text, Reference)
+  )
+)
+
+# Statements with statement reference
+
+statement 1 := (state {A:2})
+
+==>
+
+Program(
+  StatementDeclaration(
+    statement,
+    StatementName(NumericalIdentifier),
+    StatementValue(
+      Text,
+      CompoundReference
+    )
+  )
+)
+
+# Statements with multiple references and text nodes
+
+statement 1 := (state {A} and {B})
+
+==>
+
+Program(
+  StatementDeclaration(
+    statement,
+    StatementName(NumericalIdentifier),
+    StatementValue(Text, Reference, Text, Reference)
+  )
+)
+
+# Statements with math expression
+
+statement 1 := (state `math`)
+
+==>
+
+Program(
+  StatementDeclaration(
+    statement,
+    StatementName(NumericalIdentifier),
+    StatementValue(Text, MathExpression)
+  )
+)
+
+# Statements with math expression containing parentheses
+
+statement 1 := (state `f(x, y) => x + y`)
+
+==>
+
+Program(
+  StatementDeclaration(
+    statement,
+    StatementName(NumericalIdentifier),
+    StatementValue(Text, MathExpression)
+  )
+)
+
+# Multi-line math expression
+
+statement 1 := (
+    state `
+        f(x, y) = {
+            x; y <= 0
+            -x; y > 0
+        }
+`)
+
+==>
+
+Program(
+  StatementDeclaration(
+    statement,
+    StatementName(NumericalIdentifier),
+    StatementValue(Text, MathExpression)
+  )
+)
+
+# Multiple statements with math expression
+
+statement 1.1 := (`f(x)`)
+statement 1.2 := (`f(x)`)
+
+==>
+
+Program(
+  StatementDeclaration(
+    statement,
+    StatementName(NumericalIdentifier),
+    StatementValue(MathExpression)
+  ),
+  StatementDeclaration(
+    statement,
+    StatementName(NumericalIdentifier),
+    StatementValue(MathExpression)
+  )
+)
+
+# Statements with decimal numerical identifier
+
+statement 1.1 := (state)
+
+==>
+
+Program(
+  StatementDeclaration(statement,StatementName(NumericalIdentifier),StatementValue(Text))
+)
+
+# Statements with longer decimal numerical identifier
+
+statement 12.345.67 := (state)
+
+==>
+
+Program(
+  StatementDeclaration(statement,StatementName(NumericalIdentifier),StatementValue(Text))
+)
+
+
+# Proofs
+
+proof §1  {
+    statement 1 := (state)
+}
+
+==>
+
+Program(ProofDeclaration(proof,StatementName(NumericalIdentifier),ProofBody(StatementDeclaration(statement,StatementName(NumericalIdentifier),StatementValue(Text)))))
+
+# Proofs with statement value references
+
+proof §1  {
+    statement 1 := (state {A})
+}
+
+==>
+
+Program(ProofDeclaration(proof,StatementName(NumericalIdentifier),ProofBody(StatementDeclaration(statement,StatementName(NumericalIdentifier),StatementValue(Text,Reference)))))
+
+# Proofs with multiple statements
+
+proof §1  {
+    statement 1 := (state {A})
+    statement 2 := (state {B})
+}
+
+==>
+
+Program(ProofDeclaration(proof,StatementName(NumericalIdentifier),ProofBody(
+  StatementDeclaration(statement,StatementName(NumericalIdentifier),StatementValue(Text,Reference)),
+  StatementDeclaration(statement,StatementName(NumericalIdentifier),StatementValue(Text,Reference)),
+)))
+
+# Comments
+
+// Line comment
+
+==>
+
+Program(LineComment)
+
+# Multiple comments
+
+// Line comment
+// Line comment 2
+
+==>
+
+Program(LineComment, LineComment)
+
+# Comment after expression
+
+symbol A // A is action
+
+==>
+
+Program(SymbolDeclaration(symbol,SymbolName(Identifier)),LineComment)
+
+# Imports
+
+use X of "./X.kdl"
+
+==>
+
+Program(
+  ImportDeclaration(use,Identifier,of,String)
+)
+
+# Imports with single quotes
+
+use X of './X.kdl'
+
+==>
+
+Program(
+  ImportDeclaration(use,Identifier,of,String)
+)
+
+# Multiple imports
+
+use X of "./X.kdl"
+use A of "./Action.kdl"
+
+==>
+
+Program(
+  ImportDeclaration(use,Identifier,of,String),
+  ImportDeclaration(use,Identifier,of,String)
+)

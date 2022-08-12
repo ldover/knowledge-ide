@@ -1,0 +1,93 @@
+@top Program { expression* }
+
+@skip { space | LineComment }
+
+expression {
+  ImportDeclaration |
+  SymbolDeclaration |
+  StatementDeclaration |
+  ProofDeclaration
+}
+
+SymbolDeclaration {
+  kw<"symbol"> SymbolName (ckw<"as"> SymbolLongName)?
+}
+
+StatementDeclaration {
+  kw<"statement"> StatementName ":=" StatementValue
+}
+
+ProofDeclaration {
+  kw<"proof"> "§" StatementName ProofBody
+}
+
+ProofBody {
+  "{" expression* "}"
+}
+
+ImportDeclaration {
+  kw<"use"> Identifier ckw<"of"> String
+}
+
+SymbolName { Identifier }
+
+SymbolLongName { Identifier }
+
+StatementName { NumericalIdentifier }
+
+StatementValue {
+  "(" (Text | Reference | CompoundReference | MathExpression)* ")"
+}
+
+// Keywords
+kw<term> {
+  @specialize[@name={term}]<Identifier, term>
+}
+
+// Contextual keywords
+ckw<term> { @extend[@name={term}]<Identifier, term> }
+
+@tokens {
+  Identifier { $[a-zA-Z_\-0-9]+ }
+
+  NumericalIdentifier { $[0-9]+($[0-9] | ".")* }
+
+  space { $[ \t\n\r]+ }
+
+  Text {
+    ($[a-zA-Z0-9] | space)+
+  }
+
+  @precedence { Text, space }
+
+  Reference {
+   "{" ((Identifier (":" NumericalIdentifier)?) | NumericalIdentifier) "}"
+  }
+
+  CompoundReference {
+    "{" Identifier ":" NumericalIdentifier "}"
+  }
+
+  MathExpression {
+    "`" (![\\`] | "\\" _)* "`"
+  }
+
+  @precedence { CompoundReference, Reference }
+
+  String {
+     '"' (![\\\n"] | "\\" _)* '"'? |
+     "'" (![\\\n'] | "\\" _)* "'"?
+  }
+
+  LineComment { "//" ![\n]* }
+
+  "`"
+
+  "(" ")"
+
+  "{" "}"
+
+  "§"
+}
+
+@detectDelim
