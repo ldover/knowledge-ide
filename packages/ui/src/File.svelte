@@ -15,10 +15,16 @@
     if (['.png', 'jpg'].includes(extname)) return 'image'
     return 'description'
   }
+
+  function handleDragStart(ev) {
+    ev.dataTransfer.setData("text", file.path);
+  }
 </script>
 
 {#if !hidden}
   <a
+    draggable="true"
+    on:dragstart={handleDragStart}
     on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
     class:text-red-300={file === $sEditor.file}
     class="flex items-center"

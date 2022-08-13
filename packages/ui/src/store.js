@@ -403,10 +403,26 @@ export const sFileSystem = {
 
     this.dump();
   },
+  move: function (filePath, folder) {
+    if (folder.type === 'folder') {
+      _sFileSystem.update(files => {
+        const f = files.find(f => f.path === filePath);
+        if (!f) throw new Error('File not found: ' + filePath);
+        f.path = [folder.path, f.basename].join('/');
+
+        return files;
+      })
+    } else {
+      console.warn('Invalid move operation — target must be folder')
+    }
+  },
+  // refresh state
+  _update: function () {
+    _sFileSystem.update(state => state);
+  },
   renameFile: function (file, value) {
-    console.log('renameFile', {file, value})
     file.basename = value;
-    _sFileSystem.update(state => state); // refresh state
+    this._update();
   },
   renameFolder: function (folder, value) {
     let pathParts = folder.path.split('/');

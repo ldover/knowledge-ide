@@ -24,20 +24,10 @@
     })
   }
 
-  onMount(() => {
-    // Event listener for dragging the image over the div
-    folderEl.addEventListener('dragover', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      // Style the drag-and-drop as a "copy file" operation.
-      event.dataTransfer.dropEffect = 'copy';
-    });
-
-    // Event listener for dropping the image inside the div
-    folderEl.addEventListener('drop', async (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      let fileList = event.dataTransfer.files;
+  async function handleDrop (ev) {
+    // Handle drop image
+    if (ev.dataTransfer.files && ev.dataTransfer.files.length) {
+      let fileList = ev.dataTransfer.files;
 
       let fileName = fileList[0].name;
       console.log('dropping', {fileName})
@@ -50,8 +40,11 @@
       });
       console.log('created vfile', {vfile})
       sFileSystem.addFile(vfile)
-    })
-  })
+    } else { // Handle drop internal file
+      const file0Path = ev.dataTransfer.getData("text");
+      sFileSystem.move(file0Path, file)
+    }
+  }
 
   function toggle() {
     expanded = !expanded;
@@ -60,6 +53,8 @@
 
 <div bind:this={folderEl}>
     <div on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
+         on:drop|preventDefault|stopPropagation={handleDrop}
+         on:dragover|preventDefault|stopPropagation={() => console.log('dragover', file.path)}
          class:expanded
          class="flex items-center cursor-pointer"
          on:click={toggle}>
