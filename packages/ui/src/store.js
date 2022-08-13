@@ -52,6 +52,39 @@ function getCodeBraceExtension() {
 
 }
 
+function completeFromKDLFiles(context, sourceFile, files) {
+  let tree = syntaxTree(context.state);
+  let nodeBefore = tree.resolveInner(context.pos, -1)
+  let from = /\./.test(nodeBefore.name) ? nodeBefore.to : nodeBefore.from
+  const isImport = nodeBefore.name === 'Identifier' && nodeBefore.parent.name === "ImportDeclaration";
+
+  const options = files.map(file => {
+    let label = file.stem;
+    const opt = {
+      label: label,
+      type: 'variable'
+    }
+    if (isImport) {
+      opt.apply = `${label} of '${computeRelativePath(sourceFile.path, file.path)}'`
+    } else {
+      opt.apply = `{${label}}`
+    }
+
+    return opt;
+  })
+
+  let completion = {
+    from,
+    options: options,
+    // validFor: /^[\w$]*$/
+  };
+  return completion
+}
+
+const kdlAutocomplete = (sourceFile, files) => knowledgeLanguage.data.of({
+  autocomplete: (context) => completeFromKDLFiles(context, sourceFile, files)
+})
+
 /**
  * Computes autocomplete data, like relative imports from the source file specified.
  * @param {VFile} sourceFile
@@ -191,7 +224,6 @@ export const sEditor = {
 
       let files = get(sFileSystem)
 
-      let importAutocomplete = getImportAutocomplete(file, files)
 
       let extensions = [
         basicSetup,
@@ -200,6 +232,7 @@ export const sEditor = {
       ];
 
       if (file.extname === '.mdl') {
+        let importAutocomplete = getImportAutocomplete(file, files)
         extensions = [
           ...extensions,
           importAutocomplete.javascript, // Autocomplete for JS (within script tag)
@@ -208,8 +241,10 @@ export const sEditor = {
           EditorView.lineWrapping,
         ]
       } else if (file.extname === '.kdl') {
+        let importAutocomplete = kdlAutocomplete(file, files.filter(f => f.extname === '.kdl'))
         extensions = [
           ...extensions,
+          importAutocomplete,
           knowledge(),
         ]
       }
