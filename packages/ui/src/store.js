@@ -403,14 +403,14 @@ export const sFileSystem = {
 
     this.dump();
   },
+  renameFile: function (file, value) {
+    console.log('renameFile', {file, value})
+    file.basename = value;
+    _sFileSystem.update(state => state); // refresh state
+  },
   deleteFile: function (file) {
     _sFileSystem.update(files => files.filter(f => f !== file));
 
     this.dump();
   },
-  updateFile: async function (file, state) {
-    console.warn('not implemented')
-    // todo: implement
-  },
-
 }

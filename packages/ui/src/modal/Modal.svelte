@@ -1,7 +1,10 @@
 <script>
   import {clickOutside} from "../util";
-  import {sModal} from "./store";
   import {afterUpdate} from "svelte";
+
+
+  /** @type {import('../typedef').Modal} */
+  export let sModal;
 
   $: visible = $sModal.visible;
   let prevVisible;
@@ -19,7 +22,7 @@
 
   function onKeyUp(ev) {
     if (ev.key === 'Enter') {
-      sModal.onNew()
+      sModal.submit()
     } else if (ev.key=== 'Escape') {
       sModal.hide()
     }
@@ -35,12 +38,12 @@
          class="modal shadow-md bg-white rounded-md rounded-sm">
       <div class="flex flex-col w-full">
         <div class="w-full text-center bg-gray-300">
-          New {$sModal.type}
+          {$sModal.options.title}
         </div>
         <input type="text"
                bind:this={inputEl}
                on:keyup={onKeyUp}
-               placeholder="Name"
+               placeholder="{$sModal.options.placeholder}"
                class="border outline-none w-full px-2"
                bind:value={$sModal.value}
         />

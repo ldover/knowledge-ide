@@ -1,7 +1,6 @@
 <script>
   import File from './File.svelte';
-  import {sContextMenu} from "./context-menu/store";
-  import {onMount} from "svelte";
+  import {onMount, getContext} from "svelte";
   import {sFileSystem} from "./store";
   import {VFile} from "vfile";
 
@@ -9,6 +8,8 @@
   export let file;
 
   let folderEl;
+
+  let sContextMenu = getContext('stores').sContextMenu;
 
   // Converts the image into a data URI
   const readImage = async (file) => {

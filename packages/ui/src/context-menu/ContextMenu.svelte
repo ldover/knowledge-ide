@@ -1,7 +1,7 @@
 <script>
-  import {clickOutside} from "./util";
-  import {sContextMenu} from "./context-menu/store";
-  import {sFileSystem} from "./store";
+  import {clickOutside} from "../util";
+
+  export let sContextMenu;
 
   const options = [
     {
@@ -18,7 +18,7 @@
     },
     {
       name: 'Rename',
-      onClick: () => window.alert('not implemented')
+      onClick: () => sContextMenu.onRename()
     },
 
     {

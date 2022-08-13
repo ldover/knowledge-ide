@@ -1,54 +1,49 @@
 import {writable, get} from "svelte/store";
-import {sFileSystem} from "../store";
-import {VFile} from "vfile";
 
-const _sModal = writable({
-  el: null,
-  inputEl: null,
-  visible: null,
-  file: null,
-  value: null,
-})
+/**
+ *
+ * @return {import('../typedef').Modal}
+ */
+export function getModal(initialState) {
+  initialState = {
+    el: null,
+    inputEl: null,
+    visible: null,
+    value: null,
+    options: {
+      title: null,
+      placeholder: null,
+    },
+    ...initialState
+  };
 
-export const sModal = {
-  subscribe: _sModal.subscribe,
-  set: _sModal.set,
-  show: function (file, type) {
-    _sModal.update(state => {
-      return {...state, file: file, type: type, visible: true}
-    })
+  const _sModal = writable(initialState)
 
-  },
-  hide: function () {
-    _sModal.update(state => ({...state, file: null, visible: false, value: null}))
-  },
-  onNew: async function() {
-    const {file, value, type} = get(_sModal);
-    if (file.type !== 'folder') {
-      return window.alert('Cannot add file to file... this edge case not implemented')
-    }
-    if (!value) return window.alert('value invalid')
+  const sModal = {
+    subscribe: _sModal.subscribe,
+    set: _sModal.set,
+    configure: function (options, state1 = {}) {
+      _sModal.update(state => {
+        return {...state, options, ...state1}
+      })
+    },
+    reset: function () {
+      _sModal.set(initialState)
+    },
+    submit: function () {
+      throw new Error('Not implemented: you should override \'submit\' function.')
+    },
+    show: function () {
+      _sModal.update(state => {
+        return {...state, visible: true}
+      })
 
-    let path;
-    if (type === 'folder') {
-      // Creates an empty file which allows us to display a folder (see derived store of sFileSystem)
-      path = `${file.path}/${value}/.`;
-    } else {
-      const isMDL = value.endsWith('.mdl')
-      const isKDL = value.endsWith('.kdl')
-
-      if (!isMDL && !isKDL) {
-        return window.alert('Specify one of the supported extensions: .mdl, .kdl.')
-      }
-
-      path = `${file.path}/${value}`;
-    }
-
-    const newFile = new VFile({
-      path,
-      value: ''
-    })
-    this.hide()
-    sFileSystem.addFile(newFile)
+    },
+    hide: function () {
+      _sModal.update(state => ({...state, file: null, visible: false, value: null}))
+    },
   }
+
+  return sModal;
 }
+

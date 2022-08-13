@@ -1,9 +1,10 @@
 <script>
-  import {createEventDispatcher} from 'svelte';
+  import {createEventDispatcher, getContext} from 'svelte';
   import {sEditor} from "./store";
-  import {sContextMenu} from "./context-menu/store";
 
   const dispatch = createEventDispatcher();
+
+  let sContextMenu = getContext('stores').sContextMenu;
 
   /** @type {import('vfile').VFile} */
   export let file;

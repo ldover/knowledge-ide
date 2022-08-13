@@ -1,20 +1,36 @@
 <script>
   import FileTree from "./FileTree.svelte";
   import CodeMirror from "./CodeMirror.svelte";
-  import ContextMenu from "./ContextMenu.svelte";
-  import NewFileModal from "./modal/NewFileModal.svelte";
+  import ContextMenu from "./context-menu/ContextMenu.svelte";
+  import NewFileModal from "./modal/new-file/NewFileModal.svelte";
   import Resizer from "./Resizer.svelte";
   import {Node} from "./notes-ui"
   import {parse as parseMDL, compile as compileMDL} from "@knowledge/mdl"
   import {sEditor, sFileSystem} from "./store";
   import {banners} from "./banner/store";
   import {CompilerError} from "@knowledge/mdl";
-  import {onMount} from "svelte";
+  import {onMount, setContext} from "svelte";
+  import {getNewFileModal} from "./modal/new-file/store";
+  import {getContextMenu} from "./context-menu/store";
+  import {getRenameModal} from "./modal/rename/store";
+  import RenameModal from "./modal/rename/RenameModal.svelte";
 
   let note = null;
   let file = null;
 
   sFileSystem.init()
+
+  let sNewFileModal = getNewFileModal()
+  let sRenameModal = getRenameModal()
+  let sContextMenu = getContextMenu(sNewFileModal, sRenameModal, sFileSystem)
+
+  setContext('stores', {
+    sContextMenu,
+    sNewFileModal,
+    sRenameModal,
+  });
+
+
 
   function process(files) {
     console.log('parse files', files)
@@ -95,8 +111,9 @@
     </div>
 </div>
 
-<ContextMenu/>
-<NewFileModal/>
+<ContextMenu {sContextMenu}/>
+<NewFileModal sModal={sNewFileModal}/>
+<RenameModal sModal={sRenameModal}/>
 
 <style lang="scss">
   .h-fullvw {
