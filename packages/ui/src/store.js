@@ -408,6 +408,17 @@ export const sFileSystem = {
     file.basename = value;
     _sFileSystem.update(state => state); // refresh state
   },
+  renameFolder: function (folder, value) {
+    let pathParts = folder.path.split('/');
+    pathParts.splice(-1, 1, value)
+    const oldPath = folder.path + '/'
+    const newPath = pathParts.join('/') + '/'
+
+    _sFileSystem.update(files => {
+      files.forEach(file => file.path = file.path.replace(oldPath, newPath));
+      return files;
+    })
+  },
   deleteFile: function (file) {
     _sFileSystem.update(files => files.filter(f => f !== file));
 

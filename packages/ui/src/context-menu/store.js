@@ -39,7 +39,7 @@ export function getContextMenu(sNewFileModal, sRenameModal, sFileSystem) {
     },
     onRename: async function() {
       const {file} = get(_sContextMenu);
-      sRenameModal.configure({}, {file, type: 'file'})
+      sRenameModal.configure({}, {file, type: file.type === 'folder' ? 'folder' : 'file'})
       sRenameModal.show();
       this.hide();
     },

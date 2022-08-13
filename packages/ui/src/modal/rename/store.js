@@ -18,13 +18,14 @@ export function getRenameModal() {
     },
     rename: function() {
       const {file, value, type} = get(_sModal);
-      if (file.type === 'folder') {
-        throw new Error('Folder rename not implemented')
-      }
-      if (!value) throw new Error('Value invalid')
+      if (!value) throw new Error('Value invalid: ' + value)
 
       this.hide()
-      sFileSystem.renameFile(file, value)
+      if (file.type === 'folder') {
+        sFileSystem.renameFolder(file, value)
+      } else {
+        sFileSystem.renameFile(file, value)
+      }
     },
     configure: function(options = {}, state = { file: null, type: 'file', value: null}) {
       !options.title && (options.title = `Rename ${state.type}`);
