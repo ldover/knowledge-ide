@@ -5,7 +5,7 @@ import {
   Symbol,
   Text,
   Root,
-  Proof,
+  Proof, MathExpression,
 } from '../src/compiler/core.js'
 import {VFile} from "vfile";
 
@@ -154,6 +154,27 @@ describe('Compiles a statement', () => {
     expect(out.value[1]).toBeInstanceOf(Reference);
     expect(out.value[1].symbol).toEqual('A');
   });
+
+  it('Compiles a statement with math expression', () => {
+    const ast = {
+      type: 'root',
+      children: [
+        {
+          type: 'statement',
+          name: '1',
+          value: [
+            {
+              type: 'math',
+              value: 'f(x) = y'
+            },
+          ]
+        }
+      ]
+    }
+    const out = compileVFile(ast).statements[0];
+
+    expect(out.value[0]).toBeInstanceOf(MathExpression);
+  })
 })
 
 describe('Compiles a proof', () => {
@@ -191,7 +212,7 @@ describe('Compiles a proof', () => {
 
   it('Compiles a simple proof', () => {
     const out = compileVFile(ast)
-    const proof = out.children[1];
+    const proof = out.proofs[0];
 
     expect(proof).toBeInstanceOf(Proof)
     expect(proof.statement).toBe(out.children[0])
@@ -201,7 +222,7 @@ describe('Compiles a proof', () => {
 
   it('Renders a simple proof', () => {
     const out = compileVFile(ast)
-    const proof = out.children[1];
+    const proof = out.proofs[0];
     const mdast = proof.render();
 
     expect(mdast).toBeTruthy()

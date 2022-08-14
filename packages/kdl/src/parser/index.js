@@ -15,7 +15,7 @@ export function parse(kdl) {
     })
   } while (cursor.next())
 
-  const nodeTypes = new Set(['Program', 'ProofDeclaration', 'StatementDeclaration', 'StatementName', 'SymbolDeclaration', 'SymbolName', 'SymbolLongName', 'Identifier', 'ProofBody', 'StatementValue', 'Text', 'Reference', 'CompoundReference', 'ImportDeclaration', 'String'])
+  const nodeTypes = new Set(['Program', 'ProofDeclaration', 'StatementDeclaration', 'StatementName', 'SymbolDeclaration', 'SymbolName', 'SymbolLongName', 'Identifier', 'ProofBody', 'StatementValue', 'Text', 'Reference', 'CompoundReference', 'ImportDeclaration', 'String', 'MathExpression'])
   const filteredNodes = nodes.filter(n => nodeTypes.has(n.name));
 
   function createNode(node, nodes) {
@@ -78,6 +78,12 @@ function toKdlAST(ast) {
         value: node.value
       }
     },
+    String: function (node) {
+      return {
+        type: 'text',
+        value: node.value,
+      }
+    },
     Reference: function (node) {
       return {
         type: 'reference',
@@ -105,6 +111,12 @@ function toKdlAST(ast) {
         type: 'import',
         value: node.children.find(n => n.name === 'Identifier').value,
         url: node.children.find(n => n.name === 'String').value.replace(/["']/g, ''),
+      }
+    },
+    MathExpression: function (node) {
+      return {
+        type: 'math',
+        value: node.value.replace(/[`]/g, ''),
       }
     },
   }

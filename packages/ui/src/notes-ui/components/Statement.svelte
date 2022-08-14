@@ -4,17 +4,23 @@
 </script>
 
 
-<!-- TODO: implement actual link here -->
 <div class="statement relative">
-    {#if !root}
-        <a class="note-handle cursor-pointer absolute text-orange-500 text-xs font-medium">
-            {node.statement.title} →
-        </a>
-    {/if}
+
+  <div class="flex justify-between items-baseline">
+    <div class="font-medium">Statement {node.name}</div>
+    <div class=""
+       class:text-orange-500={!node.proven}
+       class:text-teal-500={node.proven}>
+      {node.proven ? 'Proven' : 'Not proven'}
+    </div>
+  </div>
     <slot></slot>
 </div>
 
 <style>
+  .statement {
+    @apply p-3 bg-gray-100 rounded-md mb-3;
+  }
     .note-handle {
         top: 0;
         right: 0;

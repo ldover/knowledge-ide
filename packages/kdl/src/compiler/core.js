@@ -4,7 +4,8 @@ import {
   text as t,
   listItem as li,
   list as l,
-  link
+  link,
+  inlineCode
 } from "mdast-builder";
 import {computeAbsolutePath} from "@knowledge/common";
 
@@ -16,21 +17,27 @@ class Symbol {
   }
 
   render() {
-    return p(
-      t(`symbol ${this.name}` + (this.longName ? ` as ${this.longName}` : ''))
-    )
+    let title = this.longName ? this.longName + ` (${this.name})` : this.name;
+    return h(1, t(title))
   }
 }
 
 class Statement {
-  constructor(name, value = [], root) {
+  constructor(name, value = [], proof = null, root) {
     this.name = name;
     this.value = value;
     this.root = root;
+    this.proof = proof;
   }
 
   render() {
-    return p([t(`statement ${this.name} := `), ...this.value.map(c => c.render())])
+    return {
+      type: 'statement',
+      proven: !!this.proof,
+      name: this.name,
+      children: this.value.map(n => n.render()),
+      statement: this,
+    }
   }
 
   ref(title = null) {
@@ -47,10 +54,11 @@ class Proof {
   }
 
   render() {
-    return l('unordered', [
-      li(t(`proof §${this.statement.name}`)),
-      l('ordered', this.statements.map(statement => li(statement.render())))
-    ])
+    return {
+      name: this.statement.name,
+      statement: this.statement,
+      proof: this,
+    }
   }
 }
 
@@ -67,6 +75,16 @@ class Reference {
     const filepath = this.root.refs.get(this.symbol);
     const obj = this.root.scope.get(filepath);
     return obj.ref(title);
+  }
+}
+
+class MathExpression {
+  constructor(value) {
+    this.value = value;
+  }
+
+  render() {
+    return inlineCode(this.value)
   }
 }
 
@@ -109,8 +127,8 @@ class Root {
         this.statements.push(statement);
       } else if (c.type === 'proof') {
         const proof = proofCompiler(c, this);
+        proof.statement.proof = proof;
         this.proofs.push(proof);
-        this.children.push(proof);
       } else {
         throw new CompilerError('Unknown node: ' + c.type)
       }
@@ -151,8 +169,17 @@ class Root {
   render() {
     return {
       type: 'root',
-      children: this.children.map(c => c.render())
+      children: [
+        ...this.children.map(c => c.render()),
+        ...this._renderBacklinks()
+      ]
     }
+  }
+
+  _renderBacklinks() {
+    return [
+      h(2, t('References')),
+    ]
   }
 }
 
@@ -164,6 +191,7 @@ const compilers = {
   statement: statementCompiler,
   text: textCompiler,
   reference: referenceCompiler,
+  math: mathCompiler,
 }
 
 
@@ -210,7 +238,7 @@ function statementCompiler(ast, root) {
   console.assert(ast.type === 'statement')
   const value = ast.value.map(node => compilers[node.type](node, root));
   root.addRef(ast.name, root.path)
-  return new Statement(ast.name, value, root)
+  return new Statement(ast.name, value, null, root)
 }
 
 function proofCompiler(ast, root) {
@@ -224,6 +252,12 @@ function textCompiler(ast) {
   console.assert(ast.type === 'text')
 
   return new Text(ast.value);
+}
+
+function mathCompiler(ast) {
+  console.assert(ast.type === 'math')
+
+  return new MathExpression(ast.value);
 }
 
 function referenceCompiler(ast, root) {
@@ -244,6 +278,7 @@ export {
   Symbol,
   Statement,
   Reference,
+  MathExpression,
   Root,
   Text,
   Proof,

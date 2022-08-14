@@ -145,6 +145,54 @@ describe('Parses statement', () => {
     }
 
     expect(parse(kdl0)).toMatchObject(out);
+  });
+
+  it('Parses statement with a math expression', () => {
+    const kdl0 = "statement 2 := (`f(x) = y`)"
+    const out = {
+      type: "root",
+      children: [
+        {
+          type: "statement",
+          name: '2',
+          value: [
+            {
+              type: 'math',
+              value: 'f(x) = y',
+            }
+          ]
+        }
+      ]
+    }
+
+    expect(parse(kdl0)).toMatchObject(out);
+  })
+
+  it('parses statement with a multiline math expression', () => {
+    const kdl0 = "statement 3 := (`\n" +
+      "    X = {x1, x2, x3,..., xn},\n" +
+      "    Y = {y1, y2, y3,..., yn}\n`"
+      ")"
+
+    const out = {
+      type: "root",
+      children: [
+        {
+          type: "statement",
+          name: '3',
+          value: [
+            {
+              type: 'math',
+              value: "\n" +
+    "    X = {x1, x2, x3,..., xn},\n" +
+    "    Y = {y1, y2, y3,..., yn}\n"
+            }
+          ]
+        }
+      ]
+    }
+
+    expect(parse(kdl0)).toMatchObject(out);
   })
 })
 
