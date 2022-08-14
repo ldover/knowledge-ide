@@ -47,8 +47,7 @@ describe('Compiles a symbol', () => {
     expect(symbol.name).toEqual('A');
     expect(symbol.longName).toEqual('Action');
 
-    expect(compiledRoot.children.length).toEqual(1);
-    expect(compiledRoot.children[0]).toBe(symbol);
+    expect(compiledRoot.symbol).toBe(symbol);
   });
 
   it('Compiles a symbol without a long name specifier', () => {
@@ -215,7 +214,7 @@ describe('Compiles a proof', () => {
     const proof = out.proofs[0];
 
     expect(proof).toBeInstanceOf(Proof)
-    expect(proof.statement).toBe(out.children[0])
+    expect(proof.statement).toBe(out.statements[0])
     expect(proof.statements.length).toEqual(1);
     expect(proof.statements[0]).toBeInstanceOf(Statement);
   })

@@ -2,8 +2,8 @@ import {
   paragraph as p,
   heading as h,
   text as t,
-  listItem as li,
-  list as l,
+  listItem,
+  list,
   link,
   inlineCode
 } from "mdast-builder";
@@ -11,14 +11,25 @@ import {computeAbsolutePath} from "@knowledge/common";
 
 
 class Symbol {
-  constructor(name, longName) {
+  constructor(name, longName, root) {
     this.name = name;
     this.longName = longName;
+    this.root = root;
   }
 
   render() {
-    let title = this.longName ? this.longName + ` (${this.name})` : this.name;
-    return h(1, t(title))
+    return {
+      type: 'symbol',
+      name: this.name,
+      longName: this.longName,
+      symbol: this,
+      root: this.root
+    }
+  }
+
+  ref(title = null) {
+    title = title || `${this.name}`
+    return this.root.ref(title)
   }
 }
 
@@ -69,6 +80,16 @@ class Reference {
     this.root = root;
   }
 
+  getStatement() {
+    if (this.statement) {
+      const source = this.root.refs.get(this.symbol);
+      const rootFile = this.root.scope.get(source);
+      return rootFile.statements.find(s => s.name === this.statement)
+    }
+
+    return null;
+  }
+
   render() {
     const title = `${this.symbol}${this.statement ? ':' + this.statement : ''}`
     console.log('render()', {reference: this, root: this.root});
@@ -110,6 +131,9 @@ class Root {
     this.symbol = null;
     this.statements = [];
     this.proofs = [];
+
+    /** @type {Reference[]}*/
+    this.references = [];
   }
 
   init() {
@@ -118,12 +142,10 @@ class Root {
         this._processImport(c)
       } else if (c.type === 'symbol') {
         if (this.symbol) throw new CompilerError('Symbol already declared: cannot yet two symbols per file');
-        this.symbol = new Symbol(c.name, c.longName)
+        this.symbol = new Symbol(c.name, c.longName, this)
         this.refs.set(c.name, this.path)
-        this.children.push(this.symbol)
       } else if (c.type === 'statement') {
         const statement = statementCompiler(c, this);
-        this.children.push(statement);
         this.statements.push(statement);
       } else if (c.type === 'proof') {
         const proof = proofCompiler(c, this);
@@ -166,19 +188,55 @@ class Root {
     return this.statements.find(s => s.name === statementName);
   }
 
+  getTitle() {
+    return  this.symbol.longName ? this.symbol.longName + ` (${this.symbol.name})` : this.symbol.name;
+  }
+
   render() {
     return {
       type: 'root',
       children: [
-        ...this.children.map(c => c.render()),
+        h(1, t(this.getTitle())),
+        ...this.statements.map(s => s.render()),
+        {
+          type: 'thematicBreak'
+        },
         ...this._renderBacklinks()
       ]
     }
   }
 
   _renderBacklinks() {
+    // Find references in other root files
+    const files = []
+    for (const [path, rootFile] of this.scope.entries()) {
+      if (!rootFile.path.endsWith('.kdl')) continue;
+      const statements = rootFile.statements;
+      const referencedStatements = [];
+      statements.forEach(s => {
+        const refs = s.value.filter(v => v instanceof Reference);
+        const isReferenced = refs.find(r => r.symbol === this.symbol.name); // todo: might be imported under other name so use root.refs, root.scope
+        if (isReferenced) {
+          referencedStatements.push(s)
+        }
+      })
+
+      if (statements.length) {
+        files.push({file: rootFile, statements: referencedStatements})
+      }
+    }
+
+    const children = files.map(({file, statements}) => {
+      return listItem([
+          t(file.getTitle()),
+          list("unordered", statements.map(s => listItem(s.render())))
+        ]
+      )
+    })
+
     return [
       h(2, t('References')),
+      list("unordered", children)
     ]
   }
 }
@@ -270,7 +328,9 @@ function referenceCompiler(ast, root) {
 
   // todo: check for statement at compile time as well
   let statement = ast.statement ? ast.statement : null;
-  return new Reference(ast.symbol, statement, root);
+  const reference = new Reference(ast.symbol, statement, root);
+  root.references.push(reference);
+  return reference
 }
 
 
