@@ -7,11 +7,11 @@
 </li>
 
 <style>
-    li > ul {
+    li > :global(ul) {
         padding-left: 24px;
     }
 
-    li > ol {
+    li > :global(ol) {
         padding-left: 24px;
     }
 

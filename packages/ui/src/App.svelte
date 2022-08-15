@@ -18,6 +18,10 @@
   let note = null;
   let file = null;
 
+  $: isKDL = file && file.extname === '.kdl';
+  $: isMDL = file && file.extname === '.mdl';
+
+
   sFileSystem.init()
 
   let sNewFileModal = getNewFileModal()
@@ -43,7 +47,7 @@
     // return;
 
     banners.clear();
-    const file = sEditor.getFile();
+    file = sEditor.getFile();
     file.value = sEditor.getValue();
     const files = sFileSystem.getFiles()
       .filter(f => !f.basename?.startsWith('.') && ['.kdl', '.mdl', '.png', '.jpg'].includes(f.extname));
@@ -99,7 +103,7 @@
         <CodeMirror on:mount={onEditorMount}/>
     </div>
     <Resizer/>
-    <div class="h-fullvw w-4/12 px-8 py-3 overflow-y-auto">
+    <div class="h-fullvw w-4/12 px-8 py-3 overflow-y-auto" style="--list-style: {isKDL ? 'none' : 'disc'}">
       {#if note}
         <Node node={note}/>
       {:else}

@@ -15,7 +15,7 @@
 
 <style>
     ul {
-        list-style-type: disc;
+        list-style-type: var(--list-style);
     }
 
     ol {
