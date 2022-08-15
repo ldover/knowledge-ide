@@ -9,10 +9,12 @@ import {Strikethrough} from "@lezer/markdown";
 import {parser as jsParser} from "@lezer/javascript"
 import {parseMixed} from "@lezer/common"
 import {VFile} from 'vfile'
+import {HighlightStyle} from "@codemirror/language"
+import {syntaxHighlighting} from "@codemirror/language"
 
 import {syntaxTree} from "@codemirror/language"
 import {javascriptLanguage} from "@codemirror/lang-javascript"
-import {tags as t} from "@lezer/highlight";
+import {tags} from "@lezer/highlight";
 import {computeRelativePath} from "@knowledge/common";
 /**
  * This is nowhere near bulletproof code
@@ -29,11 +31,11 @@ function getCodeBraceExtension() {
     defineNodes: [
       {
         name: CodeDelimiter.resolve,
-        style: {[`${CodeDelimiter.resolve}/...`]: t.className},
+        style: {[`${CodeDelimiter.resolve}/...`]: tags.className},
       },
       {
         name: CodeDelimiter.mark,
-        style: t.brace
+        style: tags.brace
       }
     ],
       wrap: parseMixed(node => {
@@ -134,6 +136,52 @@ function getImportAutocomplete(sourceFile, files) {
     })
   }
 }
+const myHighlightStyle = HighlightStyle.define([
+  { tag: tags.meta,
+    color: "#7a757a" },
+  { tag: tags.link,
+    textDecoration: "underline" },
+  { tag: tags.heading,
+    textDecoration: "underline",
+    fontWeight: "bold" },
+  { tag: tags.emphasis,
+    fontStyle: "italic" },
+  { tag: tags.strong,
+    fontWeight: "bold" },
+  { tag: tags.strikethrough,
+    textDecoration: "line-through" },
+  { tag: tags.keyword,
+    color: "#708" },
+  { tag: [tags.atom, tags.bool, tags.url, tags.contentSeparator, tags.labelName],
+    color: "#219" },
+  { tag: [tags.literal, tags.inserted],
+    color: "#164" },
+  { tag: [tags.string, tags.deleted],
+    color: "#a11" },
+  { tag: [tags.regexp, tags.escape, /*@__PURE__*/tags.special(tags.string)],
+    color: "#e40" },
+  { tag: /*@__PURE__*/tags.definition(tags.variableName),
+    color: "#00f" },
+  { tag: /*@__PURE__*/tags.local(tags.variableName),
+    color: "#30a" },
+  { tag: [tags.typeName, tags.namespace],
+    color: "#085" },
+  { tag: tags.className,
+    color: "#167" },
+  { tag: [/*@__PURE__*/tags.special(tags.variableName), tags.macroName],
+    color: "#256" },
+  { tag: /*@__PURE__*/tags.definition(tags.propertyName),
+    color: "#00c" },
+  { tag: tags.comment,
+    color: "#940" },
+  { tag: tags.invalid,
+    color: "#f00" },
+  // {tag: tags.brace, color: "#f00"},
+  { tag: tags.variableName, color: "#00f" },
+  { tag: tags.propertyName, color: "#ad9300" },
+  // {tag: t.variableName, color: "#ff9100"},
+])
+
 
 const _sEditor = writable({el: null, view: null, file: null,});
 
@@ -235,6 +283,7 @@ export const sEditor = {
       if (file.extname === '.mdl') {
         let importAutocomplete = getImportAutocomplete(file, files)
         extensions = [
+          syntaxHighlighting(myHighlightStyle),
           ...extensions,
           importAutocomplete.javascript, // Autocomplete for JS (within script tag)
           importAutocomplete.markdown, // Autocomplete for markdown (works within MD-like body) // todo: does not work within curly brackets
