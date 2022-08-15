@@ -21,7 +21,7 @@
   let component = Components[node.type];
 </script>
 
-<svelte:component this={component} node={node} root={root}>
+<svelte:component this={component} node={node} root={root} {...$$restProps}>
     {#if Array.isArray(node.children)}
         {#each node.children as childNode (childNode.id)}
             <Node node={childNode}/>
