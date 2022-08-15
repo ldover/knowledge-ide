@@ -20,22 +20,27 @@
 
 <div class="statement relative">
 
-  <div class="flex justify-between items-baseline">
-    <div class="font-medium">Statement {node.name}</div>
+  <div class="flex justify-between items-center">
+    <div class="uppercase text-sm text-gray-600"
+         class:font-medium={!isProof}>
+      Statement {node.name}
+    </div>
 
     {#if !isProof}
       <div class:cursor-pointer={node.proven}
            on:click={onProof}
-           class:text-orange-500={!node.proven}
+           class:text-yellow-400={!node.proven}
            class:text-teal-500={node.proven}>
-        <span class="material-symbols-sharp">{node.proven ? 'verified' : 'question_mark'}</span>
+        <span class="material-symbols-sharp">{node.proven ? 'verified' : 'warning'}</span>
       </div>
     {/if}
   </div>
   <slot></slot>
 
   {#if expandProof}
-    <Proof node={node.statement.proof.render()} />
+    <div class="w-full mt-3">
+      <Proof node={node.statement.proof.render()} />
+    </div>
   {/if}
 </div>
 

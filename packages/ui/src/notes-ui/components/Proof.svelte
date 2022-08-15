@@ -6,7 +6,7 @@
 
 
 <div class="proof">
-  <div class="font-medium">Proof {node.name}</div>
+  <div class="uppercase text-sm text-gray-600 font-medium">Proof {node.name}</div>
   {#each node.proof.statements as statement}
     <Node node={statement.render()}
           isProof={true}
