@@ -1,5 +1,5 @@
 import {parse} from '../src/index.js';
-import {compile, Root} from "../src/compiler/index.js";
+import {compile, List, ListItem, Root} from "../src/compiler/index.js";
 import {VFile} from "vfile";
 
 // Wrapper
@@ -98,6 +98,71 @@ Note A content`
     expect(rendered.children[1].children[0].children[0].value).toEqual('Note A content');
 
   })
+
+  it ('Parses MD ordered list', () => {
+    const noteA = `1. item 1
+2. item 2
+`
+
+    const fileA = createVFile('./NoteA.mdl', noteA);
+
+    const out = parse([fileA])[0].data.parsed
+
+    expect(out.children[0].type).toEqual('list');
+    expect(out.children[0].ordered).toEqual(true);
+  })
+
+  it ('Compiles MD ordered list', () => {
+    const noteA = `1. item 1
+2. item 2
+`
+    let vFile = createVFile('./noteA.mdl', noteA);
+    const parsed = parse([vFile])
+    const parsedA = parsed[0].data.parsed;
+
+    const fileA = compile([vFile])[0];
+    const rootA = fileA.data.compiled;
+    expect(rootA.children[0]).toBeInstanceOf(List);
+    expect(rootA.children[0].ordered).toEqual(true)
+  })
+
+  it ('Renders ordered list', () => {
+    const noteA = `1. item 1
+2. item 2
+`
+    let vFile = createVFile('./noteA.mdl', noteA);
+    const parsed = parse([vFile])
+    const parsedA = parsed[0].data.parsed;
+
+    const fileA = compile([vFile])[0];
+    const rootA = fileA.data.compiled;
+    const mdast = rootA.render();
+    expect(mdast.children[0].type).toEqual('list');
+    expect(mdast.children[0].ordered).toEqual(true)
+  })
+
+  // todo: find out how to configure micromark to parse 1 tab or 2 spaces (works with bullet list, but not ordered)
+  it ('Parses ordered list with 2 spaces or 1 tab', () => {
+    const noteA = `1. item 1
+  1. item 1.1
+  2. item 2.2
+`
+    /**
+     * List
+     *  ListItem - item 1
+     *    List
+     *      ListItem - item 1.1
+     */
+
+    let vFile = createVFile('./noteA.mdl', noteA);
+    const parsed = parse([vFile])
+    const parsedA = parsed[0].data.parsed;
+
+    expect(parsedA.children[0]).toEqual('list');
+    expect(parsedA.children[0].children[0].type).toEqual('listItem');
+    expect(parsedA.children[0].children[0].children[1].type).toEqual('list');
+  })
+
 
   it ('Works with literal parameter', () => {
     const noteB = `<script>

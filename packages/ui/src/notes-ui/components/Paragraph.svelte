@@ -4,6 +4,6 @@
 
 <style>
     p {
-        @apply mb-3;
+        @apply mb-4 leading-tight;
     }
 </style>

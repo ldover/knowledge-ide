@@ -20,10 +20,9 @@
 
     ol {
         list-style: decimal;
-        @apply pl-8;
     }
 
     ol, ul {
-        @apply mb-3;
+        @apply mb-4;
     }
 </style>

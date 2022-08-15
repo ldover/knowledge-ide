@@ -8,14 +8,16 @@
 
 <style>
     li > :global(ul) {
-        padding-left: 24px;
+      @apply pl-8;
+      @apply mb-0;
     }
 
     li > :global(ol) {
-        padding-left: 24px;
+      @apply pl-8;
+      @apply mb-0;
     }
 
-    li > p {
+    li > :global(p) {
         @apply mb-0;
     }
 </style>

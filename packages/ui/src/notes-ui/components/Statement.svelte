@@ -21,9 +21,8 @@
 <div class="statement relative">
 
   <div class="flex justify-between items-center">
-    <div class="uppercase text-sm text-gray-600"
-         class:font-medium={!isProof}>
-      Statement {node.name}
+    <div class="uppercase text-sm text-gray-600 font-medium">
+      {!isProof ? `Statement ${node.name}` : node.name}
     </div>
 
     {#if !isProof}

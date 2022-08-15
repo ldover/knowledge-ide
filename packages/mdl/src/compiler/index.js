@@ -271,7 +271,7 @@ class List {
 
   render() {
     return list(
-      this.ordered,
+      this.ordered ? 'ordered' : 'unordered',
       this.children.map(c => c.render())
     )
   }
@@ -423,5 +423,7 @@ class Code {
 export {
   compile,
   Root,
+  List,
+  ListItem,
   LocalImage
 }
