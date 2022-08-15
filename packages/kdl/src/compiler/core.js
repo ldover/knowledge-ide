@@ -174,6 +174,12 @@ class Root {
     this.refs.set(name, source);
   }
 
+  getRootFromRef(refName) {
+    const source = this.refs.get(refName);
+    if (!source) return null;
+    return this.scope.get(source);
+  }
+
   ref(title = null) {
     title = title || this.symbol.name;
     return {
@@ -198,9 +204,6 @@ class Root {
       children: [
         h(1, t(this.getTitle())),
         ...this.statements.map(s => s.render()),
-        {
-          type: 'thematicBreak'
-        },
         ...this._renderBacklinks()
       ]
     }
@@ -210,21 +213,31 @@ class Root {
     // Find references in other root files
     const files = []
     for (const [path, rootFile] of this.scope.entries()) {
+      if (rootFile === this) continue;
       if (!rootFile.path.endsWith('.kdl')) continue;
       const statements = rootFile.statements;
       const referencedStatements = [];
       statements.forEach(s => {
         const refs = s.value.filter(v => v instanceof Reference);
-        const isReferenced = refs.find(r => r.symbol === this.symbol.name); // todo: might be imported under other name so use root.refs, root.scope
+        const isReferenced = refs.find(r => {
+          // file can be imported under a different name
+          // Hence the symbol used in reference can refer to that imported name rather than root file name
+          // Root file stores this ref -> source mapping under this.refs
+          const root = rootFile.getRootFromRef(r.symbol)
+          return root && root.symbol.name === this.symbol.name
+
+        }); // todo: might be imported under other name so use root.refs, root.scope
         if (isReferenced) {
           referencedStatements.push(s)
         }
       })
 
-      if (statements.length) {
+      if (referencedStatements.length) {
         files.push({file: rootFile, statements: referencedStatements})
       }
     }
+
+    if (!files.length) return []
 
     const children = files.map(({file, statements}) => {
       return listItem([
@@ -235,6 +248,9 @@ class Root {
     })
 
     return [
+      {
+        type: 'thematicBreak'
+      },
       h(2, t('References')),
       list("unordered", children)
     ]
