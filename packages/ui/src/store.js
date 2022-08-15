@@ -6,6 +6,8 @@ import {languages} from "@codemirror/language-data";
 import {indentWithTab} from "@codemirror/commands"
 import {keymap} from "@codemirror/view"
 import {Strikethrough} from "@lezer/markdown";
+import {parser as jsParser} from "@lezer/javascript"
+import {parseMixed} from "@lezer/common"
 import {VFile} from 'vfile'
 
 import {syntaxTree} from "@codemirror/language"
@@ -34,7 +36,9 @@ function getCodeBraceExtension() {
         style: t.brace
       }
     ],
-    // wrap: wrap,
+      wrap: parseMixed(node => {
+      return node.name === "CodeBrace" ? {parser: jsParser} : null
+    }),
     parseInline: [
       {
         name: "CodeBrace",
@@ -201,9 +205,6 @@ export const sEditor = {
         },
         "&.cm-focused .cm-selectionBackground, ::selection": {
           backgroundColor: "#074"
-        },
-        ".ͼj": {
-          color: '#CD5654',
         },
         ".ͼ7": {
           fontSize: '20px',
