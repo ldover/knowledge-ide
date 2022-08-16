@@ -14,6 +14,21 @@
   import {getContextMenu} from "./context-menu/store";
   import {getRenameModal} from "./modal/rename/store";
   import RenameModal from "./modal/rename/RenameModal.svelte";
+  import * as http  from 'isomorphic-git/http/web';
+  import LightningFS from '@isomorphic-git/lightning-fs';
+  import * as git from 'isomorphic-git'
+
+  const fs = new LightningFS('fs')
+  console.log('Lightning', {fs});
+  console.log('HTTP', {http});
+  console.log('git', git);
+
+  const dir = '/test-clone'
+  git.clone({ fs, http, dir, url: 'https://github.com/isomorphic-git/lightning-fs', corsProxy: 'https://cors.isomorphic-git.org' })
+    .then(res => {
+      console.log('Done git clone', {res})
+    })
+
 
   let note = null;
   let file = null;

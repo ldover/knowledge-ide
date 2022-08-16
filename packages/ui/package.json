@@ -9,6 +9,8 @@
     "test": "node --experimental-vm-modules ./node_modules/.bin/jest"
   },
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+    "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.31",
     "autoprefixer": "^10.4.7",
     "codemirror": "^6.0.0",
@@ -27,12 +29,14 @@
     "@codemirror/language-data": "^6.1.0",
     "@codemirror/state": "^6.1.1",
     "@codemirror/view": "^6.0.2",
+    "@isomorphic-git/lightning-fs": "^4.6.0",
+    "@knowledge/codemirror-lang-knowledge": "0.0.1",
     "@knowledge/common": "0.0.1",
     "@knowledge/kdl": "0.0.1",
     "@knowledge/mdl": "0.0.1",
-    "@knowledge/codemirror-lang-knowledge": "0.0.1",
     "@lezer/common": "^1.0.0",
     "@lezer/javascript": "^1.0.0",
-    "@lezer/markdown": "^1.0.0"
+    "@lezer/markdown": "^1.0.0",
+    "isomorphic-git": "^1.19.1"
   }
 }
