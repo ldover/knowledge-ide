@@ -13,8 +13,6 @@
       expandProof = !expandProof;
     }
   }
-
-  $: console.log('Statement.svelte', node)
 </script>
 
 

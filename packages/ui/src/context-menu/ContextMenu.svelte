@@ -17,14 +17,17 @@
       }
     },
     {
+      name: 'Clone Project',
+      onClick: () => sContextMenu.onClone()
+    },
+    {
       name: 'Rename',
       onClick: () => sContextMenu.onRename()
     },
-
     {
       name: 'Delete',
       onClick: () => sContextMenu.onDelete()
-    }
+    },
   ]
 
   $: style = $sContextMenu.visible ? `left: ${$sContextMenu.left}px;top: ${$sContextMenu.top}px;` : '';

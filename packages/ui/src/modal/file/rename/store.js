@@ -1,7 +1,5 @@
-import {writable, get} from "svelte/store";
-import {getModal} from "../store";
-import {VFile} from "vfile";
-import {sFileSystem} from "../../store";
+import {get} from "svelte/store";
+import {sFileSystem} from "../../../store";
 import {getNewFileModal} from "../new-file/store";
 
 /**
@@ -11,7 +9,7 @@ import {getNewFileModal} from "../new-file/store";
 export function getRenameModal() {
   const _sModal = getNewFileModal()
 
-  const sModal = {
+  return {
     ..._sModal,
     submit: function () {
       this.rename();
@@ -33,8 +31,5 @@ export function getRenameModal() {
       _sModal.configure(options, state)
     }
   }
-
-  console.log('RenameModal', sModal)
-  return sModal;
 }
 

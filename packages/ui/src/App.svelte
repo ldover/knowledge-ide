@@ -2,7 +2,7 @@
   import FileTree from "./FileTree.svelte";
   import CodeMirror from "./CodeMirror.svelte";
   import ContextMenu from "./context-menu/ContextMenu.svelte";
-  import NewFileModal from "./modal/new-file/NewFileModal.svelte";
+  import NewFileModal from "./modal/file/new-file/NewFileModal.svelte";
   import Resizer from "./Resizer.svelte";
   import {Node} from "./notes-ui"
   import {parse as parseMDL, compile as compileMDL} from "@knowledge/mdl"
@@ -10,24 +10,12 @@
   import {banners} from "./banner/store";
   import {CompilerError} from "@knowledge/mdl";
   import {onMount, setContext} from "svelte";
-  import {getNewFileModal} from "./modal/new-file/store";
+  import {getNewFileModal} from "./modal/file/new-file/store";
   import {getContextMenu} from "./context-menu/store";
-  import {getRenameModal} from "./modal/rename/store";
-  import RenameModal from "./modal/rename/RenameModal.svelte";
-  import * as http  from 'isomorphic-git/http/web';
-  import LightningFS from '@isomorphic-git/lightning-fs';
-  import * as git from 'isomorphic-git'
-
-  const fs = new LightningFS('fs')
-  console.log('Lightning', {fs});
-  console.log('HTTP', {http});
-  console.log('git', git);
-
-  const dir = '/test-clone'
-  git.clone({ fs, http, dir, url: 'https://github.com/isomorphic-git/lightning-fs', corsProxy: 'https://cors.isomorphic-git.org' })
-    .then(res => {
-      console.log('Done git clone', {res})
-    })
+  import {getRenameModal} from "./modal/file/rename/store";
+  import {getCloneModal} from "./modal/clone/store";
+  import RenameModal from "./modal/file/rename/RenameModal.svelte";
+  import CloneModal from "./modal/clone/CloneModal.svelte";
 
 
   let note = null;
@@ -41,12 +29,14 @@
 
   let sNewFileModal = getNewFileModal()
   let sRenameModal = getRenameModal()
-  let sContextMenu = getContextMenu(sNewFileModal, sRenameModal, sFileSystem)
+  let sCloneModal = getCloneModal()
+  let sContextMenu = getContextMenu(sNewFileModal, sRenameModal, sFileSystem, sCloneModal)
 
   setContext('stores', {
     sContextMenu,
     sNewFileModal,
     sRenameModal,
+    sCloneModal
   });
 
 
@@ -133,6 +123,7 @@
 <ContextMenu {sContextMenu}/>
 <NewFileModal sModal={sNewFileModal}/>
 <RenameModal sModal={sRenameModal}/>
+<CloneModal sModal={sCloneModal}/>
 
 <style lang="scss">
   .h-fullvw {

@@ -6,7 +6,7 @@ import {writable, get} from "svelte/store";
  * @param {RenameModal} sRenameModal
  * @param sFileSystem
  */
-export function getContextMenu(sNewFileModal, sRenameModal, sFileSystem) {
+export function getContextMenu(sNewFileModal, sRenameModal, sFileSystem, sCloneModal) {
 
   const _sContextMenu = writable({
     el: null,
@@ -36,6 +36,9 @@ export function getContextMenu(sNewFileModal, sRenameModal, sFileSystem) {
       sNewFileModal.configure({}, {file, type})
       sNewFileModal.show();
       this.hide();
+    },
+    onClone: function() {
+      sCloneModal.show();
     },
     onRename: async function() {
       const {file} = get(_sContextMenu);

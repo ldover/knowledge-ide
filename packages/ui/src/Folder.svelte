@@ -16,7 +16,6 @@
     return new Promise(resolve => {
       const reader = new FileReader();
       reader.addEventListener('load', (event) => {
-        console.log('loaded', event, {result: event.target.result})
         resolve(event.target.result)
       });
 
@@ -30,7 +29,6 @@
       let fileList = ev.dataTransfer.files;
 
       let fileName = fileList[0].name;
-      console.log('dropping', {fileName})
 
       const img = await readImage(fileList[0]);
 
@@ -38,7 +36,6 @@
         path: [file.path, fileName].join('/'),
         value: img
       });
-      console.log('created vfile', {vfile})
       sFileSystem.addFile(vfile)
     } else { // Handle drop internal file
       const file0Path = ev.dataTransfer.getData("text");

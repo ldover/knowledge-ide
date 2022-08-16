@@ -92,7 +92,6 @@ class Reference {
 
   render() {
     const title = `${this.symbol}${this.statement ? ':' + this.statement : ''}`
-    console.log('render()', {reference: this, root: this.root});
     const filepath = this.root.refs.get(this.symbol);
     const obj = this.root.scope.get(filepath);
     return obj.ref(title);

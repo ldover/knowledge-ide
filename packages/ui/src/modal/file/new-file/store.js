@@ -1,19 +1,18 @@
-import {writable, get} from "svelte/store";
-import {getModal} from "../store";
+import {get} from "svelte/store";
 import {VFile} from "vfile";
-import {sFileSystem} from "../../store";
+import {sFileSystem} from "../../../store";
+import {getInputModal} from "../../common/input/store";
 
 /**
  *
  * @return {Modal}
  */
 export function getNewFileModal() {
-  const _sModal = getModal({
+  const _sModal = getInputModal({
     file: null,
-    value: null,
   })
 
-  const sModal = {
+  return {
     ..._sModal,
     submit: function () {
       this.onNew();
@@ -57,13 +56,11 @@ export function getNewFileModal() {
     show: function() {
       const {file, type} = get(_sModal)
       if (!file || !type) {
-        throw new Error("No config specifed: call 'configure' with file and type parameters")
+        throw new Error("No config specified: call 'configure' with file and type parameters")
       }
 
       _sModal.show();
     }
   }
-
-  return sModal;
 }
 
