@@ -1,6 +1,6 @@
 <script>
   import {createEventDispatcher, getContext} from 'svelte';
-  import {sEditor} from "./store";
+  import {sEditor} from "../store";
 
   const dispatch = createEventDispatcher();
 

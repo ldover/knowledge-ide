@@ -1,6 +1,6 @@
 import {get} from "svelte/store";
-import {sFileSystem} from "../../../store";
 import {getNewFileModal} from "../new-file/store";
+import {sFileSystem} from "../../../filesystem/store";
 
 /**
  *

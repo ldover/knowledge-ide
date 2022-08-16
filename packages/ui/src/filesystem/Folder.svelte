@@ -1,8 +1,8 @@
 <script>
   import File from './File.svelte';
   import {onMount, getContext} from "svelte";
-  import {sFileSystem} from "./store";
   import {VFile} from "vfile";
+  import {sFileSystem} from "./store";
 
   export let expanded = false;
   export let file;

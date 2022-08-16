@@ -1,12 +1,12 @@
 <script>
-  import FileTree from "./FileTree.svelte";
+  import FileTree from "./filesystem/FileTree.svelte";
   import CodeMirror from "./CodeMirror.svelte";
   import ContextMenu from "./context-menu/ContextMenu.svelte";
   import NewFileModal from "./modal/file/new-file/NewFileModal.svelte";
   import Resizer from "./Resizer.svelte";
   import {Node} from "./notes-ui"
   import {parse as parseMDL, compile as compileMDL} from "@knowledge/mdl"
-  import {sEditor, sFileSystem} from "./store";
+  import {sEditor} from "./store";
   import {banners} from "./banner/store";
   import {CompilerError} from "@knowledge/mdl";
   import {onMount, setContext} from "svelte";
@@ -16,6 +16,7 @@
   import {getCloneModal} from "./modal/clone/store";
   import RenameModal from "./modal/file/rename/RenameModal.svelte";
   import CloneModal from "./modal/clone/CloneModal.svelte";
+  import {sFileSystem} from "./filesystem/store";
 
 
   let note = null;

@@ -1,7 +1,8 @@
 <script>
   import Folder from './Folder.svelte';
   import {onMount} from "svelte";
-  import {sEditor, sFileSystem, sFileTree} from "./store";
+  import {sEditor} from "../store";
+  import {sFileSystem, sFileTree} from "./store";
 
   let root;
 </script>

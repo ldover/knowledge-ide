@@ -1,7 +1,7 @@
 import {get} from "svelte/store";
 import {VFile} from "vfile";
-import {sFileSystem} from "../../../store";
 import {getInputModal} from "../../common/input/store";
+import {sFileSystem} from "../../../filesystem/store";
 
 /**
  *
