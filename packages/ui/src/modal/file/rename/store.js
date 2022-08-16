@@ -1,12 +1,11 @@
 import {get} from "svelte/store";
 import {getNewFileModal} from "../new-file/store";
-import {sFileSystem} from "../../../filesystem/store";
 
 /**
  *
  * @return {Modal}
  */
-export function getRenameModal() {
+export function getRenameModal(sFileSystem) {
   const _sModal = getNewFileModal()
 
   return {

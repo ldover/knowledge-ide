@@ -13,7 +13,6 @@ import {HighlightStyle, syntaxHighlighting, syntaxTree} from "@codemirror/langua
 import {javascriptLanguage} from "@codemirror/lang-javascript"
 import {tags} from "@lezer/highlight";
 import {computeRelativePath} from "@knowledge/common";
-import {sFileSystem} from "./filesystem/store";
 
 /**
  * This is nowhere near bulletproof code
@@ -182,133 +181,137 @@ const myHighlightStyle = HighlightStyle.define([
 ])
 
 
-const _sEditor = writable({el: null, view: null, file: null,});
 
-export const sEditor = {
-  subscribe: _sEditor.subscribe,
-  set: _sEditor.set,
-  init: function (el) {
-    this._setUpdateListener(el)
-    _sEditor.update(state => ({...state, el}));
-  },
-  getValue: function() {
-      const {view, file} = get(_sEditor);
-      return view.state.toJSON().doc;
-  },
-  /**
-   *
-   * @return {VFile}
-   */
-  getFile: function() {
-    return get(_sEditor).file;
-  },
-  _setUpdateListener: function (el) {
-    function _listener() {
-      const {view, file} = get(_sEditor);
-      file.value = view.state.toJSON().doc; // Update VFile
-      sFileSystem.dump(); // todo: save on every change — maybe explicit save is better (Stackblitz pattern)
-    }
+export function getEditor(sFileSystem) {
 
-    el.removeEventListener('input', _listener)
-    el.addEventListener('input', _listener)
-  },
-  /**
-   *
-   * @param {import('vfile').VFile} file
-   */
-  setFile: function (file) {
-    _sEditor.update(state => {
+  const _sEditor = writable({el: null, view: null, file: null,});
 
-      // Update current file before we switch
-      if (state.file && state.view.state) {
-        state.file.value = state.view.state.toJSON().doc
+  return {
+    subscribe: _sEditor.subscribe,
+    set: _sEditor.set,
+    init: function (el) {
+      this._setUpdateListener(el)
+      _sEditor.update(state => ({...state, el}));
+    },
+    getValue: function() {
+        const {view, file} = get(_sEditor);
+        return view.state.toJSON().doc;
+    },
+    /**
+     *
+     * @return {VFile}
+     */
+    getFile: function() {
+      return get(_sEditor).file;
+    },
+    _setUpdateListener: function (el) {
+      function _listener() {
+        const {view, file} = get(_sEditor);
+        file.value = view.state.toJSON().doc; // Update VFile
+        sFileSystem.dump(); // todo: save on every change — maybe explicit save is better (Stackblitz pattern)
       }
 
-      return {...state, file}
-    })
+      el.removeEventListener('input', _listener)
+      el.addEventListener('input', _listener)
+    },
+    /**
+     *
+     * @param {import('vfile').VFile} file
+     */
+    setFile: function (file) {
+      _sEditor.update(state => {
 
-    // Set editor content
-    let value = file.value || '';
-    this._setValue(value, file);
-  },
-  _setValue: function (value, file) {
-    const {el, view} = get(_sEditor);
-    view?.destroy();
-
-    _sEditor.update(state => {
-
-      let myTheme = EditorView.theme({
-        "&": {
-          color: "black",
-          backgroundColor: "#ffffff"
-        },
-        ".cm-content": {
-          caretColor: "#0e9",
-          fontFamily: "Roboto Mono",
-          fontWeight: 300
-        },
-        "&.cm-focused .cm-cursor": {
-          borderLeftColor: "#0e9"
-        },
-        "&.cm-focused .cm-selectionBackground, ::selection": {
-          backgroundColor: "#074"
-        },
-        ".ͼ7": {
-          fontSize: '20px',
-          textDecoration: 'none',
-        },
-        ".cm-content, .cm-gutter": {minHeight: "100vh"},
-        ".cm-gutters": {
-          display: "none",
-          backgroundColor: "#045",
-          color: "transparent",
-          border: "none"
+        // Update current file before we switch
+        if (state.file && state.view.state) {
+          state.file.value = state.view.state.toJSON().doc
         }
-      }, {dark: false})
 
-      // The Markdown parser will dynamically load parsers
-      // for code blocks, using @codemirror/language-data to
-      // look up the appropriate dynamic import.
+        return {...state, file}
+      })
 
-      let files = get(sFileSystem)
+      // Set editor content
+      let value = file.value || '';
+      this._setValue(value, file);
+    },
+    _setValue: function (value, file) {
+      const {el, view} = get(_sEditor);
+      view?.destroy();
+
+      _sEditor.update(state => {
+
+        let myTheme = EditorView.theme({
+          "&": {
+            color: "black",
+            backgroundColor: "#ffffff"
+          },
+          ".cm-content": {
+            caretColor: "#0e9",
+            fontFamily: "Roboto Mono",
+            fontWeight: 300
+          },
+          "&.cm-focused .cm-cursor": {
+            borderLeftColor: "#0e9"
+          },
+          "&.cm-focused .cm-selectionBackground, ::selection": {
+            backgroundColor: "#074"
+          },
+          ".ͼ7": {
+            fontSize: '20px',
+            textDecoration: 'none',
+          },
+          ".cm-content, .cm-gutter": {minHeight: "100vh"},
+          ".cm-gutters": {
+            display: "none",
+            backgroundColor: "#045",
+            color: "transparent",
+            border: "none"
+          }
+        }, {dark: false})
+
+        // The Markdown parser will dynamically load parsers
+        // for code blocks, using @codemirror/language-data to
+        // look up the appropriate dynamic import.
+
+        let files = get(sFileSystem)
 
 
-      let extensions = [
-        basicSetup,
-        myTheme,
-        keymap.of([indentWithTab]),
-      ];
+        let extensions = [
+          basicSetup,
+          myTheme,
+          keymap.of([indentWithTab]),
+        ];
 
-      if (file.extname === '.mdl') {
-        let importAutocomplete = getImportAutocomplete(file, files)
-        extensions = [
-          syntaxHighlighting(myHighlightStyle),
-          ...extensions,
-          importAutocomplete.javascript, // Autocomplete for JS (within script tag)
-          importAutocomplete.markdown, // Autocomplete for markdown (works within MD-like body) // todo: does not work within curly brackets
-          markdown({codeLanguages: languages, extensions: [Strikethrough, getCodeBraceExtension()]}),
-          EditorView.lineWrapping,
-        ]
-      } else if (file.extname === '.kdl') {
-        let importAutocomplete = kdlAutocomplete(file, files.filter(f => f.extname === '.kdl'))
-        extensions = [
-          ...extensions,
-          importAutocomplete,
-          knowledge(),
-        ]
-      }
+        if (file.extname === '.mdl') {
+          let importAutocomplete = getImportAutocomplete(file, files)
+          extensions = [
+            syntaxHighlighting(myHighlightStyle),
+            ...extensions,
+            importAutocomplete.javascript, // Autocomplete for JS (within script tag)
+            importAutocomplete.markdown, // Autocomplete for markdown (works within MD-like body) // todo: does not work within curly brackets
+            markdown({codeLanguages: languages, extensions: [Strikethrough, getCodeBraceExtension()]}),
+            EditorView.lineWrapping,
+          ]
+        } else if (file.extname === '.kdl') {
+          let importAutocomplete = kdlAutocomplete(file, files.filter(f => f.extname === '.kdl'))
+          extensions = [
+            ...extensions,
+            importAutocomplete,
+            knowledge(),
+          ]
+        }
 
-      let editorView = new EditorView({
-        doc: value,
-        extensions,
-        parent: el
-      });
+        let editorView = new EditorView({
+          doc: value,
+          extensions,
+          parent: el
+        });
 
-      return {
-        ...state,
-        view: editorView
-      }
-    })
+        return {
+          ...state,
+          view: editorView
+        }
+      })
+    }
   }
 }
 

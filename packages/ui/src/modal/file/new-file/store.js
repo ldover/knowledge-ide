@@ -1,13 +1,12 @@
 import {get} from "svelte/store";
 import {VFile} from "vfile";
 import {getInputModal} from "../../common/input/store";
-import {sFileSystem} from "../../../filesystem/store";
 
 /**
  *
  * @return {Modal}
  */
-export function getNewFileModal() {
+export function getNewFileModal(sFileSystem) {
   const _sModal = getInputModal({
     file: null,
   })

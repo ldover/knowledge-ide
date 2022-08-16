@@ -2,14 +2,14 @@
   import File from './File.svelte';
   import {onMount, getContext} from "svelte";
   import {VFile} from "vfile";
-  import {sFileSystem} from "./store";
+
 
   export let expanded = false;
   export let file;
 
   let folderEl;
 
-  let sContextMenu = getContext('stores').sContextMenu;
+  const {sContextMenu, sFileSystem} = getContext('stores');
 
   // Converts the image into a data URI
   const readImage = async (file) => {

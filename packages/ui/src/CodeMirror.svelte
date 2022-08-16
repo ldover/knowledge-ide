@@ -1,12 +1,8 @@
 <script>
 
-  import {onMount} from "svelte";
-  import {sEditor} from "./store";
+  import {onMount, createEventDispatcher} from "svelte";
   import {banners} from "./banner/store";
   import Banner from "./banner/Banner.svelte";
-
-  import {createEventDispatcher} from 'svelte';
-  import {sFileSystem} from "./filesystem/store";
 
   const dispatch = createEventDispatcher();
 

@@ -6,7 +6,7 @@
   import Resizer from "./Resizer.svelte";
   import {Node} from "./notes-ui"
   import {parse as parseMDL, compile as compileMDL} from "@knowledge/mdl"
-  import {sEditor} from "./store";
+  import {getEditor} from "./store";
   import {banners} from "./banner/store";
   import {CompilerError} from "@knowledge/mdl";
   import {onMount, setContext} from "svelte";
@@ -16,7 +16,7 @@
   import {getCloneModal} from "./modal/clone/store";
   import RenameModal from "./modal/file/rename/RenameModal.svelte";
   import CloneModal from "./modal/clone/CloneModal.svelte";
-  import {sFileSystem} from "./filesystem/store";
+  import {getFileSystem} from "./filesystem/store";
 
 
   let note = null;
@@ -25,21 +25,23 @@
   $: isKDL = file && file.extname === '.kdl';
   $: isMDL = file && file.extname === '.mdl';
 
-
-  sFileSystem.init()
-
-  let sNewFileModal = getNewFileModal()
-  let sRenameModal = getRenameModal()
-  let sCloneModal = getCloneModal()
+  let sFileSystem = getFileSystem()
+  let sEditor = getEditor(sFileSystem)
+  let sNewFileModal = getNewFileModal(sFileSystem)
+  let sRenameModal = getRenameModal(sFileSystem)
+  let sCloneModal = getCloneModal(sFileSystem)
   let sContextMenu = getContextMenu(sNewFileModal, sRenameModal, sFileSystem, sCloneModal)
 
   setContext('stores', {
+    sFileSystem,
+    sEditor,
     sContextMenu,
     sNewFileModal,
     sRenameModal,
     sCloneModal
   });
 
+  sFileSystem.init()
 
 
   function process(files) {
@@ -102,7 +104,7 @@
 
 <div class="w-full flex h-full overflow-y-hidden overflow-x-hidden">
     <div class="w-3/12 bg-gray-600 text-white overflow-x-auto">
-        <FileTree/>
+        <FileTree sFileSystem={sFileSystem}/>
     </div>
     <Resizer/>
     <div class="w-5/12 h-fullvw overflow-y-auto">
