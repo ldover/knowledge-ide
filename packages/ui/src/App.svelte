@@ -45,24 +45,32 @@
 
 
   function process(files) {
-    console.log('parse files', files)
-
     parseMDL(files);
     compileMDL(files)
   }
 
-  function onRun() {
-    // return;
-
+  async function onRun() {
     banners.clear();
-    file = sEditor.getFile();
-    file.value = sEditor.getValue();
-    const files = sFileSystem.getFiles()
-      .filter(f => !f.basename?.startsWith('.') && ['.kdl', '.mdl', '.png', '.jpg'].includes(f.extname));
+    const currentFile = sEditor.getFile();
+    const currentValue = sEditor.getValue();
+
+    let files = await sFileSystem.getFiles();
+    files = files.filter(f => !f.basename?.startsWith('.') && ['.kdl', '.mdl', '.png', '.jpg'].includes(f.extname));
+    if (!files.length) {
+      return console.warn('No files to run');
+    }
 
     try {
       // Abstract everything away in the process method
       process(files)
+      const file = files.find(f => f.path === currentFile.path);
+      if (!file) {
+        return console.error('ERROR: File not found')
+      }
+      if (!file.data.compiled) {
+        return console.warn('WARN: file cannot run since it did not compile')
+      }
+
       note = file.data.compiled.render()
     } catch(err) {
       if (err instanceof CompilerError) {
@@ -77,14 +85,17 @@
 
   $: noteName = $sEditor.file?.name?.split('.')[0];
 
-  function onHashChange() {
+  async function onHashChange() {
     let path = window.location.hash.slice(2);
     if (path) {
-      const fullpath = `~/${path}`
-      const f = $sFileSystem.find(f => f.path === fullpath);
-      if (f) {
-        sEditor.setFile(f);
-        onRun()
+      try {
+        const f = await sFileSystem.getFile(path);
+        if (f) {
+          sEditor.setFile(f);
+          onRun()
+        }
+      } catch (err) {
+        console.error('onHashChange failed', err);
       }
     }
   }

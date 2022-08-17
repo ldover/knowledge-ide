@@ -15,7 +15,6 @@ export function getCloneModal(sFileSystem) {
   })
 
   async function clone(dir = '/test-clone', url = 'https://gitlab.com/ldover/knowledge-library.git') {
-    console.log('cloning', {dir, url})
 
 
     let fs = sFileSystem.getInstance();
@@ -28,13 +27,10 @@ export function getCloneModal(sFileSystem) {
       corsProxy: 'https://cors.isomorphic-git.org',
       onAuth: (url) => onAuth(url)
     })
-
-    console.log('clone complete')
   }
 
 
   function onAuth(url) {
-    console.log('onAuth', url)
     const accessToken = "glpat-Mzd_iz-ysuRT5Yz6XgBV"
     const username = "ldover";
 
@@ -51,13 +47,11 @@ export function getCloneModal(sFileSystem) {
 
       try {
         await clone();
-        console.log('clone successful')
       } catch (err) {
         // todo: display error in the interface
         window.alert('Failed clone')
         console.error('Display error somewhere', err)
       } finally {
-        console.log('finally')
       }
     },
   }

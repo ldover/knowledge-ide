@@ -46,32 +46,36 @@
   function toggle() {
     expanded = !expanded;
   }
+
+  $: hidden = file.name && file.name.startsWith('.');
 </script>
 
-<div bind:this={folderEl}>
+{#if !hidden}
+  <div bind:this={folderEl}>
     <div on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
          on:drop|preventDefault|stopPropagation={handleDrop}
          on:dragover|preventDefault|stopPropagation={() => console.log('dragover', file.path)}
          class:expanded
          class="flex items-center cursor-pointer"
          on:click={toggle}>
-        <span class="material-symbols-sharp">{expanded ? 'expand_more' : 'chevron_right'}</span>
-        <span class="material-symbols-sharp text-teal-200">folder</span>{file.name}
+      <span class="material-symbols-sharp">{expanded ? 'expand_more' : 'chevron_right'}</span>
+      <span class="material-symbols-sharp text-teal-200">folder</span>{file.name}
     </div>
     {#if expanded}
-        <ul class=ml-6>
-            {#each file.files as file}
-                <li>
-                    {#if file.files}
-                        <svelte:self file={file}/>
-                    {:else}
-                        <File file={file.value}/>
-                    {/if}
-                </li>
-            {/each}
-        </ul>
+      <ul class=ml-6>
+        {#each file.files as file}
+          <li>
+            {#if file.files}
+              <svelte:self file={file}/>
+            {:else}
+              <File file={file}/>
+            {/if}
+          </li>
+        {/each}
+      </ul>
     {/if}
-</div>
+  </div>
+{/if}
 
 
 

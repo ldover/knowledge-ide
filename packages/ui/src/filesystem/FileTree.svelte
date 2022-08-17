@@ -1,16 +1,14 @@
 <script>
   import Folder from './Folder.svelte';
-  import {getFileTree} from "./store";
 
   export let sFileSystem;
 
-  let sFileTree = getFileTree(sFileSystem);
   let root;
 </script>
 
-{#if $sFileTree}
+{#if $sFileSystem}
     <div class="flex">
-        <Folder file={$sFileTree}
+        <Folder file={$sFileSystem}
                 expanded={true}/>
         <div class="px-3"></div>
     </div>

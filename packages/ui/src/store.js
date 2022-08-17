@@ -1,4 +1,5 @@
 import {get, writable} from "svelte/store";
+import {tick} from "svelte";
 import {basicSetup, EditorView} from "codemirror";
 import {markdown, markdownLanguage} from "@codemirror/lang-markdown";
 import {knowledge, knowledgeLanguage} from '@knowledge/codemirror-lang-knowledge';
@@ -208,11 +209,12 @@ export function getEditor(sFileSystem) {
       function _listener() {
         const {view, file} = get(_sEditor);
         file.value = view.state.toJSON().doc; // Update VFile
-        sFileSystem.dump(); // todo: save on every change — maybe explicit save is better (Stackblitz pattern)
+        console.log('_listener', file)
+        sFileSystem.updateFile(file)
       }
 
-      el.removeEventListener('input', _listener)
-      el.addEventListener('input', _listener)
+      el.removeEventListener('keyup', _listener)
+      el.addEventListener('keyup', _listener)
     },
     /**
      *
@@ -272,7 +274,7 @@ export function getEditor(sFileSystem) {
         // for code blocks, using @codemirror/language-data to
         // look up the appropriate dynamic import.
 
-        let files = get(sFileSystem)
+        let files = sFileSystem.flatten().map(f => new VFile({path: f.path}));
 
 
         let extensions = [

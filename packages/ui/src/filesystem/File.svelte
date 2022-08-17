@@ -5,10 +5,9 @@
 
   const {sContextMenu, sEditor} = getContext('stores');
 
-  /** @type {import('vfile').VFile} */
   export let file;
 
-  $: hidden = file.basename && file.basename.startsWith('.');
+  $: hidden = file.name && file.name.startsWith('.');
 
   const getIcon = (extname) => {
     if (['.png', 'jpg'].includes(extname)) return 'image'
@@ -30,7 +29,7 @@
     href="#/{file.path.replace('~/', '')}">
     <span class="material-symbols-sharp text-gray-200">
       {getIcon(file.extname)}
-    </span>{file.basename}
+    </span>{file.name}
   </a>
 {/if}
 
