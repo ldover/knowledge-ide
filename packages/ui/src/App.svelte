@@ -17,6 +17,7 @@
   import RenameModal from "./modal/file/rename/RenameModal.svelte";
   import CloneModal from "./modal/clone/CloneModal.svelte";
   import {getFileSystem} from "./filesystem/store";
+  import {getGit} from "./versioning/store";
 
 
   let note = null;
@@ -29,20 +30,20 @@
   let sEditor = getEditor(sFileSystem)
   let sNewFileModal = getNewFileModal(sFileSystem)
   let sRenameModal = getRenameModal(sFileSystem)
-  let sCloneModal = getCloneModal(sFileSystem)
+  let sGit = getGit(sFileSystem)
+  let sCloneModal = getCloneModal(sFileSystem, sGit)
   let sContextMenu = getContextMenu(sNewFileModal, sRenameModal, sFileSystem, sCloneModal)
 
-  setContext('stores', {
+  let scope = {
     sFileSystem,
     sEditor,
     sContextMenu,
     sNewFileModal,
     sRenameModal,
     sCloneModal
-  });
+  };
 
-  sFileSystem.init()
-
+  setContext('stores', scope);
 
   function process(files) {
     parseMDL(files);
@@ -104,9 +105,22 @@
     sEditor.init(e.detail);
   }
 
-  onMount(() => {
+  onMount(async () => {
     if (window.location.hash) {
       onHashChange();
+    }
+
+    try {
+      await sFileSystem.init()
+    } catch (err) {
+      // Clone if we empty system
+      if (err.code === 'ENOENT') {
+        console.info("INFO: no repo found, cloning anew.")
+        await sGit.clone();
+        console.info('INFO: cloning finished')
+      } else {
+        console.error(err)
+      }
     }
   })
 </script>

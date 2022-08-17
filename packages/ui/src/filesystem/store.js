@@ -5,7 +5,7 @@ import LightningFS from '@isomorphic-git/lightning-fs';
 const _sFileSystem = writable(null);
 
 
-export function getFileSystem(workingDir = '/test-clone') {
+export function getFileSystem(workingDir = '/knowledge-library') {
   const fs = new LightningFS('fs');
 
   return {
@@ -74,13 +74,9 @@ export function getFileSystem(workingDir = '/test-clone') {
       return this._getAllFiles(workingDir);
     },
     init: async function () {
-      try {
-        const files = await this.load();
-        _sFileSystem.set(files);
-        return files;
-      } catch (err) {
-        console.error(err);
-      }
+      const files = await this.load();
+      _sFileSystem.set(files);
+      return files;
     },
     flatten: function () {
       const dir = get(_sFileSystem);
