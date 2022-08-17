@@ -50,21 +50,13 @@ export function getContextMenu(sNewFileModal, sRenameModal, sFileSystem, sCloneM
       const {file} = get(_sContextMenu);
       this.hide();
       if (file.type === 'folder') {
-        if (window.confirm(`'Sure you want to delete folder "${file.name}"?`)) {
-          this._deleteFolder(file)
-        }
+        this._deleteFolder(file)
       } else {
         sFileSystem.deleteFile(file);
       }
     },
     _deleteFolder: function(folder) {
-      folder.files.forEach(f => {
-        if (f.type === 'folder') {
-          this._deleteFolder(f)
-        } else {
-          sFileSystem.deleteFile(f.value)
-        }
-      })
+      sFileSystem.deleteFolder(folder.path)
     }
   }
 

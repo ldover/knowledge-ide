@@ -38,41 +38,40 @@ export function getFileSystem(workingDir = '/test-clone') {
       let value = await fs.promises.readFile(path, {encoding: 'utf8'});
       return new VFile({value: value, path: path})
     },
-    load: function () {
-      const getAllFiles = async function (dirPath) {
-        const dirFiles = await fs.promises.readdir(dirPath)
-        const files = await Promise.all(dirFiles.map(async file => {
-          let filepath = [dirPath, file].join('/');
-          const stat = await fs.promises.stat(filepath)
-          const vfile = new VFile({path: file});
+    _getAllFiles: async function (dirPath) {
+      const dirFiles = await fs.promises.readdir(dirPath)
+      const files = await Promise.all(dirFiles.map(async file => {
+        let filepath = [dirPath, file].join('/');
+        const stat = await fs.promises.stat(filepath)
+        const vfile = new VFile({path: file});
 
-          if (stat.type === 'dir') {
-            // Don't read the empty folder
-            if (vfile.basename.startsWith('.')) {
-              return null;
-            }
-            return getAllFiles(filepath);
-          } else {
-            const name = vfile.basename;
-            const extname = vfile.extname;
-            return {
-              type: 'file',
-              name,
-              extname,
-              path: filepath,
-            }
+        if (stat.type === 'dir') {
+          // Don't read the empty folder
+          if (vfile.basename.startsWith('.')) {
+            return null;
           }
-        }))
-
-        return {
-          type: 'folder',
-          name: new VFile({path: dirPath}).basename,
-          path: dirPath,
-          files: files.filter(f => f !== null) // filter out null returns (empty folders)
+          return this._getAllFiles(filepath);
+        } else {
+          const name = vfile.basename;
+          const extname = vfile.extname;
+          return {
+            type: 'file',
+            name,
+            extname,
+            path: filepath,
+          }
         }
-      }
+      }))
 
-      return getAllFiles(workingDir);
+      return {
+        type: 'folder',
+        name: new VFile({path: dirPath}).basename,
+        path: dirPath,
+        files: files.filter(f => f !== null) // filter out null returns (empty folders)
+      }
+    },
+    load: function () {
+      return this._getAllFiles(workingDir);
     },
     init: async function () {
       try {
@@ -99,6 +98,10 @@ export function getFileSystem(workingDir = '/test-clone') {
      */
     addFile: async function (file) {
       await fs.promises.writeFile(file.path, file.value, {encoding: 'utf8'})
+      this.init();
+    },
+    addFolder: async function (path) {
+      await fs.promises.mkdir(path)
       this.init();
     },
     move: async function (filePath, folder) {
@@ -129,7 +132,7 @@ export function getFileSystem(workingDir = '/test-clone') {
     renameFile: async function (file, value) {
       let parts = file.path.split('/');
       parts.splice(-1, 1, value);
-      const newPath = path.join(parts);
+      const newPath = parts.join('/');
       return this.rename(file.path, newPath);
     },
     renameFolder: function (folder, value) {
@@ -141,7 +144,7 @@ export function getFileSystem(workingDir = '/test-clone') {
     },
     rename: async function(oldPath, newPath) {
       try {
-        await fs.promises.rename(file.path, newPath)
+        await fs.promises.rename(oldPath, newPath)
         this.init(); // Refresh
       } catch (err) {
         console.error('Rename failed', err);
@@ -151,9 +154,34 @@ export function getFileSystem(workingDir = '/test-clone') {
       await fs.promises.unlink(file.path)
       this.init();
     },
-    deleteFolder: async function (folder) {
-      await fs.promises.rmdir(folder.path)
-      this.init();
+    deleteFolder: async function (path) {
+      async function recursiveDelete(folder) {
+        await Promise.all(folder.files.map(async f => {
+          if (f.type === 'folder') {
+            await recursiveDelete(f);
+          } else {
+            return fs.promises.unlink(f.path)
+          }
+        }))
+
+        return fs.promises.rmdir(path)
+      }
+
+      try {
+        await fs.promises.rmdir(path)
+      } catch (err) {
+        if (err.message ==='ENOTEMPTY') {
+          if (window.confirm('directory is not empty — sure you want to delete all contents?')) {
+            const dir = await this._getAllFiles(path);
+            console.log('recursive delete', dir);
+            await recursiveDelete(dir);
+          }
+        } else {
+          throw err;
+        }
+      } finally {
+        this.init();
+      }
     }
   };
 }

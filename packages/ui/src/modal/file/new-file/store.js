@@ -25,8 +25,8 @@ export function getNewFileModal(sFileSystem) {
 
       let path;
       if (type === 'folder') {
-        // Creates an empty file which allows us to display a folder (see derived store of sFileSystem)
         path = `${file.path}/${value}/.`;
+        sFileSystem.addFolder(path); // todo: unhandled error here
       } else {
         const isMDL = value.endsWith('.mdl')
         const isKDL = value.endsWith('.kdl')
@@ -36,14 +36,16 @@ export function getNewFileModal(sFileSystem) {
         }
 
         path = `${file.path}/${value}`;
+
+        const newFile = new VFile({
+          path,
+          value: ''
+        })
+
+        sFileSystem.addFile(newFile)
       }
 
-      const newFile = new VFile({
-        path,
-        value: ''
-      })
       this.hide()
-      sFileSystem.addFile(newFile)
     },
     configure: function(options = {}, state = { file: null, type: 'file'}) {
       !options.title && (options.title = `New ${state.type}`);
