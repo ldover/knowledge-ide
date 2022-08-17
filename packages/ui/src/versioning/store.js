@@ -4,14 +4,26 @@ import * as http from 'isomorphic-git/http/web';
 import * as git from 'isomorphic-git'
 
 
-const _sFileSystem = writable([]);
+const _sGit = writable([]);
 
 
 export function getGit(sFileSystem) {
 
 
+  sFileSystem.getFiles().then(files => {
+    const gitFiles = files.map(file => {
+      return {
+        path: file.path,
+        status: 'unstaged'
+      }
+    })
+
+    console.log({gitFiles});
+    _sGit.set(gitFiles)
+  });
+
   return {
-    subscribe: _sFileSystem.subscribe,
+    subscribe: _sGit.subscribe,
     clone: async function (dir = '/knowledge-library', url = 'https://gitlab.com/ldover/knowledge-library.git') {
 
       let fs = sFileSystem.getInstance();
@@ -32,9 +44,19 @@ export function getGit(sFileSystem) {
     }, // init from the local filesystem and cwnd
     commit: function () {
     },
-    add: function () {
+    add: function (file) {
+      _sGit.update(files => {
+        const f = files.find(f => f === file);
+        f.status = 'staged';
+        return files;
+      })
     },
-    remove: function () {
+    remove: function (file) {
+      _sGit.update(files => {
+        const f = files.find(f => f === file);
+        f.status = 'unstaged';
+        return files;
+      })
     },
     push: function () {
     },

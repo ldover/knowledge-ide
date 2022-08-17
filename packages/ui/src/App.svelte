@@ -18,6 +18,7 @@
   import CloneModal from "./modal/clone/CloneModal.svelte";
   import {getFileSystem} from "./filesystem/store";
   import {getGit} from "./versioning/store";
+  import GitTab from "./versioning/GitTab.svelte";
 
 
   let note = null;
@@ -127,25 +128,34 @@
 
 <svelte:window on:hashchange={onHashChange} />
 
-<div class="w-full flex h-full overflow-y-hidden overflow-x-hidden">
-    <div class="w-3/12 bg-gray-600 text-white overflow-x-auto">
-        <FileTree sFileSystem={sFileSystem}/>
-    </div>
-    <Resizer/>
-    <div class="w-5/12 h-fullvw overflow-y-auto">
-        <CodeMirror on:mount={onEditorMount}/>
-    </div>
-    <Resizer/>
-    <div class="h-fullvw w-4/12 px-8 py-3 overflow-y-auto" style="--list-style: {isKDL ? 'none' : 'disc'}">
-      {#if note}
-        <Node node={note}/>
-      {:else}
-        (1) Add file (2) Press "Run"
-      {/if}
-    </div>
-    <div class="absolute top-0 right-0 m-3">
-        <button class="px-16 text-lg bg-green-600 text-white" on:click={onRun}>Run</button>
-    </div>
+<div class="w-full h-full">
+  <div class="w-full text-white h-1/6 bg-black">
+    <div class>Toolbar</div>
+  </div>
+  <div class="w-full flex h-5/6 overflow-y-hidden overflow-x-hidden">
+      <div class="w-3/12 bg-gray-600 text-white overflow-x-auto">
+          <FileTree sFileSystem={sFileSystem}/>
+      </div>
+      <Resizer/>
+      <div class="w-5/12 h-fullvw overflow-y-auto">
+          <CodeMirror on:mount={onEditorMount}/>
+      </div>
+      <Resizer/>
+      <div class="h-fullvw w-4/12 px-8 py-3 overflow-y-auto" style="--list-style: {isKDL ? 'none' : 'disc'}">
+        {#if note}
+          <Node node={note}/>
+        {:else}
+          (1) Add file (2) Press "Run"
+        {/if}
+      </div>
+      <Resizer/>
+      <div class="h-fullvw px-8 py-3">
+        <GitTab {sGit}/>
+      </div>
+      <div class="absolute top-0 right-0 m-3">
+          <button class="px-16 text-lg bg-green-600 text-white" on:click={onRun}>Run</button>
+      </div>
+  </div>
 </div>
 
 <ContextMenu {sContextMenu}/>
