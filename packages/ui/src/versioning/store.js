@@ -74,6 +74,7 @@ export function getGit(sFileSystem) {
       console.log('commit', {message})
       await git.commit({fs, dir: rootDir, message})
       console.log('successfully committed changes')
+      this.refresh();
     },
     add: async function (file) {
       console.log('git add', file)

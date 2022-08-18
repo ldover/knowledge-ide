@@ -9,13 +9,16 @@
   export let sModal;
 
   const isDeleted = row => row[HEAD] === 1 && row[WORKDIR] === 0;
-  const isUnstaged = row => row[WORKDIR] !== row[STAGE];
+  const isUnmodified = row => row[HEAD] && row[WORKDIR];
+  // todo: this next line might be wrong: I'm trying to get all files that are (a) not staged and (b) have changes
+  const isUnstaged = row => row[WORKDIR] !== row[STAGE] && !isUnmodified(row);
+  const isStaged = row => row[WORKDIR] === row[STAGE] && !isUnmodified(row);
   const isModified = row => row[HEAD] === 1 && row[WORKDIR] === 2;
+  const isNew = row => row[HEAD] === 0 && row[WORKDIR] === 2;
   const isAdded = row => row[HEAD] === 0 && row[WORKDIR] === 2;
 
-  // TODO: make this correct
   $: unstaged = $sGit.filter(file => isUnstaged(file.status));
-  $: staged = $sGit.filter(file => !isUnstaged(file.status));
+  $: staged = $sGit.filter(file => isStaged(file.status));
 
   let commitMsg;
 
@@ -26,11 +29,22 @@
 
     selectedFile = await sFileSystem.getFile(file.path)
   }
+
+  async function onCommit() {
+    try {
+      await sGit.commit(commitMsg)
+      commitMsg = null;
+      sModal.hide();
+    } catch (err) {
+      console.error(err)
+      window.alert('Error:' + err)
+    }
+  }
 </script>
 
 <Modal style="width: 80%; height: 80%;" {sModal}>
   <div class="flex w-full h-full">
-    <div class="w-7/12 h-full">
+    <div class="w-7/12 h-full overflow-y-auto overflow-x-auto relative">
       {#if selectedFile}
           <Diff {sGit} file={selectedFile} />
       {/if}
@@ -38,6 +52,8 @@
 
     <div class="w-5/12 h-full border-l-2 border-gray-300 flex flex-col justify-between">
       <div>
+        <button on:click={() => sGit.refresh()}>Refresh</button>
+
         <div class="border mb-3 w-full">
           <div class="flex justify-between border">
             <div class="font-bold">Unstaged</div>
@@ -75,7 +91,7 @@
 
         <button class="bg-gray-100 rounded-sm px-2 float-right"
                 disabled={!commitMsg}
-                on:click={() => sGit.commit(commitMsg)}>Commit</button>
+                on:click={onCommit}>Commit</button>
       </div>
     </div>
 

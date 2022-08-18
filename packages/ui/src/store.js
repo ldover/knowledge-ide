@@ -209,7 +209,6 @@ export function getEditor(sFileSystem) {
       function _listener() {
         const {view, file} = get(_sEditor);
         file.value = view.state.toJSON().doc; // Update VFile
-        console.log('_listener', file)
         sFileSystem.updateFile(file)
       }
 
