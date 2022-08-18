@@ -5,6 +5,7 @@
   import Diff from "./components/Diff.svelte";
 
   export let sGit;
+  export let sFileSystem;
   export let sModal;
 
   const isDeleted = row => row[HEAD] === 1 && row[WORKDIR] === 0;
@@ -17,12 +18,22 @@
   $: staged = $sGit.filter(file => !isUnstaged(file.status));
 
   let commitMsg;
+
+  let selectedFile;
+
+  async function onSelect(e) {
+    const file = e.detail;
+
+    selectedFile = await sFileSystem.getFile(file.path)
+  }
 </script>
 
 <Modal style="width: 80%; height: 80%;" {sModal}>
   <div class="flex w-full h-full">
     <div class="w-7/12 h-full">
-      <Diff {sGit} file={{path: '/knowledge-library/test.mdl', value: '# Test change'}} />
+      {#if selectedFile}
+          <Diff {sGit} file={selectedFile} />
+      {/if}
     </div>
 
     <div class="w-5/12 h-full border-l-2 border-gray-300 flex flex-col justify-between">
@@ -34,7 +45,11 @@
           </div>
           <div>
             {#each unstaged as file}
-              <File file={file} button="Stage" onClick={() => sGit.add(file)} />
+              <File file={file}
+                    on:select={onSelect}
+                    button="Stage"
+                    onClick={() => sGit.add(file)}
+              />
             {/each}
           </div>
         </div>
@@ -44,7 +59,10 @@
           </div>
           <div>
             {#each staged as file}
-              <File file={file} button="Unstage" onClick={() => sGit.remove(file)} />
+              <File file={file}
+                    on:select={onSelect}
+                    button="Unstage"
+                    onClick={() => sGit.remove(file)} />
             {/each}
           </div>
         </div>

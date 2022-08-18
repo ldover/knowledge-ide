@@ -1,5 +1,5 @@
 <script>
-  import {onMount} from 'svelte';
+  import {onMount, afterUpdate} from 'svelte';
   import {Diff2HtmlUI} from 'diff2html/lib/ui/js/diff2html-ui'
   import * as Diff from 'diff'
 
@@ -7,23 +7,37 @@
 
   export let file;
   export let sGit;
+
+  let prevFile;
   let el;
 
-  onMount(async () => {
-    const s0 = file.value;
+  afterUpdate(async () => {
+    if (file === prevFile) return;
+    prevFile = file;
 
-    const f = await sGit.getLatest(file);
-    debugger
-    const s1 = f.value;
+    if (!file) return;
+
+
+    let oldString = '';
+    const newString = file.value;
+    try {
+      const f = await sGit.getLatest(file);
+      oldString = f.value
+    } catch(err) {
+      console.error(err) // handle file not found case where we searc for a new file in git — meaning.
+    }
+
     // Creates a unified diff patch.
-
-    console.log({s0, s1})
-    const patch = Diff.createTwoFilesPatch(file.path, file.path, s0, s1);
+    console.log({s0: newString, s1: oldString})
+    const patch = Diff.createTwoFilesPatch(file.path, file.path, oldString, newString);
     console.log({el, patch, configuration})
 
     const diff2htmlUi = new Diff2HtmlUI(el, patch, configuration);
-
     diff2htmlUi.draw();
+  })
+
+  onMount(async () => {
+
   })
 </script>
 

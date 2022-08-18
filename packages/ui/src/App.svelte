@@ -162,7 +162,11 @@
 <NewFileModal sModal={sNewFileModal}/>
 <RenameModal sModal={sRenameModal}/>
 <CloneModal sModal={sCloneModal}/>
-<GitModal sModal={sGitModal} width={1000} {sGit}/>
+<GitModal sModal={sGitModal}
+          width={1000}
+          {sGit}
+          {sFileSystem}
+/>
 
 <style lang="scss">
   .h-fullvw {

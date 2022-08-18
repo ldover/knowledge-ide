@@ -36,6 +36,12 @@ export function getFileSystem(workingDir = '/knowledge-library') {
       }))
     },
     getFile: async function (path) {
+      if (path.startsWith('./')) {
+        path = path.replace('./', workingDir + '/');
+      } else if (!path.startsWith('/')) {
+        path = [workingDir, path].join('/')
+      }
+
       let value = await fs.promises.readFile(path, {encoding: 'utf8'});
       return new VFile({value: value, path: path})
     },
