@@ -18,7 +18,8 @@
   import CloneModal from "./modal/clone/CloneModal.svelte";
   import {getFileSystem} from "./filesystem/store";
   import {getGit} from "./versioning/store";
-  import GitTab from "./versioning/GitTab.svelte";
+  import GitModal from "./versioning/GitModal.svelte";
+  import {getModal} from "./modal/store";
 
 
   let note = null;
@@ -34,6 +35,7 @@
   let sGit = getGit(sFileSystem)
   let sCloneModal = getCloneModal(sFileSystem, sGit)
   let sContextMenu = getContextMenu(sNewFileModal, sRenameModal, sFileSystem, sCloneModal)
+  let sGitModal = getModal()
 
   let scope = {
     sFileSystem,
@@ -132,6 +134,7 @@
 <div class="w-full h-full">
   <div class="w-full text-white h-1/6 bg-black">
     <div class>Toolbar</div>
+    <button on:click={() => sGitModal.show()}>Open Git</button>
   </div>
   <div class="w-full flex h-5/6 overflow-y-hidden overflow-x-hidden">
       <div class="w-3/12 bg-gray-600 text-white overflow-x-auto">
@@ -149,10 +152,6 @@
           (1) Add file (2) Press "Run"
         {/if}
       </div>
-      <Resizer/>
-      <div class="h-fullvw px-8 py-3">
-        <GitTab {sGit}/>
-      </div>
       <div class="absolute top-0 right-0 m-3">
           <button class="px-16 text-lg bg-green-600 text-white" on:click={onRun}>Run</button>
       </div>
@@ -163,6 +162,7 @@
 <NewFileModal sModal={sNewFileModal}/>
 <RenameModal sModal={sRenameModal}/>
 <CloneModal sModal={sCloneModal}/>
+<GitModal sModal={sGitModal} width={1000} {sGit}/>
 
 <style lang="scss">
   .h-fullvw {

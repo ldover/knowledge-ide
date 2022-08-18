@@ -11,7 +11,9 @@
 
     <div use:clickOutside
          on:outclick={() => sModal.hide()}
-         class="modal shadow-md bg-white rounded-md rounded-sm">
+         class="modal shadow-md bg-white rounded-md rounded-sm"
+         {...$$restProps}>
+
       <slot></slot>
     </div>
 </div>
