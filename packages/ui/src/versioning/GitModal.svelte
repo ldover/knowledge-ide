@@ -2,6 +2,7 @@
   import File from './components/File.svelte'
   import {FILE, HEAD, WORKDIR, STAGE} from "./store";
   import Modal from "../modal/Modal.svelte";
+  import Diff from "./components/Diff.svelte";
 
   export let sGit;
   export let sModal;
@@ -21,9 +22,7 @@
 <Modal style="width: 80%; height: 80%;" {sModal}>
   <div class="flex w-full h-full">
     <div class="w-7/12 h-full">
-      <div>
-        Diff Zone
-      </div>
+      <Diff s0="abc\nqwe" s1="abc\nqee\123" />
     </div>
 
     <div class="w-5/12 h-full border-l-2 border-gray-300 flex flex-col justify-between">
