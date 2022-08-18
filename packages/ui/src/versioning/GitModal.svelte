@@ -22,7 +22,7 @@
 <Modal style="width: 80%; height: 80%;" {sModal}>
   <div class="flex w-full h-full">
     <div class="w-7/12 h-full">
-      <Diff s0="abc\nqwe" s1="abc\nqee\123" />
+      <Diff {sGit} file={{path: '/knowledge-library/test.mdl', value: '# Test change'}} />
     </div>
 
     <div class="w-5/12 h-full border-l-2 border-gray-300 flex flex-col justify-between">

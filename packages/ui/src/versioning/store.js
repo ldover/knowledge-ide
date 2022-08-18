@@ -3,6 +3,7 @@ import {get, writable} from 'svelte/store';
 import * as http from 'isomorphic-git/http/web';
 import * as git from 'isomorphic-git'
 import fs from "fs";
+import {VFile} from 'vfile';
 
 
 const _sGit = writable([]);
@@ -90,6 +91,26 @@ export function getGit(sFileSystem) {
     pull: function () {
     },
     diff: function () {
+    },
+    getLatest: async function (file) {
+      console.log('getLatest', {file})
+      const commitOid = await git.resolveRef({fs, dir: rootDir, ref: 'main'}); // Latest commit
+
+      const relativePath = file.path.replace(rootDir + '/', '');
+      console.log({relativePath})
+      const content = await this._readFileFromCommit(relativePath, commitOid);
+      console.log({content})
+      return new VFile({path: file.path, value: content })
+    },
+    _readFileFromCommit: async function (filepath, oid) {
+      let {blob} = await git.readBlob({
+        fs,
+        dir: rootDir,
+        oid,
+        filepath,
+      });
+
+      return new TextDecoder().decode(blob);
     },
     _onAuth: function (url) {
       const accessToken = "glpat-Mzd_iz-ysuRT5Yz6XgBV"

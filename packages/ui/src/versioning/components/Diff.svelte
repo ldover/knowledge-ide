@@ -5,16 +5,20 @@
 
   const configuration = {drawFileList: false, matching: 'lines'};
 
-  export let s0;
-  export let s1;
-
-  $: diffString = Diff.diffWords(s0, s1)
-
+  export let file;
+  export let sGit;
   let el;
 
-  onMount(() => {
-    // - creates a unified diff patch.
-    const patch = Diff.createTwoFilesPatch('a.mdl', 'a.mdl', s0, s1);
+  onMount(async () => {
+    const s0 = file.value;
+
+    const f = await sGit.getLatest(file);
+    debugger
+    const s1 = f.value;
+    // Creates a unified diff patch.
+
+    console.log({s0, s1})
+    const patch = Diff.createTwoFilesPatch(file.path, file.path, s0, s1);
     console.log({el, patch, configuration})
 
     const diff2htmlUi = new Diff2HtmlUI(el, patch, configuration);
