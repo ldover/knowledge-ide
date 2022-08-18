@@ -2,31 +2,23 @@ import {get, writable} from 'svelte/store';
 
 import * as http from 'isomorphic-git/http/web';
 import * as git from 'isomorphic-git'
+import fs from "fs";
 
 
 const _sGit = writable([]);
 
+export const FILE = 0, HEAD = 1, WORKDIR = 2, STAGE = 3;
 
 export function getGit(sFileSystem) {
 
+  const rootDir = sFileSystem.getWorkingDir();
+  const fs = sFileSystem.getInstance();
 
-  sFileSystem.getFiles().then(files => {
-    const gitFiles = files.map(file => {
-      return {
-        path: file.path,
-        status: 'unstaged'
-      }
-    })
 
-    console.log({gitFiles});
-    _sGit.set(gitFiles)
-  });
-
-  return {
+  const sGit = {
     subscribe: _sGit.subscribe,
     clone: async function (dir = '/knowledge-library', url = 'https://gitlab.com/ldover/knowledge-library.git') {
 
-      let fs = sFileSystem.getInstance();
       console.assert(fs);
       await git.clone({
         fs: fs,
@@ -40,23 +32,58 @@ export function getGit(sFileSystem) {
       // Refresh file system
       sFileSystem.init()
     },
-    init: function () {
-    }, // init from the local filesystem and cwnd
-    commit: function () {
+    load: async function() {
+        const gitMatrix = await git.statusMatrix({fs, dir: rootDir});
+
+        return gitMatrix.map(row => {
+          return {
+            path: row[FILE],
+            status: row
+          }
+        })
     },
-    add: function (file) {
-      _sGit.update(files => {
-        const f = files.find(f => f === file);
-        f.status = 'staged';
-        return files;
-      })
+    refresh: async function () {
+        const gitFiles = await this.load()
+        console.log('refresh', {gitFiles})
+        _sGit.set(gitFiles)
     },
-    remove: function (file) {
-      _sGit.update(files => {
-        const f = files.find(f => f === file);
-        f.status = 'unstaged';
-        return files;
+    init: async function () {
+      await this.refresh()
+
+      await git.setConfig({
+        fs,
+        dir: rootDir,
+        path: 'user.name',
+        value: 'ldover'
       })
+
+      await git.setConfig({
+        fs,
+        dir: rootDir,
+        path: 'user.email',
+        value: 'luka.dover@gmail.com'
+      })
+
+      // todo: Register listeners
+      // sFileSystem.on('change', () => {
+      //   this.refresh(); // todo: Should throttle this
+      // })
+    },
+    commit: async function (message) {
+      console.log('commit', {message})
+      await git.commit({fs, dir: rootDir, message})
+      console.log('successfully committed changes')
+    },
+    add: async function (file) {
+      console.log('git add', file)
+      await git.add({fs, dir: rootDir, filepath: file.path})
+
+      this.refresh()
+    },
+    remove: async function (file) {
+      await git.remove({fs, dir: rootDir, filepath: file.path})
+
+      this.refresh()
     },
     push: function () {
     },
@@ -73,6 +100,7 @@ export function getGit(sFileSystem) {
         password: accessToken
       };
     }
-
   }
+
+  return sGit;
 }

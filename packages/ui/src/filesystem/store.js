@@ -13,6 +13,7 @@ export function getFileSystem(workingDir = '/knowledge-library') {
      * @return {LightningFS}
      */
     getInstance: () => fs,
+    getWorkingDir: () => workingDir,
     subscribe: _sFileSystem.subscribe,
     /*
      * @return {VFile[]}

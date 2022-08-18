@@ -113,6 +113,7 @@
 
     try {
       await sFileSystem.init()
+      await sGit.init();
     } catch (err) {
       // Clone if we empty system
       if (err.code === 'ENOENT') {

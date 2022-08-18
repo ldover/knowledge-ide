@@ -1,9 +1,18 @@
 <script>
   import File from './components/File.svelte'
+  import {FILE, HEAD, WORKDIR, STAGE} from "./store";
   export let sGit;
 
-  $: unstaged = $sGit.filter(f => f.status === 'unstaged')
-  $: staged = $sGit.filter(f => f.status === 'staged')
+  const isDeleted = row => row[HEAD] === 1 && row[WORKDIR] === 0;
+  const isUnstaged = row => row[WORKDIR] !== row[STAGE];
+  const isModified = row => row[HEAD] === 1 && row[WORKDIR] === 2;
+  const isAdded = row => row[HEAD] === 0 && row[WORKDIR] === 2;
+
+  // TODO: make this correct
+  $: unstaged = $sGit.filter(file => isUnstaged(file.status));
+  $: staged = $sGit.filter(file => !isUnstaged(file.status));
+
+  let commitMsg;
 </script>
 
 <div class="w-full">
@@ -26,6 +35,16 @@
       {#each staged as file}
         <File file={file} button="Unstage" onClick={() => sGit.remove(file)} />
       {/each}
+    </div>
+
+    <div class="border w-full">
+      <textarea rows="6"
+                placeholder="Commit message..."
+                bind:value={commitMsg}></textarea>
+
+      <button class="bg-gray-100 rounded-sm px-2 float-right"
+              disabled={!commitMsg}
+              on:click={() => sGit.commit(commitMsg)}>Commit</button>
     </div>
 </div>
 
