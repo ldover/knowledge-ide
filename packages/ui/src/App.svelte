@@ -17,7 +17,7 @@
   import RenameModal from "./modal/file/rename/RenameModal.svelte";
   import CloneModal from "./modal/clone/CloneModal.svelte";
   import {getFileSystem} from "./filesystem/store";
-  import {getGit} from "./versioning/store";
+  import {getGit, getGitModal} from "./versioning/store";
   import GitModal from "./versioning/GitModal.svelte";
   import {getModal} from "./modal/store";
 
@@ -35,7 +35,7 @@
   let sGit = getGit(sFileSystem)
   let sCloneModal = getCloneModal(sFileSystem, sGit)
   let sContextMenu = getContextMenu(sNewFileModal, sRenameModal, sFileSystem, sCloneModal)
-  let sGitModal = getModal()
+  let sGitModal = getGitModal(sGit, sFileSystem)
 
   let scope = {
     sFileSystem,
@@ -43,7 +43,9 @@
     sContextMenu,
     sNewFileModal,
     sRenameModal,
-    sCloneModal
+    sCloneModal,
+    sGit,
+    sGitModal,
   };
 
   setContext('stores', scope);
@@ -162,11 +164,7 @@
 <NewFileModal sModal={sNewFileModal}/>
 <RenameModal sModal={sRenameModal}/>
 <CloneModal sModal={sCloneModal}/>
-<GitModal sModal={sGitModal}
-          width={1000}
-          {sGit}
-          {sFileSystem}
-/>
+<GitModal sModal={sGitModal}/>
 
 <style lang="scss">
   .h-fullvw {

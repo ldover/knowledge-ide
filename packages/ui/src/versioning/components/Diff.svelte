@@ -1,12 +1,13 @@
 <script>
-  import {onMount, afterUpdate} from 'svelte';
+  import {onMount, afterUpdate, getContext} from 'svelte';
   import {Diff2HtmlUI} from 'diff2html/lib/ui/js/diff2html-ui'
   import * as Diff from 'diff'
 
   const configuration = {drawFileList: false, matching: 'lines'};
 
   export let file;
-  export let sGit;
+
+  const {sGit} = getContext('stores');
 
   let prevFile;
   let el;

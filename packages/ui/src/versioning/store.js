@@ -4,6 +4,7 @@ import * as http from 'isomorphic-git/http/web';
 import * as git from 'isomorphic-git'
 import fs from "fs";
 import {VFile} from 'vfile';
+import {getModal} from "../modal/store";
 
 
 const _sGit = writable([]);
@@ -125,4 +126,19 @@ export function getGit(sFileSystem) {
   }
 
   return sGit;
+}
+
+export function getGitModal(sGit, sFileSystem) {
+  const _sGitModal = getModal({
+    selectedFile: null
+  });
+
+  return {
+    ..._sGitModal,
+    select: async function (file) {
+       const selectedFile = await sFileSystem.getFile(file.path)
+      _sGitModal.update(state => ({...state, selectedFile}))
+    }
+  }
+
 }
