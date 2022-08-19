@@ -18,8 +18,19 @@
   const isNew = row => row[HEAD] === 0 && row[WORKDIR] === 2;
   const isAdded = row => row[HEAD] === 0 && row[WORKDIR] === 2;
 
-  $: unstaged = $sGit.filter(file => isUnstaged(file.status));
-  $: staged = $sGit.filter(file => isStaged(file.status));
+  $: files =  $sGit.map(file => {
+    return {
+      ...file,
+      modified: isModified(file.status),
+      removed: isDeleted(file.status),
+      added: isNew(file.status),
+      staged: isStaged(file.status),
+      unstaged: isUnstaged(file.status),
+    }
+  })
+
+  $: unstaged = files.filter(file => file.unstaged);
+  $: staged = files.filter(file => file.staged);
 
   let commitMsg;
 

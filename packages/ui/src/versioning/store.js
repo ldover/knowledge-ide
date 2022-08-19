@@ -96,7 +96,7 @@ export function getGit(sFileSystem) {
       return git.log({fs, dir: rootDir})
     },
     diff: async function (commitHash1, commitHash2) {
-      return git.walk({
+      const diffs = await git.walk({
         fs,
         dir: rootDir,
         trees: [git.TREE({ref: commitHash1}), git.TREE({ref: commitHash2})],
@@ -105,8 +105,15 @@ export function getGit(sFileSystem) {
           if (filepath === '.') {
             return
           }
-          if ((await A.type()) === 'tree' || (await B.type()) === 'tree') {
-            return
+
+          // todo: this errors sometime and the methods fails to compute the diff
+          try {
+            if ((await A.type()) === 'tree' || (await B.type()) === 'tree') {
+              return
+            }
+          } catch (err) {
+            console.error(err)
+            return null;
           }
 
           // generate ids
@@ -114,15 +121,15 @@ export function getGit(sFileSystem) {
           const Boid = await B.oid()
 
           // determine modification type
-          let type = 'equal'
+          let type;
           if (Aoid !== Boid) {
-            type = 'modify'
+            type = 'modified'
           }
           if (Aoid === undefined) {
-            type = 'add'
+            type = 'added'
           }
           if (Boid === undefined) {
-            type = 'remove'
+            type = 'removed'
           }
           if (Aoid === undefined && Boid === undefined) {
             console.log('Something weird happened:')
@@ -130,12 +137,17 @@ export function getGit(sFileSystem) {
             console.log(B)
           }
 
+          if (!type) return null;
+
           return {
             path: `/${filepath}`,
-            type: type,
+            [type]: true
           }
         },
-      })
+      });
+
+      // Filter out nulls
+      return diffs.filter(_ => _);
     },
     getLatest: async function (file) {
       console.log('getLatest', {file})

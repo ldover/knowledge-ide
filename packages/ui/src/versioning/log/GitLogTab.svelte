@@ -2,22 +2,18 @@
   import {getContext} from 'svelte';
   import moment from 'moment';
 
+  import File from '../components/File.svelte'
+
   const {sGitLogTab} = getContext('stores')
-
-  $: console.log({sGitLogTab: $sGitLogTab});
-
-  /** @type {import('isomorphic-git').ReadCommitResult} */
-
-  let selected;
 </script>
 
 <div class="w-full flex flex-col justify-between">
   <!-- Log -->
   <div class="border">
-    {#each $sGitLogTab as commitRes}
-      <div on:click={() => selected = commitRes}
+    {#each $sGitLogTab.logs as commitRes}
+      <div on:click={() => sGitLogTab.onSelect(commitRes)}
            class="flex cursor-pointer"
-           class:bg-gray-100={commitRes === selected}
+           class:bg-gray-100={commitRes === $sGitLogTab.selected}
       >
         <div class="w-6/12">{commitRes.commit.message}</div>
         <div class="w-2/12">{commitRes.commit.author.name}</div>
@@ -28,11 +24,10 @@
 
   <!-- Selected commit files  -->
   <div class="border">
-    {#if selected}
-      <!--todo: use sGit.diff to get files of a selected commit-->
-      <!--{#each selected.files as file}-->
-      <!--  <div>{file.path}</div>-->
-      <!--{/each}-->
+    {#if $sGitLogTab.selected}
+      {#each $sGitLogTab.diffs as file}
+        <File {file}/>
+      {/each}
     {/if}
   </div>
 
