@@ -7,9 +7,6 @@
 </script>
 
 {#if $sFileSystem}
-    <div class="flex">
-        <Folder file={$sFileSystem}
-                expanded={true}/>
-        <div class="px-3"></div>
-    </div>
+  <Folder file={$sFileSystem}
+          expanded={true}/>
 {/if}

@@ -51,20 +51,20 @@
 </script>
 
 {#if !hidden}
-  <div bind:this={folderEl}>
+  <div bind:this={folderEl} class="text-gray-900">
     <div on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
          on:drop|preventDefault|stopPropagation={handleDrop}
          on:dragover|preventDefault|stopPropagation={() => console.log('dragover', file.path)}
          class:expanded
-         class="flex items-center cursor-pointer"
+         class="flex items-center cursor-pointer text-sm hover:bg-gray-200 w-full"
          on:click={toggle}>
       <span class="material-symbols-sharp">{expanded ? 'expand_more' : 'chevron_right'}</span>
-      <span class="material-symbols-sharp text-teal-200">folder</span>{file.name}
+      <span class="material-symbols-sharp text-teal-300">folder</span>{file.name}
     </div>
     {#if expanded}
-      <ul class=ml-6>
+      <ul class="pl-6 w-full">
         {#each file.files as file}
-          <li>
+          <li class="hover:bg-gray-200 w-full">
             {#if file.files}
               <svelte:self file={file}/>
             {:else}

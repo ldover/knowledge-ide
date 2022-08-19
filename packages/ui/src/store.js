@@ -238,9 +238,20 @@ export function getEditor(sFileSystem) {
       const {el, view} = get(_sEditor);
       view?.destroy();
 
+      const isMDL = file.extname === '.mdl';
+
       _sEditor.update(state => {
 
-        let myTheme = EditorView.theme({
+        const mdlConfig = {
+          ".cm-content, .cm-gutter": {minHeight: "100vh"},
+          ".cm-gutters": {
+            display: "none",
+            backgroundColor: "#045",
+            color: "transparent",
+            border: "none"
+          }
+        }
+        let config = {
           "&": {
             color: "black",
             backgroundColor: "#ffffff"
@@ -260,14 +271,26 @@ export function getEditor(sFileSystem) {
             fontSize: '20px',
             textDecoration: 'none',
           },
-          ".cm-content, .cm-gutter": {minHeight: "100vh"},
+          ".cm-activeLineGutter": {
+            backgroundColor: 'transparent',
+            color: "#005a57",
+          },
           ".cm-gutters": {
-            display: "none",
-            backgroundColor: "#045",
-            color: "transparent",
+            minWidth: "36px",
+            backgroundColor: "transparent",
+            color: "#009c97",
             border: "none"
+          },
+          ".cm-gutterElement": {
+            display: "flex",
+            alignItems: "center"
           }
-        }, {dark: false})
+        };
+
+        isMDL && Object.assign(config, mdlConfig)
+
+        let myTheme = EditorView.theme(config, {dark: false})
+
 
         // The Markdown parser will dynamically load parsers
         // for code blocks, using @codemirror/language-data to

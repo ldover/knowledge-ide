@@ -67,12 +67,13 @@
 
 <style lang="scss">
   .resizer {
+    background: transparent;
     cursor: col-resize;
-    background: black;
     height: 100vh;
   }
 
   .resizer:hover {
+    visibility: visible;
     background: blue;
   }
 </style>

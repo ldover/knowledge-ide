@@ -9,6 +9,10 @@
 
   $: hidden = file.name && file.name.startsWith('.');
 
+  $: isCode = ['.kdl', '.mdl'].includes(file.extname)
+  $: isImage = ['.png', '.jpg'].includes(file.extname)
+  $: isText = !isCode && !isImage;
+
   const getIcon = (extname) => {
     if (['.png', 'jpg'].includes(extname)) return 'image'
     return 'description'
@@ -25,9 +29,9 @@
     on:dragstart={handleDragStart}
     on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
     class:text-red-300={file === $sEditor.file}
-    class="flex items-center"
+    class="flex items-center text-sm "
     href="#/{file.path.replace('~/', '')}">
-    <span class="material-symbols-sharp text-gray-200">
+    <span class="material-symbols-sharp text-gray-400">
       {getIcon(file.extname)}
     </span>{file.name}
   </a>

@@ -138,12 +138,16 @@
 <svelte:window on:hashchange={onHashChange} />
 
 <div class="w-full h-full">
-  <div class="w-full text-white h-1/6 bg-black">
-    <div class>Toolbar</div>
-    <button on:click={() => sGitModal.show()}>Open Git</button>
+  <div class="w-full text-white h-1/6 bg-gray-200 flex justify-end">
+    <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sGitModal.show()}>
+      <span class="material-symbols-sharp text-gray-900">conversion_path</span> Git
+    </button>
+    <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => onRun()}>
+      <span class="material-symbols-sharp text-gray-900">refresh</span> Refresh
+    </button>
   </div>
   <div class="w-full flex h-5/6 overflow-y-hidden overflow-x-hidden">
-      <div class="w-3/12 bg-gray-600 text-white overflow-x-auto">
+      <div class="w-3/12 bg-gray-100 text-white overflow-x-auto">
           <FileTree sFileSystem={sFileSystem}/>
       </div>
       <Resizer/>
@@ -151,16 +155,14 @@
           <CodeMirror on:mount={onEditorMount}/>
       </div>
       <Resizer/>
-      <div class="h-fullvw w-4/12 px-8 py-3 overflow-y-auto" style="--list-style: {isKDL ? 'none' : 'disc'}">
+      <div class="border-l border-gray-100 h-fullvw w-4/12 px-8 py-3 overflow-y-auto" style="--list-style: {isKDL ? 'none' : 'disc'}">
         {#if note}
           <Node node={note}/>
         {:else}
           (1) Add file (2) Press "Run"
         {/if}
       </div>
-      <div class="absolute top-0 right-0 m-3">
-          <button class="px-16 text-lg bg-green-600 text-white" on:click={onRun}>Run</button>
-      </div>
+
   </div>
 </div>
 
