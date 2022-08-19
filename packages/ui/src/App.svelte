@@ -155,7 +155,7 @@
           <CodeMirror on:mount={onEditorMount}/>
       </div>
       <Resizer/>
-      <div class="border-l border-gray-100 h-fullvw w-4/12 px-8 py-3 overflow-y-auto" style="--list-style: {isKDL ? 'none' : 'disc'}">
+      <div class="border-l border-gray-100 h-fullvw w-4/12 px-4 py-3 overflow-y-auto" style="--list-style: {isKDL ? 'none' : 'disc'}">
         {#if note}
           <Node node={note}/>
         {:else}

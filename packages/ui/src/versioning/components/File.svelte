@@ -4,26 +4,30 @@
   const dispatch = createEventDispatcher();
 
   export let file;
-
-  export let button = null;
-  export let onClick;
 </script>
 
-<div class="flex justify-between items-center cursor-pointer"
+<div class="file hover:bg-gray-200 pl-2"
      on:click={() => dispatch('select', file)}
 >
-  <div class:text-red-500={file.removed}
-       class:text-blue-500={file.modified}
-       class:text-green-500={file.added}>
+  <div class="font-light"
+       class:text-pink-500={file.removed}
+       class:text-sky-500={file.modified}
+       class:text-emerald-500={file.added}>
     {file.path}
   </div>
-
-  {#if button}
-    <button class="bg-gray-100 rounded-sm px-2"
-            on:click|stopPropagation={() => onClick()}>{button}</button>
-  {/if}
+  <slot></slot>
 </div>
 
 <style lang="scss">
+  .file {
+    @apply flex justify-between items-center cursor-pointer;
+  }
+
+  .file > :global(button) {
+    visibility: hidden;
+  }
+  .file:hover > :global(button) {
+    visibility: visible;
+  }
 
 </style>

@@ -4,14 +4,16 @@
 
   /** @type {import('../typedef').Modal} */
   export let sModal;
+
+  export let closeOnOutClick = true;
 </script>
 
 <div class:invisible={!$sModal.visible}
-     class="absolute left-0 top-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
+     class="absolute left-0 top-0 w-full h-full flex justify-center items-center bg-black bg-opacity-75">
 
     <div use:clickOutside
-         on:outclick={() => sModal.hide()}
-         class="modal shadow-md bg-white rounded-md rounded-sm"
+         on:outclick={() => closeOnOutClick && sModal.hide()}
+         class="modal shadow-md bg-white"
          {...$$restProps}>
 
       <slot></slot>

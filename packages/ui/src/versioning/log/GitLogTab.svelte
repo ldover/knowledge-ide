@@ -7,9 +7,9 @@
   const {sGitLogTab} = getContext('stores')
 </script>
 
-<div class="w-full flex flex-col justify-between">
+<div class="w-full flex flex-col justify-between text-sm">
   <!-- Log -->
-  <div class="border">
+  <div class="p-2">
     {#each $sGitLogTab.logs as commitRes}
       <div on:click={() => sGitLogTab.onSelect(commitRes)}
            class="flex cursor-pointer"

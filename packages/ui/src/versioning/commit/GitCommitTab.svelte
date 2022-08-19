@@ -52,41 +52,47 @@
   }
 </script>
 
-<div class="h-full flex flex-col justify-between bg-gray-200 p-2">
+<div class="h-full flex flex-col justify-between text-sm">
   <div>
-    <button on:click={() => sGit.refresh()}>Refresh</button>
-
-    <div class="border mb-3 w-full">
-      <div class="flex justify-between border">
-        <div class="font-bold">Unstaged</div>
-        <button>Stage all</button>
+    <div class="mb-3 w-full">
+      <div class="flex justify-between pl-2 pt-2">
+        <div class="font-medium">Unstaged</div>
+        <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
+                on:click={() => sGit.addAll(unstaged)}>
+          <span class="material-symbols-sharp text-gray-900">file_download</span> Stage all
+        </button>
       </div>
       <div>
         {#each unstaged as file}
           <File file={file}
-                on:select={onSelect}
-                button="Stage"
-                onClick={() => sGit.add(file)}
-          />
+                on:select={onSelect}>
+            <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
+                    on:click|stopPropagation={() => sGit.add(file)}>
+              <span class="material-symbols-sharp text-gray-900">file_download</span> Stage
+            </button>
+          </File>
         {/each}
       </div>
     </div>
-    <div class="border w-full">
-      <div class="flex justify-between border w-full">
-        <div class="font-bold">Staged</div>
+    <div class="w-full">
+      <div class="flex justify-between w-full pt-2 pl-2">
+        <div class="font-medium">Staged</div>
       </div>
       <div>
         {#each staged as file}
           <File file={file}
-                on:select={onSelect}
-                button="Unstage"
-                onClick={() => sGit.remove(file)}/>
+                on:select={onSelect}>
+            <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
+                    on:click|stopPropagation={() => sGit.remove(file)}>
+              <span class="material-symbols-sharp text-gray-900">file_download</span> Unstage
+            </button>
+          </File>
         {/each}
       </div>
     </div>
   </div>
 
-  <div class="border w-full flex flex-col">
+  <div class="w-full flex flex-col p-2">
     <textarea rows="6"
               class="w-full bg-white border p-2"
               placeholder="Commit message..."
