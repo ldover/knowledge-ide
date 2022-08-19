@@ -192,7 +192,7 @@ export function getGitModal(sGit, sFileSystem) {
     ..._sGitModal,
     select: async function (file) {
        const selectedFile = await sFileSystem.getFile(file.path)
-      _sGitModal.update(state => ({...state, selectedFile}))
+      _sGitModal.configure({}, {selectedFile})
     }
   }
 

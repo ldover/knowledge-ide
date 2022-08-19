@@ -52,7 +52,7 @@
   }
 </script>
 
-<div class="h-full flex flex-col justify-between">
+<div class="h-full flex flex-col justify-between bg-gray-200 p-2">
   <div>
     <button on:click={() => sGit.refresh()}>Refresh</button>
 
@@ -86,15 +86,18 @@
     </div>
   </div>
 
-  <div class="border w-full">
-        <textarea rows="6"
-                  placeholder="Commit message..."
-                  bind:value={commitMsg}></textarea>
+  <div class="border w-full flex flex-col">
+    <textarea rows="6"
+              class="w-full bg-white border p-2"
+              placeholder="Commit message..."
+              bind:value={commitMsg}></textarea>
 
-    <button class="bg-gray-100 rounded-sm px-2 float-right"
-            disabled={!commitMsg}
-            on:click={onCommit}>Commit
-    </button>
+    <div>
+      <button class="bg-white rounded-sm px-8 mt-2"
+              disabled={!commitMsg}
+              on:click={onCommit}>Commit
+      </button>
+    </div>
   </div>
 
 </div>

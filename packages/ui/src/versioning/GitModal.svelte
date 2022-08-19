@@ -22,20 +22,23 @@
       {/if}
     </div>
 
-    <div class="w-5/12 h-full border-l-2 border-gray-300">
+    <div class="w-5/12 h-full border-l-2 border-gray-300 flex flex-col">
       <div class="flex justify-between">
         {#each tabs as t}
           <button class="flex-grow"
+                  class:bg-gray-200={t.name === tab }
                   on:click={() => tab = t.name}>
             {t.name}
           </button>
         {/each}
       </div>
-      {#if tab === 'changes'}
-        <GitCommitTab/>
-      {:else if tab === 'log'}
-        <GitLogTab/>
-      {/if}
+      <div class="flex-grow">
+        {#if tab === 'changes'}
+          <GitCommitTab/>
+        {:else if tab === 'log'}
+          <GitLogTab/>
+        {/if}
+      </div>
     </div>
 
 
