@@ -20,6 +20,7 @@
   import {getGit, getGitModal} from "./versioning/store";
   import GitModal from "./versioning/GitModal.svelte";
   import {getModal} from "./modal/store";
+  import {getGitLogTab} from "./versioning/log/store";
 
 
   let note = null;
@@ -36,6 +37,7 @@
   let sCloneModal = getCloneModal(sFileSystem, sGit)
   let sContextMenu = getContextMenu(sNewFileModal, sRenameModal, sFileSystem, sCloneModal)
   let sGitModal = getGitModal(sGit, sFileSystem)
+  let sGitLogTab = getGitLogTab(sGit, sGitModal)
 
   let scope = {
     sFileSystem,
@@ -46,6 +48,7 @@
     sCloneModal,
     sGit,
     sGitModal,
+    sGitLogTab,
   };
 
   setContext('stores', scope);
@@ -118,6 +121,7 @@
     try {
       await sFileSystem.init()
       await sGit.init();
+      await sGitLogTab.init();
     } catch (err) {
       // Clone if we empty system
       if (err.code === 'ENOENT') {
