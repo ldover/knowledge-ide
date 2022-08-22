@@ -85,8 +85,26 @@ export function getGit(sFileSystem) {
 
       this.refresh()
     },
-    remove: async function (file) {
-      await git.remove({fs, dir: rootDir, filepath: file.path})
+    stage: async function (...files) {
+      let addToIndex = [];
+      let removeFromIndex = [];
+      files.forEach(file => {
+        if (file.removed) {
+          removeFromIndex.push(file)
+        } else {
+          addToIndex.push(file)
+        }
+      })
+
+      console.log({addToIndex, removeFromIndex})
+      addToIndex.length && await this.add(...addToIndex);
+      removeFromIndex.length && await this.remove(...removeFromIndex);
+    },
+    remove: async function (...files) {
+      for (const file of files) {
+        debugger
+        await git.remove({fs, dir: rootDir, filepath: file.path})
+      }
 
       this.refresh()
     },
@@ -246,9 +264,22 @@ export function getGitModal(sGit, sFileSystem) {
   return {
     ..._sGitModal,
     select: async function (file) {
-       const selectedFile = await sFileSystem.getFile(file.path)
+      let selectedFile;
+
+      try {
+        selectedFile = await sFileSystem.getFile(file.path)
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          console.debug('No file found in the system, assuming deleted and using empty string')
+          selectedFile = new VFile({path: file.path, value: ''});
+        }
+      }
+
       _sGitModal.configure({}, {selectedFile})
+    },
+    show: function () {
+      _sGitModal.show();
+      sGit.refresh();
     }
   }
-
 }

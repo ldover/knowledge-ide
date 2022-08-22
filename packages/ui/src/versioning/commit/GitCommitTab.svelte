@@ -44,7 +44,7 @@
     try {
       await sGit.commit(commitMsg)
       commitMsg = null;
-      sGitModal.hide();
+      window.alert('Commit successful!')
     } catch (err) {
       console.error(err)
       window.alert('Error:' + err)
@@ -63,7 +63,7 @@
           <span class="material-symbols-sharp text-gray-900">undo</span> Revert all
         </button>
           <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
-                  on:click={() => sGit.add(...unstaged)}>
+                  on:click={() => sGit.stage(...unstaged)}>
             <span class="material-symbols-sharp text-gray-900">file_download</span> Stage all
           </button>
         </div>
@@ -78,7 +78,7 @@
                 <span class="material-symbols-sharp text-gray-900">undo</span> Revert
               </button>
               <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
-                      on:click|stopPropagation={() => sGit.add(file)}>
+                      on:click|stopPropagation={() => sGit.stage(file)}>
                 <span class="material-symbols-sharp text-gray-900">file_download</span> Stage
               </button>
             </div>

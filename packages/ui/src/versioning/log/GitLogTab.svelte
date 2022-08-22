@@ -1,10 +1,14 @@
 <script>
-  import {getContext} from 'svelte';
+  import {getContext, onMount} from 'svelte';
   import moment from 'moment';
 
   import File from '../components/File.svelte'
 
   const {sGitLogTab} = getContext('stores')
+
+  onMount(() => {
+    sGitLogTab.refresh()
+  })
 </script>
 
 <div class="w-full flex flex-col justify-between text-sm">
