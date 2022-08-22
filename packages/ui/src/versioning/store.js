@@ -232,6 +232,13 @@ export function getGit(sFileSystem) {
       console.log({content})
       return new VFile({path: file.path, value: content })
     },
+    getCurrentBranch: () => {
+      return git.currentBranch({
+        fs,
+        dir: rootDir,
+        fullname: false
+      })
+    },
     _readFileFromCommit: async function (filepath, oid) {
       let {blob} = await git.readBlob({
         fs,

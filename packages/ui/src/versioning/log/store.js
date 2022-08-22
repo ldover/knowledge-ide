@@ -8,6 +8,7 @@ export function getGitLogTab(sGit, sGitModal) {
     /** @type {import('isomorphic-git').ReadCommitResult[]} */
     logs: [],
     diffs: [],
+    branch: null,
     /** @type {import('isomorphic-git').ReadCommitResult} */
     selected: null,
   });
@@ -20,6 +21,9 @@ export function getGitLogTab(sGit, sGitModal) {
           return {...state, logs: res}
         });
       })
+
+      // Get the current branch name
+      sGit.getCurrentBranch().then((branch) => _sGitLogTab.update(state => ({...state, branch})))
     },
     init: function () {
       this.refresh();
