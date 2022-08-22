@@ -59,11 +59,11 @@
         <div class="font-medium">Unstaged</div>
         <div class="flex">
           <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
-                     on:click|stopPropagation={() => sGit.rollback(unstaged)}>
+                     on:click|stopPropagation={() => sGit.rollback(...unstaged)}>
           <span class="material-symbols-sharp text-gray-900">undo</span> Revert all
         </button>
           <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
-                  on:click={() => sGit.addAll(unstaged)}>
+                  on:click={() => sGit.add(...unstaged)}>
             <span class="material-symbols-sharp text-gray-900">file_download</span> Stage all
           </button>
         </div>

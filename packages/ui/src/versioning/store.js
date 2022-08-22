@@ -77,9 +77,11 @@ export function getGit(sFileSystem) {
       console.log('successfully committed changes')
       this.refresh();
     },
-    add: async function (file) {
-      console.log('git add', file)
-      await git.add({fs, dir: rootDir, filepath: file.path})
+    add: async function (...files) {
+      console.log({files})
+      let filepaths = files.map(file => file.path);
+      console.log('git add', filepaths)
+      await git.add({fs, dir: rootDir, filepath: filepaths})
 
       this.refresh()
     },
@@ -132,11 +134,12 @@ export function getGit(sFileSystem) {
     },
     rollback: async function (...files) {
       try {
+        let filepaths = files.map(file => file.path);
         await git.checkout({
           fs,
           dir: rootDir,
           force: true,
-          filepaths: files.map(file => file.path)
+          filepaths: filepaths
         })
         this.refresh()
         sFileSystem.init();
