@@ -130,6 +130,19 @@ export function getGit(sFileSystem) {
       }
 
     },
+    rollback: async function (file) {
+      try {
+        await git.checkout({
+          fs,
+          dir: rootDir,
+          force: true,
+          filepaths: [file.path]
+        })
+        this.refresh()
+      } catch (err) {
+        console.error(err)
+      }
+    },
     log: async function () {
       return git.log({fs, dir: rootDir})
     },
