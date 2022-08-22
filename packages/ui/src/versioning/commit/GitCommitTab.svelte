@@ -84,7 +84,7 @@
                 on:select={onSelect}>
             <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
                     on:click|stopPropagation={() => sGit.remove(file)}>
-              <span class="material-symbols-sharp text-gray-900">file_download</span> Unstage
+              <span class="material-symbols-sharp text-gray-900">file_upload</span> Unstage
             </button>
           </File>
         {/each}

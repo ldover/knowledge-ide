@@ -88,7 +88,24 @@ export function getGit(sFileSystem) {
 
       this.refresh()
     },
-    push: function () {
+    push: async function () {
+      try {
+        let pushResult = await git.push({
+          fs,
+          dir: rootDir,
+          http,
+          remote: 'origin',
+          ref: 'main',
+          onAuth: (url) => this._onAuth(url),
+        })
+
+        console.log(pushResult);
+        window.alert('Push successful')
+      } catch (err) {
+        let msg = 'Push to remote failed: ' + err;
+        console.error(msg)
+        window.alert(msg);
+      }
     },
     pull: function () {
     },
