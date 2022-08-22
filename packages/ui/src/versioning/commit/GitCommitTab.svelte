@@ -57,10 +57,16 @@
     <div class="mb-3 w-full">
       <div class="flex justify-between pl-2 pt-2">
         <div class="font-medium">Unstaged</div>
-        <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
-                on:click={() => sGit.addAll(unstaged)}>
-          <span class="material-symbols-sharp text-gray-900">file_download</span> Stage all
+        <div class="flex">
+          <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
+                     on:click|stopPropagation={() => sGit.rollback(unstaged)}>
+          <span class="material-symbols-sharp text-gray-900">undo</span> Revert all
         </button>
+          <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
+                  on:click={() => sGit.addAll(unstaged)}>
+            <span class="material-symbols-sharp text-gray-900">file_download</span> Stage all
+          </button>
+        </div>
       </div>
       <div>
         {#each unstaged as file}
