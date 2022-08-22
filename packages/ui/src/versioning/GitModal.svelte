@@ -26,6 +26,10 @@
   <div class="w-full h-full flex flex-col">
     <div class="w-full flex justify-end bg-gray-200">
       <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm"
+              on:click={() => sGit.pull()}>
+        <span class="material-symbols-sharp text-gray-900">file_download</span> Pull
+      </button>
+      <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm"
               on:click={() => sGit.push()}>
         <span class="material-symbols-sharp text-gray-900">publish</span> Push
       </button>

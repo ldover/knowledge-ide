@@ -1,6 +1,7 @@
 import {get, writable} from 'svelte/store';
 
 
+// todo: add a refresh listener to sGit for push, pull, commit, and methods that modify git tree
 export function getGitLogTab(sGit, sGitModal) {
 
   const _sGitLogTab = writable({

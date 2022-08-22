@@ -107,7 +107,28 @@ export function getGit(sFileSystem) {
         window.alert(msg);
       }
     },
-    pull: function () {
+    pull: async function () {
+      try {
+        let pullResult = await git.pull({
+          fs,
+          dir: rootDir,
+          http,
+          remote: 'origin',
+          singleBranch: true,
+          ref: 'main',
+          onAuth: (url) => this._onAuth(url),
+        })
+
+        sFileSystem.init()
+        this.refresh()
+        console.log(pullResult);
+        window.alert('Pull successful')
+      } catch (err) {
+        let msg = 'Pull failed: ' + err;
+        console.error(msg)
+        window.alert(msg);
+      }
+
     },
     log: async function () {
       return git.log({fs, dir: rootDir})

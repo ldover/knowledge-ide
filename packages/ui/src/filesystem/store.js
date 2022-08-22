@@ -80,6 +80,7 @@ export function getFileSystem(workingDir = '/knowledge-library') {
     load: function () {
       return this._getAllFiles(workingDir);
     },
+    // todo: now used as refresh function — keep it more explicit and rename
     init: async function () {
       const files = await this.load();
       _sFileSystem.set(files);
