@@ -161,6 +161,8 @@ export function getGit(sFileSystem) {
       return git.log({fs, dir: rootDir})
     },
     diff: async function (commitHash1, commitHash2) {
+      const DIRECTORY_MODE = 0o40000;
+
       const diffs = await git.walk({
         fs,
         dir: rootDir,
@@ -169,6 +171,12 @@ export function getGit(sFileSystem) {
           // ignore directories
           if (filepath === '.') {
             return
+          }
+          let aMode = A && (await A.mode())
+          let bMode = B && (await B.mode())
+
+          if (aMode === DIRECTORY_MODE || bMode === DIRECTORY_MODE) {
+            return;
           }
 
           const vfile = new VFile({
