@@ -21,6 +21,7 @@
   import GitModal from "./versioning/GitModal.svelte";
   import {getModal} from "./modal/store";
   import {getGitLogTab} from "./versioning/log/store";
+  import {getGitDiff} from "./versioning/diff/store";
 
 
   let note = null;
@@ -36,7 +37,8 @@
   let sGit = getGit(sFileSystem)
   let sCloneModal = getCloneModal(sFileSystem, sGit)
   let sContextMenu = getContextMenu(sNewFileModal, sRenameModal, sFileSystem, sCloneModal)
-  let sGitModal = getGitModal(sGit, sFileSystem)
+  let sDiff = getGitDiff()
+  let sGitModal = getGitModal(sGit, sFileSystem, sDiff)
   let sGitLogTab = getGitLogTab(sGit, sGitModal)
 
   let scope = {
@@ -49,6 +51,7 @@
     sGit,
     sGitModal,
     sGitLogTab,
+    sDiff,
   };
 
   setContext('stores', scope);

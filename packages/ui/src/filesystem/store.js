@@ -24,9 +24,6 @@ export function getFileSystem(workingDir = '/knowledge-library') {
         const filepath = file.path;
         let value = null;
         const extname = new VFile({path: filepath}).extname;
-        if (!(new VFile({path: filepath}).basename)) {
-          debugger
-        }
         const isHidden = new VFile({path: filepath}).basename.startsWith('.');
 
          if (!isHidden && ['.mdl', '.kdl', '.mdl', '.md'].includes(extname)) {

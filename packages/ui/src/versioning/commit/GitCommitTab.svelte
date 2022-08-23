@@ -19,7 +19,7 @@
   const isAdded = row => row[HEAD] === 0 && row[WORKDIR] === 2;
 
   $: files =  $sGit.map(file => {
-    return {
+    let f = {
       ...file,
       modified: isModified(file.status),
       removed: isDeleted(file.status),
@@ -27,6 +27,10 @@
       staged: isStaged(file.status),
       unstaged: isUnstaged(file.status),
     }
+
+    f.status = f.modified ? 'modified' : f.added ? 'added' : 'removed'
+
+    return f;
   })
 
   $: unstaged = files.filter(file => file.unstaged);
@@ -41,6 +45,11 @@
   }
 
   async function onCommit() {
+    if (!commitMsg) {
+      return window.alert('Specify commit message')
+    }
+
+
     try {
       await sGit.commit(commitMsg)
       commitMsg = null;
@@ -71,6 +80,7 @@
       <div>
         {#each unstaged as file}
           <File file={file}
+                status={file.status}
                 on:select={onSelect}>
             <div class="flex">
               <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
@@ -93,6 +103,7 @@
       <div>
         {#each staged as file}
           <File file={file}
+                status={file.status}
                 on:select={onSelect}>
             <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
                     on:click|stopPropagation={() => sGit.remove(file)}>
@@ -111,8 +122,8 @@
               bind:value={commitMsg}></textarea>
 
     <div>
-      <button class="bg-white rounded-sm px-8 mt-2"
-              disabled={!commitMsg}
+      <button class="bg-sky-700 text-white border rounded-sm px-8 mt-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              disabled={!staged.length}
               on:click={onCommit}>Commit
       </button>
     </div>

@@ -2,7 +2,7 @@
   import {getContext} from 'svelte';
 
   import Modal from "../modal/Modal.svelte";
-  import Diff from "./components/Diff.svelte";
+  import Diff from "./diff/Diff.svelte";
   import GitLogTab from "./log/GitLogTab.svelte";
   import GitCommitTab from "./commit/GitCommitTab.svelte";
 
@@ -44,9 +44,7 @@
     </div>
     <div class="flex w-full flex-grow">
       <div class="w-7/12 h-full overflow-y-auto overflow-x-auto relative">
-        {#if $sModal.selectedFile}
-          <Diff file={$sModal.selectedFile}/>
-        {/if}
+        <Diff/>
       </div>
 
       <div class="w-5/12 h-full border-l border-gray-200 bg-gray-100 flex flex-col">

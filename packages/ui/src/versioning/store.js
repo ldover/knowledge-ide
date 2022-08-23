@@ -102,7 +102,6 @@ export function getGit(sFileSystem) {
     },
     remove: async function (...files) {
       for (const file of files) {
-        debugger
         await git.remove({fs, dir: rootDir, filepath: file.path})
       }
 
@@ -179,25 +178,22 @@ export function getGit(sFileSystem) {
             return
           }
 
-          if (!A) {
-            return {
-              path: `/${filepath}`,
-              added: true,
+          const vfile = new VFile({
+            path: `/${filepath}`,
+            data: {
+              file0: '',
+              file1: '',
+              status: null
             }
-          }
+          })
 
-          if (!B) {
-            return {
-              path: `/${filepath}`,
-              removed: true
-            }
-          }
 
-          try {
+          A && (vfile.data.file0 = await A.content())
+          B && (vfile.data.file1 = await B.content())
+
+          if (A && B) {
             let aType = await A.type();
-            let aContent = await A.content();
             let bType = await B.type();
-            let bContent = await A.content();
 
             if (aType === 'tree' || bType === 'tree') {
               return
@@ -208,16 +204,24 @@ export function getGit(sFileSystem) {
             const Boid = await B.oid()
 
             if (Aoid !== Boid) {
-              return {
-                path: `/${filepath}`,
-                modified: true
-              }
+              vfile.data.status = 'modified';
+            } else {
+              return;
             }
-          } catch (err) {
-            console.error(err)
+          } else if (!A && !B) {
+            console.warn('Unexpected case: !A && !B')
             return;
+          } else if (!A) {
+            vfile.data.status = 'added';
+          } else if (!B) {
+            vfile.data.status = 'removed'
           }
-        },
+
+          vfile.data.file0 && (vfile.data.file0 = new TextDecoder().decode(vfile.data.file0));
+          vfile.data.file1 && (vfile.data.file1 = new TextDecoder().decode(vfile.data.file1));
+
+          return vfile;
+        }
       });
 
       // Filter out nulls
@@ -264,7 +268,7 @@ export function getGit(sFileSystem) {
   return sGit;
 }
 
-export function getGitModal(sGit, sFileSystem) {
+export function getGitModal(sGit, sFileSystem, sDiff) {
   const _sGitModal = getModal({
     selectedFile: null
   });
@@ -284,6 +288,16 @@ export function getGitModal(sGit, sFileSystem) {
       }
 
       _sGitModal.configure({}, {selectedFile})
+
+      let f0 = '';
+      try {
+        f0 = (await sGit.getLatest(selectedFile)).value;
+      } catch (err) {
+
+        console.log(err)
+      }
+
+      sDiff.showDiff(f0, selectedFile.value, selectedFile.path)
     },
     show: function () {
       _sGitModal.show();

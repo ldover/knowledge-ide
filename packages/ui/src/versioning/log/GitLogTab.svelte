@@ -4,7 +4,7 @@
 
   import File from '../components/File.svelte'
 
-  const {sGitLogTab} = getContext('stores')
+  const {sGitLogTab, sGitModal, sDiff} = getContext('stores')
 
   onMount(() => {
     sGitLogTab.refresh()
@@ -17,6 +17,12 @@
     } else {
       return m0.format('MM/DD/YY, HH:mm A')
     }
+  }
+
+  async function onSelect(e) {
+    const file = e.detail;
+
+    sDiff.showDiff(file.data.file0, file.data.file1, file.path)
   }
 </script>
 
@@ -43,7 +49,7 @@
   <div>
     {#if $sGitLogTab.selected}
       {#each $sGitLogTab.diffs as file}
-        <File {file}/>
+        <File {file} status={file.data.status} on:select={onSelect}/>
       {/each}
     {/if}
   </div>
