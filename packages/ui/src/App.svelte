@@ -141,12 +141,9 @@
 <svelte:window on:hashchange={onHashChange} />
 
 <div class="w-full h-full">
-  <div class="w-full text-white h-1/6 bg-gray-200 flex justify-end">
+  <div class="w-full text-white h-1/6 bg-gray-200 flex">
     <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sGitModal.show()}>
       <span class="material-symbols-sharp text-gray-900">conversion_path</span> Git
-    </button>
-    <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => onRun()}>
-      <span class="material-symbols-sharp text-gray-900">refresh</span> Refresh
     </button>
   </div>
   <div class="w-full flex h-5/6 overflow-y-hidden overflow-x-hidden">
@@ -158,12 +155,19 @@
           <CodeMirror on:mount={onEditorMount}/>
       </div>
       <Resizer/>
-      <div class="border-l border-gray-100 h-fullvw w-4/12 px-4 py-3 overflow-y-auto" style="--list-style: {isKDL ? 'none' : 'disc'}">
-        {#if note}
-          <Node node={note}/>
-        {:else}
-          (1) Add file (2) Press "Run"
-        {/if}
+      <div class="border-l border-gray-100 h-fullvw w-4/12 flex flex-col" style="--list-style: {isKDL ? 'none' : 'disc'}">
+        <div class="w-full justify-end flex border-b">
+          <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => onRun()}>
+            <span class="material-symbols-sharp text-gray-900">refresh</span> Refresh
+          </button>
+        </div>
+        <div class="px-4 py-3 overflow-y-auto w-full flex-grow">
+          {#if note}
+            <Node node={note}/>
+          {:else}
+            (1) Add file (2) Press "Run"
+          {/if}
+        </div>
       </div>
 
   </div>

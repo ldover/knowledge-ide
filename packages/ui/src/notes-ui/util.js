@@ -18,23 +18,23 @@ import Statement from "./components/Statement.svelte";
 import Note from "./components/Note.svelte";
 
 export const Components = {
-  'text': Text,
-  'thematicBreak': ThematicBreak,
-  'break': Break,
-  'blockquote': Blockquote,
-  'code': Code,
-  'emphasis': Emphasis,
-  'inlineCode': InlineCode,
-  'strong': Strong,
-  'heading': Heading,
-  'paragraph': Paragraph,
-  'root': Note,
-  'link': Link,
-  'listItem': ListItem,
-  'list': List,
-  'notebase-image': NotebaseImage,
-  'mdxTextExpression': NoteReference, // todo: this kind of works now as the only thing I use it for, but maybe ditch mdx and create custom node types for common patterns?
-  'reference': Reference,
-  'statement': Statement,
+  'text': {component: Text, children: false,},
+  'thematicBreak': {component: ThematicBreak, children: false,},
+  'break': {component: Break, children: false,},
+  'blockquote': {component: Blockquote, children: true,},
+  'code': {component: Code, children: false,},
+  'emphasis': {component: Emphasis, children: false,},
+  'inlineCode': {component: InlineCode, children: false,},
+  'strong': {component: Strong, children: false,},
+  'heading': {component: Heading, children: true,},
+  'paragraph': {component: Paragraph, children: true,},
+  'root': {component: Note, children: true,},
+  'link': {component: Link, children: false,},
+  'listItem': {component: ListItem, children: true,},
+  'list': {component: List, children: true,},
+  'notebase-image': {component: NotebaseImage, children: false,},
+  'mdxTextExpression': {component: NoteReference, children: false}, // todo: this kind of works now as the only thing I use it for, but maybe ditch mdx and create custom node types component: for common children: false, patterns?
+  'reference': {component: Reference, children: false,},
+  'statement': {component: Statement, children: true,},
 }
 

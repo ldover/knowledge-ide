@@ -1,8 +1,6 @@
 <script>
   import {getContext, onMount} from 'svelte';
 
-  export let file;
-
   let el;
   const {sDiff} = getContext('stores');
 

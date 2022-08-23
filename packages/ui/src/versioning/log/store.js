@@ -16,7 +16,6 @@ export function getGitLogTab(sGit, sGitModal) {
     subscribe: _sGitLogTab.subscribe,
     refresh: function () {
       sGit.log().then(res => {
-        console.log('git log', res)
         _sGitLogTab.update(state => {
           return {...state, logs: res}
         });

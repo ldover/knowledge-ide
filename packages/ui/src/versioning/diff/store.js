@@ -23,9 +23,7 @@ export function getGitDiff() {
       _sDiff.update(state => ({...state, file0, file1, filepath}))
       const el = get(_sDiff).el;
       // Creates a unified diff patch.
-      console.log({file0, file1, filepath})
       const patch = Diff.createTwoFilesPatch(filepath, filepath, file0, file1);
-      console.log({el, patch, configuration})
 
       const diff2htmlUi = new Diff2HtmlUI(el, patch, configuration);
       diff2htmlUi.draw();

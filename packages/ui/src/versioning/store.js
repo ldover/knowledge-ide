@@ -46,7 +46,6 @@ export function getGit(sFileSystem) {
     },
     refresh: async function () {
       const gitFiles = await this.load()
-      console.log('refresh', {gitFiles})
       _sGit.set(gitFiles)
     },
     init: async function () {
@@ -67,7 +66,6 @@ export function getGit(sFileSystem) {
       })
     },
     commit: async function (message) {
-      console.log('commit', {message})
       await git.commit({fs, dir: rootDir, message})
       console.log('successfully committed changes')
       this.refresh();

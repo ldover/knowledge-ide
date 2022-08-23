@@ -2,7 +2,6 @@
   import Proof from "./Proof.svelte";
 
   export let node;
-  export let root;
   export let isProof = false;
 
   let expandProof;
