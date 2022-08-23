@@ -296,7 +296,6 @@ statement 1 := state {A}
 //     expect(actual.children[0].children[1].type).toEqual('mdxTextExpression')
 //   });
 //
-//   // TODO: the render() should probably always be in the new line — make a test for that
 //   it('Parses MDL node at the beginning of sentence as mdxFlowExpression', () => {
 //     const mdl0 = `{NoteA.render()}`
 //     let actual = parse(mdl0);

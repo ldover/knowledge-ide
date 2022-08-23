@@ -65,11 +65,6 @@ export function getGit(sFileSystem) {
         path: 'user.email',
         value: 'luka.dover@gmail.com'
       })
-
-      // todo: Register listeners
-      // sFileSystem.on('change', () => {
-      //   this.refresh(); // todo: Should throttle this
-      // })
     },
     commit: async function (message) {
       console.log('commit', {message})

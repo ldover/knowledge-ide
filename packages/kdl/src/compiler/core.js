@@ -183,7 +183,7 @@ class Root {
     title = title || this.symbol.name;
     return {
       type: 'reference',
-      url:`#/${this.path.replace('~/', '')}`, // todo: I'm building in this assumption of files starting with "~/" which is only true atm
+      url:`#/${this.path}`,
       title
     }
   }
@@ -225,7 +225,7 @@ class Root {
           const root = rootFile.getRootFromRef(r.symbol)
           return root && root.symbol.name === this.symbol.name
 
-        }); // todo: might be imported under other name so use root.refs, root.scope
+        });
         if (isReferenced) {
           referencedStatements.push(s)
         }
@@ -341,7 +341,6 @@ function referenceCompiler(ast, root) {
     throw new CompilerError('Reference failed to compile, variable not initialized: ' + ast.symbol )
   }
 
-  // todo: check for statement at compile time as well
   let statement = ast.statement ? ast.statement : null;
   const reference = new Reference(ast.symbol, statement, root);
   root.references.push(reference);

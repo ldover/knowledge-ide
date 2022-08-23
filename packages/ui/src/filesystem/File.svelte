@@ -29,7 +29,7 @@
     on:dragstart={handleDragStart}
     on:contextmenu|preventDefault={event => sContextMenu.addEvent(event, file)}
     class:text-red-300={file === $sEditor.file}
-    class="flex items-center text-sm "
+    class="flex items-center text-sm hover:bg-gray-200"
     href="#/{file.path.replace('~/', '')}">
     <span class="material-symbols-sharp text-gray-400">
       {getIcon(file.extname)}

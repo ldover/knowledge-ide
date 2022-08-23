@@ -11,7 +11,6 @@
 
   const isDeleted = row => row[HEAD] === 1 && row[WORKDIR] === 0;
   const isUnmodified = row => row[HEAD] === row[WORKDIR];
-  // todo: this next line might be wrong: I'm trying to get all files that are (a) not staged and (b) have changes
   const isUnstaged = row => row[WORKDIR] !== row[STAGE] && !isUnmodified(row);
   const isStaged = row => row[WORKDIR] === row[STAGE] && !isUnmodified(row);
   const isModified = row => row[HEAD] === 1 && row[WORKDIR] === 2;
@@ -122,7 +121,7 @@
               bind:value={commitMsg}></textarea>
 
     <div>
-      <button class="bg-sky-700 text-white border rounded-sm px-8 mt-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
+      <button class="bg-sky-700 text-white border rounded-sm px-8 mt-2 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
               disabled={!staged.length}
               on:click={onCommit}>Commit
       </button>

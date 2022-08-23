@@ -27,7 +27,6 @@ export function getCloneModal(sFileSystem, sGit) {
       try {
         await sGit.clone(dir, url);
       } catch (err) {
-        // todo: display error in the interface
         window.alert('Failed clone')
         console.error('Display error somewhere', err)
       }

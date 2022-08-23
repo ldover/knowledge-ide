@@ -7,7 +7,6 @@
 
   let expandProof;
 
-  // todo: might have to afterUpdate this and reset expandProof if node changed
   function onProof(ev) {
     if (node.proven) {
       expandProof = !expandProof;

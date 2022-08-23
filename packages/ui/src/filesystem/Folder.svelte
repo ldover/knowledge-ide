@@ -64,7 +64,7 @@
     {#if expanded}
       <ul class="pl-6 w-full">
         {#each file.files as file}
-          <li class="hover:bg-gray-200 w-full">
+          <li class="w-full">
             {#if file.files}
               <svelte:self file={file}/>
             {:else}
