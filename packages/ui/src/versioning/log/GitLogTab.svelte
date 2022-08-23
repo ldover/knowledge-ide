@@ -29,8 +29,9 @@
   <div class="border-t">
     {#each $sGitLogTab.logs as commitRes}
       <div on:click={() => sGitLogTab.onSelect(commitRes)}
-           class="flex cursor-pointer border-b"
-           class:bg-gray-100={commitRes === $sGitLogTab.selected}
+           class="flex cursor-default border-b"
+           class:hover:bg-gray-200={commitRes !== $sGitLogTab.selected}
+           class:bg-sky-300={commitRes === $sGitLogTab.selected}
       >
         <div class="w-7/12 border-r px-2">{commitRes.commit.message}</div>
         <div class="w-5/12 pl-2">{formatTime(commitRes.commit.author.timestamp)}</div>

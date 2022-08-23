@@ -43,11 +43,9 @@ export function getGitLogTab(sGit, sGitModal) {
       if (commitResPrev) {
         let diffs = await sGit.diff(commitResPrev.oid, commitRes.oid);
 
-        if (diffs.length) {
-          _sGitLogTab.update(state => {
-            return {...state, diffs}
-          });
-        }
+        _sGitLogTab.update(state => {
+          return {...state, diffs}
+        });
       }
     }
   }

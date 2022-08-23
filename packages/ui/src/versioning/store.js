@@ -34,20 +34,20 @@ export function getGit(sFileSystem) {
       // Refresh file system
       sFileSystem.init()
     },
-    load: async function() {
-        const gitMatrix = await git.statusMatrix({fs, dir: rootDir});
+    load: async function () {
+      const gitMatrix = await git.statusMatrix({fs, dir: rootDir});
 
-        return gitMatrix.map(row => {
-          return {
-            path: row[FILE],
-            status: row
-          }
-        })
+      return gitMatrix.map(row => {
+        return {
+          path: row[FILE],
+          status: row
+        }
+      })
     },
     refresh: async function () {
-        const gitFiles = await this.load()
-        console.log('refresh', {gitFiles})
-        _sGit.set(gitFiles)
+      const gitFiles = await this.load()
+      console.log('refresh', {gitFiles})
+      _sGit.set(gitFiles)
     },
     init: async function () {
       await this.refresh()
@@ -179,42 +179,43 @@ export function getGit(sFileSystem) {
             return
           }
 
-          // todo: this errors sometime and the methods fails to compute the diff
+          if (!A) {
+            return {
+              path: `/${filepath}`,
+              added: true,
+            }
+          }
+
+          if (!B) {
+            return {
+              path: `/${filepath}`,
+              removed: true
+            }
+          }
+
           try {
-            if ((await A.type()) === 'tree' || (await B.type()) === 'tree') {
+            let aType = await A.type();
+            let aContent = await A.content();
+            let bType = await B.type();
+            let bContent = await A.content();
+
+            if (aType === 'tree' || bType === 'tree') {
               return
+            }
+
+            // generate ids
+            const Aoid = await A.oid()
+            const Boid = await B.oid()
+
+            if (Aoid !== Boid) {
+              return {
+                path: `/${filepath}`,
+                modified: true
+              }
             }
           } catch (err) {
             console.error(err)
-            return null;
-          }
-
-          // generate ids
-          const Aoid = await A.oid()
-          const Boid = await B.oid()
-
-          // determine modification type
-          let type;
-          if (Aoid !== Boid) {
-            type = 'modified'
-          }
-          if (Aoid === undefined) {
-            type = 'added'
-          }
-          if (Boid === undefined) {
-            type = 'removed'
-          }
-          if (Aoid === undefined && Boid === undefined) {
-            console.log('Something weird happened:')
-            console.log(A)
-            console.log(B)
-          }
-
-          if (!type) return null;
-
-          return {
-            path: `/${filepath}`,
-            [type]: true
+            return;
           }
         },
       });
@@ -230,7 +231,7 @@ export function getGit(sFileSystem) {
       console.log({relativePath})
       const content = await this._readFileFromCommit(relativePath, commitOid);
       console.log({content})
-      return new VFile({path: file.path, value: content })
+      return new VFile({path: file.path, value: content})
     },
     getCurrentBranch: () => {
       return git.currentBranch({
