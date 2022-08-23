@@ -26,13 +26,13 @@
   }
 </script>
 
-<div class="w-full flex flex-col justify-between text-sm">
+<div class="w-full flex flex-col overflow-y-auto text-sm">
   <div class="p-2 font-bold">
     Branch: {$sGitLogTab.branch}
   </div>
 
   <!-- Log -->
-  <div class="border-t">
+  <div class="border-t h-1/2 overflow-y-auto bg-gray-50">
     {#each $sGitLogTab.logs as commitRes}
       <div on:click={() => sGitLogTab.onSelect(commitRes)}
            class="flex cursor-default border-b"
@@ -48,6 +48,9 @@
   <!-- Selected commit files  -->
   <div>
     {#if $sGitLogTab.selected}
+      <div class="p-2 font-bold">
+        Modified files
+      </div>
       {#each $sGitLogTab.diffs as file}
         <File {file} status={file.data.status} on:select={onSelect}/>
       {/each}

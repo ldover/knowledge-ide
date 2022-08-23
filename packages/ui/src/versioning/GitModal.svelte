@@ -24,10 +24,10 @@
 <Modal style="width: 80%; height: 80%;" {sModal}
        closeOnOutClick={false}>
   <div class="w-full h-full flex flex-col">
-    <div class="w-full flex justify-end bg-gray-200">
-      <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm"
+    <div class="w-full flex justify-end bg-gray-700">
+      <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
               on:click={() => sGitModal.hide()}>
-        <span class="material-symbols-sharp text-gray-900">close</span> Close
+        <span class="material-symbols-sharp text-gray-100">close</span> Close
       </button>
     </div>
     <div class="flex w-full flex-grow">
@@ -36,7 +36,7 @@
       </div>
 
       <div class="w-5/12 h-full border-l border-gray-200 bg-gray-100 flex flex-col">
-        <div class="flex justify-end bg-gray-700">
+        <div class="flex justify-end bg-gray-700 border-t border-gray-100">
           <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
                   on:click={() => sGit.pull()}>
             <span class="material-symbols-sharp text-gray-100">file_download</span> Pull
@@ -60,7 +60,7 @@
             </button>
           {/each}
         </div>
-        <div class="flex-grow">
+        <div class="flex-grow relative overflow-y-auto">
           {#if tab === 'changes'}
             <GitCommitTab/>
           {:else if tab === 'log'}
