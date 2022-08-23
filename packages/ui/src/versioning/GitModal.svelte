@@ -26,18 +26,6 @@
   <div class="w-full h-full flex flex-col">
     <div class="w-full flex justify-end bg-gray-200">
       <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm"
-              on:click={() => sGit.pull()}>
-        <span class="material-symbols-sharp text-gray-900">file_download</span> Pull
-      </button>
-      <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm"
-              on:click={() => sGit.push()}>
-        <span class="material-symbols-sharp text-gray-900">publish</span> Push
-      </button>
-      <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm"
-              on:click={() => sGit.refresh()}>
-        <span class="material-symbols-sharp text-gray-900">refresh</span> Refresh
-      </button>
-      <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm"
               on:click={() => sGitModal.hide()}>
         <span class="material-symbols-sharp text-gray-900">close</span> Close
       </button>
@@ -48,6 +36,20 @@
       </div>
 
       <div class="w-5/12 h-full border-l border-gray-200 bg-gray-100 flex flex-col">
+        <div class="flex justify-end bg-gray-700">
+          <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
+                  on:click={() => sGit.pull()}>
+            <span class="material-symbols-sharp text-gray-100">file_download</span> Pull
+          </button>
+          <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
+                  on:click={() => sGit.push()}>
+            <span class="material-symbols-sharp text-gray-100">publish</span> Push
+          </button>
+          <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
+                  on:click={() => sGit.refresh()}>
+            <span class="material-symbols-sharp text-gray-100">refresh</span> Refresh
+          </button>
+        </div>
         <div class="flex justify-between border-b border-gray-300">
           {#each tabs as t}
             <button class="flex-grow capitalize text-gray-700 text-sm"
