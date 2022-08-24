@@ -19,13 +19,13 @@ export function getGit(sFileSystem) {
 
   const sGit = {
     subscribe: _sGit.subscribe,
-    clone: async function (dir = '/knowledge-library', url = 'https://gitlab.com/ldover/knowledge-library.git') {
+    clone: async function (url) {
 
       console.assert(fs);
       await git.clone({
         fs: fs,
         http,
-        dir,
+        dir: rootDir,
         url,
         corsProxy: 'https://cors.isomorphic-git.org',
         onAuth: (url) => this._onAuth(url)
@@ -51,6 +51,7 @@ export function getGit(sFileSystem) {
     init: async function () {
       await this.refresh()
 
+      // todo Prompt user for git config
       await git.setConfig({
         fs,
         dir: rootDir,

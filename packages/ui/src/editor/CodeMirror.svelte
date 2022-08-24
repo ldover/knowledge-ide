@@ -1,8 +1,8 @@
 <script>
 
   import {onMount, createEventDispatcher} from "svelte";
-  import {banners} from "./banner/store";
-  import Banner from "./banner/Banner.svelte";
+  import {banners} from "../banner/store";
+  import Banner from "../banner/Banner.svelte";
 
   const dispatch = createEventDispatcher();
 

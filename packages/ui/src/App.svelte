@@ -1,12 +1,12 @@
 <script>
   import FileTree from "./filesystem/FileTree.svelte";
-  import CodeMirror from "./CodeMirror.svelte";
+  import CodeMirror from "./editor/CodeMirror.svelte";
   import ContextMenu from "./context-menu/ContextMenu.svelte";
   import NewFileModal from "./modal/file/new-file/NewFileModal.svelte";
-  import Resizer from "./Resizer.svelte";
+  import Resizer from "./editor/Resizer.svelte";
   import {Node} from "./notes-ui"
   import {parse as parseMDL, compile as compileMDL} from "@knowledge/mdl"
-  import {getEditor} from "./store";
+  import {getEditor} from "./editor/store";
   import {banners} from "./banner/store";
   import {CompilerError} from "@knowledge/mdl";
   import {onMount, setContext} from "svelte";
@@ -122,15 +122,13 @@
     }
 
     try {
-      await sFileSystem.init()
+      const files = await sFileSystem.init();
       await sGit.init();
-      await sGitLogTab.init();
     } catch (err) {
       // Clone if we empty system
       if (err.code === 'ENOENT') {
-        console.info("INFO: no repo found, cloning anew.")
-        await sGit.clone();
-        console.info('INFO: cloning finished')
+        console.info("INFO: no repo found, open clone modal.")
+        sCloneModal.show();
       } else {
         console.error(err)
       }

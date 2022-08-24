@@ -5,15 +5,18 @@ import LightningFS from '@isomorphic-git/lightning-fs';
 const _sFileSystem = writable(null);
 
 
-export function getFileSystem(workingDir = '/knowledge-library') {
+export function getFileSystem(workingDir = '/project') {
   const fs = new LightningFS('fs');
+
+  let cwd = workingDir;
 
   return {
     /**
      * @return {LightningFS}
      */
     getInstance: () => fs,
-    getWorkingDir: () => workingDir,
+    setWorkingDir: (dir) => cwd = dir,
+    getWorkingDir: () => cwd,
     subscribe: _sFileSystem.subscribe,
     /*
      * @return {VFile[]}
@@ -34,9 +37,9 @@ export function getFileSystem(workingDir = '/knowledge-library') {
     },
     getFile: async function (path) {
       if (path.startsWith('./')) {
-        path = path.replace('./', workingDir + '/');
+        path = path.replace('./', cwd + '/');
       } else if (!path.startsWith('/')) {
-        path = [workingDir, path].join('/')
+        path = [cwd, path].join('/')
       }
 
       let value = await fs.promises.readFile(path, {encoding: 'utf8'});
@@ -75,7 +78,7 @@ export function getFileSystem(workingDir = '/knowledge-library') {
       }
     },
     load: function () {
-      return this._getAllFiles(workingDir);
+      return this._getAllFiles(cwd);
     },
     init: async function () {
       const files = await this.load();
