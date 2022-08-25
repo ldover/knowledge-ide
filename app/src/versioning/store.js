@@ -48,6 +48,9 @@ export function getGit(sFileSystem) {
       const gitFiles = await this.load()
       _sGit.set(gitFiles)
     },
+    isGit: async function () {
+      return sFileSystem.exists('.git')
+    },
     init: async function () {
       await this.refresh()
 

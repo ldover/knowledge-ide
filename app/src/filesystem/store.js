@@ -35,6 +35,18 @@ export function getFileSystem(workingDir = '/project') {
         return new VFile({value: value, path: filepath})
       }))
     },
+    exists: async function (path) {
+      try {
+        await fs.promises.stat([cwd, path].join('/'))
+        return true;
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          return false
+        }
+
+        throw err;
+      }
+    },
     getFile: async function (path) {
       if (path.startsWith('./')) {
         path = path.replace('./', cwd + '/');

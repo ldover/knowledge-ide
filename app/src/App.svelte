@@ -107,7 +107,12 @@
           onRun()
         }
       } catch (err) {
-        console.error('onHashChange failed', err);
+        if (err.code === 'ENOENT') {
+          window.location.hash = '';
+          console.error('File not found: ' + path);
+        } else {
+          console.error('onHashChange failed', err);
+        }
       }
     }
   }
@@ -123,11 +128,14 @@
 
     try {
       const files = await sFileSystem.init();
-      await sGit.init();
+      const isGit = await sGit.isGit();
+      if (!isGit) {
+        sCloneModal.show();
+      }
     } catch (err) {
       // Clone if we empty system
       if (err.code === 'ENOENT') {
-        console.info("INFO: no repo found, open clone modal.")
+        console.info("INFO: no local repository exists — opening git clone modal.")
         sCloneModal.show();
       } else {
         console.error(err)
