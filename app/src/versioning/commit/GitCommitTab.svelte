@@ -6,7 +6,7 @@
 
   import {HEAD, STAGE, WORKDIR} from "../store";
 
-  const {sGitModal, sGit} = getContext('stores');
+  const {sGitModal, sGit, sGitUserModal} = getContext('stores');
 
 
   const isDeleted = row => row[HEAD] === 1 && row[WORKDIR] === 0;
@@ -48,14 +48,18 @@
       return window.alert('Specify commit message')
     }
 
-
     try {
       await sGit.commit(commitMsg)
       commitMsg = null;
       window.alert('Commit successful!')
     } catch (err) {
       console.error(err)
-      window.alert('Error:' + err)
+      if (err.code === 'MissingNameError') {
+        window.alert('You have to specify local Git credentials before committing.')
+        return sGitUserModal.show();
+      } else {
+        window.alert(err)
+      }
     }
   }
 </script>

@@ -19,9 +19,10 @@
   import {getFileSystem} from "./filesystem/store";
   import {getGit, getGitModal} from "./versioning/store";
   import GitModal from "./versioning/GitModal.svelte";
-  import {getModal} from "./modal/store";
   import {getGitLogTab} from "./versioning/log/store";
   import {getGitDiff} from "./versioning/diff/store";
+  import {getGitUserModal} from "./modal/git-user/store";
+  import GitUserModal from "./modal/git-user/GitUserModal.svelte";
 
 
   let note = null;
@@ -40,6 +41,7 @@
   let sDiff = getGitDiff()
   let sGitModal = getGitModal(sGit, sFileSystem, sDiff)
   let sGitLogTab = getGitLogTab(sGit, sGitModal)
+  let sGitUserModal = getGitUserModal(sGit, sGitModal)
 
   let scope = {
     sFileSystem,
@@ -51,6 +53,7 @@
     sGit,
     sGitModal,
     sGitLogTab,
+    sGitUserModal,
     sDiff,
   };
 
@@ -184,6 +187,7 @@
 <RenameModal sModal={sRenameModal}/>
 <CloneModal sModal={sCloneModal}/>
 <GitModal sModal={sGitModal}/>
+<GitUserModal sModal={sGitUserModal}/>
 
 <style lang="scss">
   .h-fullvw {

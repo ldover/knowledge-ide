@@ -51,25 +51,23 @@ export function getGit(sFileSystem) {
     isGit: async function () {
       return sFileSystem.exists('.git')
     },
-    init: async function () {
-      await this.refresh()
-
-      // todo Prompt user for git config
-      // todo: there might be edge case here where we have files but not git
-      //   should promp user
+    setConfig: async function({user, email}) {
       await git.setConfig({
         fs,
         dir: rootDir,
         path: 'user.name',
-        value: 'ldover'
+        value: user
       })
 
       await git.setConfig({
         fs,
         dir: rootDir,
         path: 'user.email',
-        value: 'luka.dover@gmail.com'
+        value: email
       })
+
+      localStorage.setItem('user.name', user);
+      localStorage.setItem('user.email', email);
     },
     commit: async function (message) {
       await git.commit({fs, dir: rootDir, message})

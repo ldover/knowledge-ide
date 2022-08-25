@@ -68,8 +68,6 @@
           {/if}
         </div>
       </div>
-
-
     </div>
   </div>
 </Modal>
