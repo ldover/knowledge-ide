@@ -15,7 +15,7 @@ import ListItem from "./components/ListItem.svelte";
 import List from "./components/List.svelte";
 import Reference from "./components/Reference.svelte";
 import Statement from "./components/Statement.svelte";
-import Note from "./components/Note.svelte";
+import Root from "./components/Root.svelte";
 
 export const Components = {
   'text': {component: Text, children: false,},
@@ -28,7 +28,7 @@ export const Components = {
   'strong': {component: Strong, children: false,},
   'heading': {component: Heading, children: true,},
   'paragraph': {component: Paragraph, children: true,},
-  'root': {component: Note, children: true,},
+  'root': {component: Root, children: true,},
   'link': {component: Link, children: false,},
   'listItem': {component: ListItem, children: true,},
   'list': {component: List, children: true,},

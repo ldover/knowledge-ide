@@ -29,8 +29,3 @@
   </div>
 </Modal>
 
-<style lang="scss">
-  .modal {
-    width: 400px;
-  }
-</style>

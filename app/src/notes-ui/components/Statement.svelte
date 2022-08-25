@@ -43,11 +43,6 @@
   .statement {
     @apply p-3 bg-gray-100 mb-3;
   }
-    .note-handle {
-        top: 0;
-        right: 0;
-    }
-
 </style>
 
 

@@ -1,14 +1,14 @@
 <script>
-  export let node;
+  export const node = null;
 
 </script>
 
-<div class="note">
+<div class="root">
     <slot></slot>
 </div>
 
 <style>
-    .note {
+    .root {
         @apply font-light;
         font-family: 'Roboto', sans-serif;
     }

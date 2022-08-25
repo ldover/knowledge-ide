@@ -4,7 +4,7 @@
   import {Components} from "../util";
 
   export let node;
-  export let root = false;
+  export const root = false;
   let prevNode;
 
   const addId = (node) => node.id = Math.round(Math.random() * 100000000) + '';

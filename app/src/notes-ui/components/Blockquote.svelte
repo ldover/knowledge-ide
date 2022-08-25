@@ -1,5 +1,5 @@
 <script>
-  export let node;
+  export const node = null;
 </script>
 
 <blockquote>
@@ -13,7 +13,7 @@
         @apply text-gray-700;
     }
 
-    blockquote > p {
+    blockquote > :global(p) {
         margin: 0;
     }
 </style>
