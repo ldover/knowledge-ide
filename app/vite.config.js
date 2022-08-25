@@ -40,7 +40,7 @@ export default defineConfig({
       plugins: [
         // Enable rollup polyfills plugin
         // used during production bundling
-        rollupNodePolyFill()
+        rollupNodePolyFill({crypto: true, include: ['buffer']})
       ]
     }
   }
