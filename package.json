@@ -1,5 +1,4 @@
 {
-  "name": "knowledge-ide",
   "version": "0.0.1",
   "private": true,
   "author": "Luka Dover",
@@ -9,6 +8,7 @@
     "node": "16.13.2"
   },
   "workspaces": [
+    "app",
     "./packages/*"
   ]
 }

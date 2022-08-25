@@ -52,6 +52,8 @@ export function getGit(sFileSystem) {
       await this.refresh()
 
       // todo Prompt user for git config
+      // todo: there might be edge case here where we have files but not git
+      //   should promp user
       await git.setConfig({
         fs,
         dir: rootDir,
