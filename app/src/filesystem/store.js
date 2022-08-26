@@ -120,8 +120,11 @@ export function getFileSystem(workingDir = '/project') {
       this.init();
     },
     move: async function (filePath, folder) {
+      debugger
       if (folder.type === 'folder') {
-        await fs.promises.rename(filePath, folder.path)
+        const newFilePath = [folder.path, (new VFile({path: filePath})).basename].join('/');
+        if (newFilePath === filePath) return;
+        await fs.promises.rename(filePath, newFilePath)
         this.init(); // Refresh
       } else {
         window.alert('Invalid move operation — target must be folder')

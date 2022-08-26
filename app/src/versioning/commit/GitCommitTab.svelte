@@ -108,10 +108,16 @@
           <File file={file}
                 status={file.status}
                 on:select={onSelect}>
-            <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
-                    on:click|stopPropagation={() => sGit.remove(file)}>
-              <span class="material-symbols-sharp text-gray-900">file_upload</span> Unstage
-            </button>
+            <div class="flex">
+              <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
+                      on:click|stopPropagation={() => sGit.rollback(file)}>
+                <span class="material-symbols-sharp text-gray-900">undo</span> Revert
+              </button>
+              <button class="text-gray-900 bg-white flex items-center hover:bg-gray-300 px-2 text-sm"
+                      on:click|stopPropagation={() => sGit.remove(file)}>
+                <span class="material-symbols-sharp text-gray-900">file_upload</span> Unstage
+              </button>
+            </div>
           </File>
         {/each}
       </div>

@@ -146,6 +146,7 @@ export function getGit(sFileSystem) {
       }
 
     },
+    // todo: does not work sometimes
     rollback: async function (...files) {
       try {
         let filepaths = files.map(file => file.path);

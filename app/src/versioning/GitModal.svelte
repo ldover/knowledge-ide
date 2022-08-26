@@ -30,8 +30,8 @@
         <span class="material-symbols-sharp text-gray-100">close</span> Close
       </button>
     </div>
-    <div class="flex w-full flex-grow">
-      <div class="w-7/12 h-full overflow-y-auto overflow-x-auto relative">
+    <div class="flex w-full h-full">
+      <div class="w-7/12 bg-white h-full overflow-y-auto overflow-x-auto relative">
         <Diff/>
       </div>
 
