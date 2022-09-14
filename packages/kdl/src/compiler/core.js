@@ -119,7 +119,8 @@ class Text {
 }
 
 class Root {
-  constructor(path, ast, scope) {
+  constructor(path, ast, scope, value) {
+    this.raw = value;
     this.path = path;
     this.ast = ast;
     this.scope = scope;
@@ -197,7 +198,16 @@ class Root {
     return  this.symbol.longName ? this.symbol.longName + ` (${this.symbol.name})` : this.symbol.name;
   }
 
-  render() {
+  render(options) {
+    if (options.type === 'codemirror') {
+      debugger
+      return {
+        type: 'codemirror',
+        language: 'kdl',
+        value: this.raw
+      }
+    }
+
     return {
       type: 'root',
       children: [
@@ -292,7 +302,7 @@ function compile(files) {
       throw new Error('Unsupported file type: ' + file.path);
     }
 
-    rootObj = new Root(file.path, file.data.parsed, scope)
+    rootObj = new Root(file.path, file.data.parsed, scope, file.value)
 
     scope.set(file.path, rootObj);
   })

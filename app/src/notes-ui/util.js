@@ -16,9 +16,11 @@ import List from "./components/List.svelte";
 import Reference from "./components/Reference.svelte";
 import Statement from "./components/Statement.svelte";
 import Root from "./components/Root.svelte";
+import CodeCodeMirror from "./components/CodeCodeMirror.svelte";
 
 export const Components = {
   'text': {component: Text, children: false,},
+  'codemirror': {component: CodeCodeMirror, children: false,},
   'thematicBreak': {component: ThematicBreak, children: false,},
   'break': {component: Break, children: false,},
   'blockquote': {component: Blockquote, children: true,},

@@ -33,7 +33,7 @@ function compile(files) {
     if (type === '.mdl') {
       rootObj = new Root(file.path, file.data.parsed, scope)
     } else if (type === '.kdl') {
-      rootObj =  new KDLRoot(file.path, file.data.parsed, scope)
+      rootObj =  new KDLRoot(file.path, file.data.parsed, scope, file.value)
     } else if (['.png', '.jpg'].includes(file.extname)) {
       rootObj = new LocalImage(file.path, file.value)
     } else {
