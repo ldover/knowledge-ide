@@ -70,13 +70,13 @@ function completeFromKDLFiles(context, sourceFile, files) {
       type: 'variable'
     }
     if (isImport) {
-      opt.apply = `${label} of '${computeRelativePath(sourceFile.path, file.path)}'`
+      opt.apply = `${capitalize(label)} of '${computeRelativePath(sourceFile.path, file.path)}'`
     } else {
-      opt.apply = `{${label}}`
+      return null
     }
 
     return opt;
-  })
+  }).filter(_ => _)
 
   let completion = {
     from,
@@ -90,6 +90,9 @@ const kdlAutocomplete = (sourceFile, files) => knowledgeLanguage.data.of({
   autocomplete: (context) => completeFromKDLFiles(context, sourceFile, files)
 })
 
+const capitalize = (text) => {
+  return text.substring(0, 1).toUpperCase() + text.substring(1);
+}
 /**
  * Computes autocomplete data, like relative imports from the source file specified.
  * @param {VFile} sourceFile
@@ -110,7 +113,7 @@ function getImportAutocomplete(sourceFile, files) {
         type: 'variable'
       }
       if (isImport) {
-        opt.apply = `${label} from '${computeRelativePath(sourceFile.path, file.path)}'`
+        opt.apply = `${capitalize(label)} from '${computeRelativePath(sourceFile.path, file.path)}'`
       } else {
         opt.apply = `{${label}}`
       }
