@@ -200,11 +200,18 @@ class Root {
 
   render(options) {
     if (options.type === 'codemirror') {
-      debugger
+      let value = this.raw;
+      if (options.lines) {
+        const lines = value.split('\n');
+        let from = options.lines.from || 0;
+        let to = options.lines.to || lines.length;
+        value = lines.slice(from, to).join('\n');
+      }
+
       return {
         type: 'codemirror',
         language: 'kdl',
-        value: this.raw
+        value: value
       }
     }
 
