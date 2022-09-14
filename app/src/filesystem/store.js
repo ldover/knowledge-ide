@@ -29,9 +29,11 @@ export function getFileSystem(workingDir = '/project') {
         const extname = new VFile({path: filepath}).extname;
         const isHidden = new VFile({path: filepath}).basename.startsWith('.');
 
-         if (!isHidden && ['.mdl', '.kdl', '.mdl', '.md'].includes(extname)) {
+        if (!isHidden) {
+         if (['.mdl', '.kdl', '.mdl', '.md', '.png', '.jpg'].includes(extname)) {
           value = await fs.promises.readFile(filepath, {encoding: 'utf8'})
          }
+        }
         return new VFile({value: value, path: filepath})
       }))
     },
