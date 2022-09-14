@@ -80,12 +80,21 @@
   })
 </script>
 
-<div class="relative">
+<div class="relative mb-3">
   <div bind:this={node.el}
        class="h-full">
+  </div>
+  <div class="font-normal bg-gray-100 roboto-mono text-xs text-gray-700 py-1 flex justify-between px-2">
+    <div class="">{node.path}</div>
+    <!-- TODO: make this into link pointing to actual repo (maybe path above is clickable too?)  -->
+    <div class="">
+      View on Github
+    </div>
   </div>
 </div>
 
 <style lang="scss">
-
+  .roboto-mono {
+    font-family: 'Roboto Mono', monospace;
+  }
 </style>

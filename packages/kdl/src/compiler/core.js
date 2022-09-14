@@ -211,7 +211,8 @@ class Root {
       return {
         type: 'codemirror',
         language: 'kdl',
-        value: value
+        value: value,
+        path: this.path,
       }
     }
 
