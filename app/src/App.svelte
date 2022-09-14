@@ -164,7 +164,7 @@
           <CodeMirror on:mount={onEditorMount}/>
       </div>
       <Resizer/>
-      <div class="border-l border-gray-100 h-fullvw w-4/12 flex flex-col" style="--list-style: {isKDL ? 'none' : 'disc'}">
+      <div class="reader border-l border-gray-100 h-fullvw flex-grow flex flex-col" style="--list-style: {isKDL ? 'none' : 'disc'}">
         <div class="w-full justify-end flex border-b">
           <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => onRun()}>
             <span class="material-symbols-sharp text-gray-900">refresh</span> Refresh
@@ -193,6 +193,10 @@
   .toolbar {
     height: 24px;
     max-height: 24px;
+  }
+
+  .reader {
+    width: 30%;
   }
 
   .h-fullvw {

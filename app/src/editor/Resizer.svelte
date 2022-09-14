@@ -69,7 +69,9 @@
   .resizer {
     background: transparent;
     cursor: col-resize;
-    height: 100vh;
+
+    /* toolbar is 24px; it doesn't appear if we don't specify height */
+    height: calc(100vh - 24px);
   }
 
   .resizer:hover {
