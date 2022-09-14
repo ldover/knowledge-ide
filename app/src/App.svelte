@@ -150,7 +150,7 @@
 <svelte:window on:hashchange={onHashChange} />
 
 <div class="w-full h-full">
-  <div class="w-full text-white h-1/6 bg-gray-200 flex">
+  <div class="toolbar w-full text-white bg-gray-200 flex">
     <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sGitModal.show()}>
       <span class="material-symbols-sharp text-gray-900">conversion_path</span> Git
     </button>
@@ -190,9 +190,13 @@
 <GitUserModal sModal={sGitUserModal}/>
 
 <style lang="scss">
-  .h-fullvw {
-    height: 100vh;
-    max-height: 100vh;
+  .toolbar {
+    height: 24px;
+    max-height: 24px;
   }
 
+  .h-fullvw {
+    height: calc(100vh - 24px);
+    max-height: calc(100vh - 24px);
+  }
 </style>
