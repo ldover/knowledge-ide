@@ -199,7 +199,7 @@ class Root {
   }
 
   render(options) {
-    if (options.type === 'codemirror') {
+    if (options?.type === 'codemirror') {
       let value = this.raw;
       if (options.lines) {
         const lines = value.split('\n');
