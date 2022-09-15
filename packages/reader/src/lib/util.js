@@ -18,6 +18,7 @@ import Statement from "./components/Statement.svelte";
 import Root from "./components/Root.svelte";
 import CodeCodeMirror from "./components/CodeCodeMirror.svelte";
 
+
 export const Components = {
   'text': {component: Text, children: false,},
   'codemirror': {component: CodeCodeMirror, children: false,},
@@ -39,4 +40,3 @@ export const Components = {
   'reference': {component: Reference, children: false,},
   'statement': {component: Statement, children: true,},
 }
-

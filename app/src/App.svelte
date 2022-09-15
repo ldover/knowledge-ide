@@ -4,7 +4,7 @@
   import ContextMenu from "./context-menu/ContextMenu.svelte";
   import NewFileModal from "./modal/file/new-file/NewFileModal.svelte";
   import Resizer from "./editor/Resizer.svelte";
-  import {Node} from "./notes-ui"
+  import {Node} from "@knowledge/reader"
   import {parse as parseMDL, compile as compileMDL} from "@knowledge/mdl"
   import {getEditor} from "./editor/store";
   import {banners} from "./banner/store";

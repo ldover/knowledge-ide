@@ -2,7 +2,6 @@ import {get, writable} from 'svelte/store';
 
 import * as http from 'isomorphic-git/http/web';
 import * as git from 'isomorphic-git'
-import fs from "fs";
 import {VFile} from 'vfile';
 import {getModal} from "../modal/store";
 

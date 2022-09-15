@@ -1,15 +1,9 @@
 <script>
   import {onMount} from "svelte";
   import {basicSetup, EditorView} from "codemirror";
-  import {keymap} from "@codemirror/view";
-  import {indentWithTab} from "@codemirror/commands";
   import {knowledge} from "@knowledge/codemirror-lang-knowledge";
 
-  export let node = {
-    type: 'codemirror',
-    language: 'kdl',
-    value: 'symbol X'
-  };
+  export let node;
 
   function init(el) {
     node.view?.destroy();
@@ -57,7 +51,6 @@
     let extensions = [
       basicSetup,
       myTheme,
-      keymap.of([indentWithTab]),
       EditorView.editable.of(false)
     ];
 
