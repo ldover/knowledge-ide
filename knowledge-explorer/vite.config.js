@@ -8,7 +8,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 // https://vitejs.dev/config/
 export default defineConfig({
   root: "src",
-  publicDir: "../public",
+  publicDir: "../dist",
   plugins: [svelte()],
   server: {
     port: 1234
@@ -36,7 +36,7 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: '../public',
+    outDir: '../dist',
     rollupOptions: {
       plugins: [
         // Enable rollup polyfills plugin
