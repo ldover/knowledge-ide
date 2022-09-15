@@ -4,13 +4,14 @@ import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
 import { defineConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 
+
 // https://vitejs.dev/config/
 export default defineConfig({
   root: "src",
   publicDir: "../public",
   plugins: [svelte()],
   server: {
-    port: 5433
+    port: 1234
   },
   resolve: {
     alias: {
@@ -43,5 +44,6 @@ export default defineConfig({
         rollupNodePolyFill({crypto: true, include: ['buffer']})
       ]
     }
+
   }
 })
