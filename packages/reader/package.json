@@ -31,7 +31,8 @@
   "dependencies": {
     "@codemirror/state": "^6.1.1",
     "@codemirror/view": "^6.0.2",
-    "@knowledge/codemirror-lang-knowledge": "0.0.1"
+    "@knowledge/codemirror-lang-knowledge": "0.0.1",
+    "codemirror": "^6.0.1"
   },
   "type": "module"
 }
