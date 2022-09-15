@@ -86,7 +86,7 @@
   </div>
 </div>
 
-<style lang="scss">
+<style>
   .roboto-mono {
     font-family: 'Roboto Mono', monospace;
   }

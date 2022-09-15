@@ -11,17 +11,17 @@
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "@sveltejs/vite-plugin-svelte": "^1.0.2",
-    "autoprefixer": "^10.4.7",
-    "postcss": "^8.4.14",
+    "autoprefixer": "^10.4.11",
+    "postcss": "^8.4.16",
     "svelte": "^3.49.0",
-    "tailwindcss": "^3.0.24",
+    "tailwindcss": "^3.1.8",
     "vite": "^3.0.9"
   },
   "dependencies": {
+    "@isomorphic-git/lightning-fs": "^4.6.0",
     "@knowledge/kdl": "0.0.1",
     "@knowledge/mdl": "0.0.1",
     "@knowledge/reader": "0.0.1",
-    "@isomorphic-git/lightning-fs": "^4.6.0",
     "isomorphic-git": "^1.19.1",
     "vfile": "^5.3.4"
   }

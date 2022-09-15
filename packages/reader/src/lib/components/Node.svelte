@@ -1,4 +1,5 @@
 <script>
+  import "../app.css";
   import Node from "./Node.svelte";
   import {beforeUpdate} from "svelte";
   import {Components} from "../util";
