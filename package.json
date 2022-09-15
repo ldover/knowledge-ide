@@ -9,6 +9,7 @@
   },
   "workspaces": [
     "app",
+    "knowledge-explorer",
     "./packages/*"
   ]
 }
