@@ -18,6 +18,11 @@
     "vite": "^3.0.9"
   },
   "dependencies": {
-    "@knowledge/common": "0.0.1"
+    "@knowledge/kdl": "0.0.1",
+    "@knowledge/mdl": "0.0.1",
+    "@knowledge/reader": "0.0.1",
+    "@isomorphic-git/lightning-fs": "^4.6.0",
+    "isomorphic-git": "^1.19.1",
+    "vfile": "^5.3.4"
   }
 }

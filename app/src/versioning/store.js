@@ -260,7 +260,7 @@ export function getGit(sFileSystem) {
       return new TextDecoder().decode(blob);
     },
     _onAuth: function (url) {
-      const accessToken = "glpat-Mzd_iz-ysuRT5Yz6XgBV"
+      const accessToken = "glpat-BGtxsx7pLueNwXSyzWHn"
       const username = "ldover";
 
       return {
