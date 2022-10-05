@@ -12,7 +12,13 @@
 
   const rootDir = '/project'
 
-  const url = 'https://gitlab.com/ldover/knowledge-engineering.git' // todo: get this from url parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  // const url = 'https://gitlab.com/ldover/knowledge-engineering.git'
+  let url = urlParams.get('repository')
+
+  let enteredUrl;
+  let downloading = !!url;
+
   const corsProxy = import.meta.env.DEV ? 'http://localhost:3000/api' : `${window.location.origin}/api`
 
   async function getFiles() {
@@ -110,7 +116,9 @@
   let rendered = null;
   let status = 'clone: ' + url
   let statusMsg = null;
-  onMount(async () => {
+
+  async function download(url) {
+    downloading = true;
     try {
       let files;
       try {
@@ -153,24 +161,49 @@
       status = 'error'
       statusMsg = err + '';
     }
+
+  }
+
+  onMount(async () => {
+
+    if (url) {
+      await download(url)
+    }
   })
+
+  function onDownload() {
+    url = enteredUrl;
+    download(url);
+  }
 </script>
 
 <div class="w-full h-full flex justify-center">
-  <div class="content">
-    {#if rendered}
-      <Node node={rendered}></Node>
-    {:else}
-      <div>
-        <div>Processing ...</div>
-        <div>Status: {status}</div>
-        {#if statusMsg}
-          <div>Status message: {statusMsg}
-          </div>
-        {/if}
-      </div>
-    {/if}
-  </div>
+  {#if !url}
+    <div class="flex flex-col justify-center items-start">
+      <div class="text-xl">Knowledge explorer</div>
+      <div class="text-xs mb-4 text-gray-700">Experimental web app for reading MDL articles.</div>
+      <div>Enter GitHub repository link</div>
+
+      <input class="border border-black w-64" type="text" bind:value={enteredUrl} />
+
+      <button class="bg-sky-700 text-white rounded-sm px-4 text-lg mt-2" on:click={onDownload}>Open</button>
+    </div>
+  {:else}
+    <div class="content">
+      {#if rendered}
+        <Node node={rendered}></Node>
+      {:else}
+        <div>
+          <div>Processing ...</div>
+          <div>Status: {status}</div>
+          {#if statusMsg}
+            <div>Status message: {statusMsg}
+            </div>
+          {/if}
+        </div>
+      {/if}
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
