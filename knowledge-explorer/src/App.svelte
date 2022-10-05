@@ -12,7 +12,8 @@
 
   const rootDir = '/project'
 
-  const url = 'https://gitlab.com/ldover/knowledge-engineering.git'
+  const url = 'https://gitlab.com/ldover/knowledge-engineering.git' // todo: get this from url parameter
+  const corsProxy = import.meta.env.DEV ? 'http://localhost:3000/api' : `${window.location.origin}/api`
 
   async function getFiles() {
     async function _getAllFiles(dirPath) {
@@ -78,7 +79,7 @@
   async function clone(url) {
     function _onAuth(url) {
       console.log('auth hook engaged')
-      const accessToken = "glpat-BGtxsx7pLueNwXSyzWHn"
+      const accessToken = "glpat-gubo7pXMQUzzo6J4W9Hz"
       const username = "ldover";
 
       return {
@@ -93,9 +94,10 @@
       http,
       dir: rootDir,
       url,
-      corsProxy: 'https://cors.isomorphic-git.org',
+      corsProxy: corsProxy,
       onAuth: (url) => _onAuth(url)
     })
+    console.info("INFO: cloning finished")
   }
 
   function process(files) {
@@ -113,8 +115,11 @@
       let files;
       try {
         files = await getFiles();
-        if (files.length) {
-          console.log('already cloned')
+        if (!files.length) {
+          status = 'cloning'
+          await clone(url)
+          status = 'clone finished'
+          files = await getFiles()
         }
       } catch (err) {
         // No project yet — clone
@@ -123,6 +128,8 @@
           await clone(url)
           status = 'clone finished'
           files = await getFiles()
+        } else {
+          throw err;
         }
       }
 
