@@ -189,7 +189,12 @@
       <button class="bg-sky-700 text-white rounded-sm px-4 text-lg mt-2" on:click={onDownload}>Open</button>
     </div>
   {:else}
-    <div class="content p-6">
+    <div class="absolute right-0 top-0 p-6">
+      <a href={url} class="text-gray-900 text-blue-500 text-xs" target="_blank">
+        <img src="GitHub-Mark-120px-plus.png" width="32px" alt="GitHub logo"/>
+      </a>
+    </div>
+    <div class="content p-6 pt-16">
       {#if rendered}
         <Node node={rendered}></Node>
       {:else}
