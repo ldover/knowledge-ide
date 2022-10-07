@@ -189,7 +189,7 @@
       <button class="bg-sky-700 text-white rounded-sm px-4 text-lg mt-2" on:click={onDownload}>Open</button>
     </div>
   {:else}
-    <div class="content">
+    <div class="content p-6">
       {#if rendered}
         <Node node={rendered}></Node>
       {:else}
@@ -208,7 +208,9 @@
   input {
     width: 350px;
   }
+
   .content {
+    width: 100%;
     max-width: 600px;
   }
 </style>
