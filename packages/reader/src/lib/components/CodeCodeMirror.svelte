@@ -73,20 +73,25 @@
   })
 </script>
 
-<div class="relative mb-3">
+<div class="relative mb-4">
   <div bind:this={node.el}
        class="h-full">
   </div>
-  <div class="font-normal bg-gray-100 roboto-mono text-xs text-gray-700 py-1 flex justify-between px-2">
+  <div class="file-header font-normal bg-gray-100 roboto-mono text-xs text-gray-700 py-1 px-2">
     <div class="">{node.path}</div>
     <!-- TODO: make this into link pointing to actual repo (maybe path above is clickable too?)  -->
-    <div class="">
+    <button class="">
       View on Github
-    </div>
+    </button>
   </div>
 </div>
 
 <style>
+  .file-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
   .roboto-mono {
     font-family: 'Roboto Mono', monospace;
   }

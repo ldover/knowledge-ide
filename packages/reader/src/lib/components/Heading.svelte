@@ -16,6 +16,7 @@
 
 <style>
     h1 {
+        @apply font-medium;
         @apply text-2xl;
         @apply mb-3;
     }

@@ -41,7 +41,7 @@
 
 <style>
   .statement {
-    @apply p-3 bg-gray-100 mb-3;
+    @apply p-3 bg-gray-100 mb-4;
   }
 </style>
 

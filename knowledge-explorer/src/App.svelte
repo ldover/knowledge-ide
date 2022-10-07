@@ -83,6 +83,8 @@
   }
 
   async function clone(url) {
+    status = '(1/2) Cloning repository ' + url
+
     function _onAuth(url) {
       console.log('auth hook engaged')
       const accessToken = "glpat-gubo7pXMQUzzo6J4W9Hz"
@@ -114,8 +116,8 @@
   }
 
   let rendered = null;
-  let status = 'clone: ' + url
-  let statusMsg = null;
+  let status = '';
+  let errorMsg = null;
 
   async function download(url) {
     downloading = true;
@@ -124,25 +126,22 @@
       try {
         files = await getFiles();
         if (!files.length) {
-          status = 'cloning'
           await clone(url)
-          status = 'clone finished'
           files = await getFiles()
         }
       } catch (err) {
         // No project yet — clone
         if (err.code === 'ENOENT') {
-          status = 'cloning'
           await clone(url)
-          status = 'clone finished'
           files = await getFiles()
         } else {
           throw err;
         }
       }
 
+      status = '(2/2) Compiling code'
       files = await process(files)
-      status = 'compile finished';
+
       // todo: take root path from from package json entrypoint
       const file = files.find(file => file.basename === 'index.mdl')
 
@@ -159,7 +158,7 @@
     } catch (err) {
       console.log(err)
       status = 'error'
-      statusMsg = err + '';
+      errorMsg = err + '';
     }
 
   }
@@ -180,11 +179,12 @@
 <div class="w-full h-full flex justify-center">
   {#if !url}
     <div class="flex flex-col justify-center items-start">
-      <div class="text-xl">Knowledge explorer</div>
       <div class="text-xs mb-4 text-gray-700">Experimental web app for reading MDL articles.</div>
-      <div>Enter GitHub repository link</div>
+      <div>Enter link to GitHub repository:</div>
 
-      <input class="border border-black w-64" type="text" bind:value={enteredUrl} />
+      <input class="rounded-sm border border-gray-600 text-sm px-1 py-1"
+             placeholder="https://github.com/ldover/knowledge-engineering.git"
+             type="text" bind:value={enteredUrl} />
 
       <button class="bg-sky-700 text-white rounded-sm px-4 text-lg mt-2" on:click={onDownload}>Open</button>
     </div>
@@ -194,11 +194,9 @@
         <Node node={rendered}></Node>
       {:else}
         <div>
-          <div>Processing ...</div>
-          <div>Status: {status}</div>
-          {#if statusMsg}
-            <div>Status message: {statusMsg}
-            </div>
+          <div class="text-lg">Status: {status}</div>
+          {#if errorMsg}
+            <div class="text-gray-600 text-xs">{errorMsg}</div>
           {/if}
         </div>
       {/if}
@@ -207,6 +205,9 @@
 </div>
 
 <style lang="scss">
+  input {
+    width: 350px;
+  }
   .content {
     max-width: 600px;
   }
