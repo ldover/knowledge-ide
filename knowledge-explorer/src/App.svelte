@@ -1,221 +1,73 @@
 <script>
-  import {onMount} from 'svelte';
-  import * as git from 'isomorphic-git';
-  import * as http from 'isomorphic-git/http/web';
-  import LightningFS from '@isomorphic-git/lightning-fs';
-  import {VFile} from "vfile";
-  import {Node} from "@knowledge/reader";
-  import {compile as compileMDL, parse as parseMDL} from "@knowledge/mdl";
+  import Reader from "./routes/reader/Reader.svelte";
 
-
-  const fs = new LightningFS('fs');
-
-  const rootDir = '/project'
-
-  const urlParams = new URLSearchParams(window.location.search);
-  // const url = 'https://gitlab.com/ldover/knowledge-engineering.git'
-  let url = urlParams.get('repository')
-
-  let enteredUrl;
-  let downloading = !!url;
-
-  const corsProxy = import.meta.env.DEV ? 'http://localhost:3000/api' : `${window.location.origin}/api`
-
-  async function getFiles() {
-    async function _getAllFiles(dirPath) {
-      const dirFiles = await fs.promises.readdir(dirPath)
-      const files = await Promise.all(dirFiles.map(async file => {
-        let filepath = [dirPath, file].join('/');
-        const stat = await fs.promises.stat(filepath)
-        const vfile = new VFile({path: file});
-
-        if (stat.type === 'dir') {
-          // Don't read the empty folder
-          if (vfile.basename.startsWith('.')) {
-            return null;
-          }
-          return _getAllFiles(filepath);
-        } else {
-          const name = vfile.basename;
-          const extname = vfile.extname;
-          return {
-            type: 'file',
-            name,
-            extname,
-            path: filepath,
-          }
-        }
-      }))
-
-      return {
-        type: 'folder',
-        name: new VFile({path: dirPath}).basename,
-        path: dirPath,
-        files: files.filter(f => f !== null) // filter out null returns (empty folders)
-      }
+  let index = [
+    {
+      repository: 'https://github.com/ldover/knowledge-engineering.git',
+      title: 'Scaling Civilizational Knowledge',
+      author: 'Luka Dover',
+      description: 'Exploration of the first principles scaling knowledge systems',
+      date: '12 Oct 2022',
     }
+  ]
 
-    function flatten(dir) {
-      if (!dir) return [];
+  let view;
+  onHashChange();
 
-      function walk(dir) {
-        return dir.files.reduce((allFiles, nextFile) => nextFile.type === 'folder' ? [...allFiles, ...walk(nextFile)] : [...allFiles, nextFile], [])
-      }
-
-      return walk(dir);
-    }
-
-    let dir = await _getAllFiles(rootDir)
-    const filePaths = flatten(dir)
-    return Promise.all(filePaths.map(async file => {
-      const filepath = file.path;
-      let value = null;
-      const extname = new VFile({path: filepath}).extname;
-      const isHidden = new VFile({path: filepath}).basename.startsWith('.');
-
-      if (!isHidden) {
-        if (['.mdl', '.kdl', '.mdl', '.md', '.png', '.jpg'].includes(extname)) {
-          value = await fs.promises.readFile(filepath, {encoding: 'utf8'})
-        }
-      }
-      return new VFile({value: value, path: filepath})
-    }))
-  }
-
-  async function clone(url) {
-    status = '(1/2) Cloning repository ' + url
-
-    function _onAuth(url) {
-      console.log('auth hook engaged')
-      const accessToken = "glpat-gubo7pXMQUzzo6J4W9Hz"
-      const username = "ldover";
-
-      return {
-        username,
-        password: accessToken
-      };
-    }
-
-    console.info('INFO: cloning ' + url, {dir: rootDir, fs, http})
-    await git.clone({
-      fs: fs,
-      http,
-      dir: rootDir,
-      url,
-      corsProxy: corsProxy,
-      onAuth: (url) => _onAuth(url)
-    })
-    console.info("INFO: cloning finished")
-  }
-
-  function process(files) {
-    parseMDL(files);
-    compileMDL(files)
-
-    return files;
-  }
-
-  let rendered = null;
-  let status = '';
-  let errorMsg = null;
-
-  async function download(url) {
-    downloading = true;
-    try {
-      let files;
-      try {
-        files = await getFiles();
-        if (!files.length) {
-          await clone(url)
-          files = await getFiles()
-        }
-      } catch (err) {
-        // No project yet — clone
-        if (err.code === 'ENOENT') {
-          await clone(url)
-          files = await getFiles()
-        } else {
-          throw err;
-        }
-      }
-
-      status = '(2/2) Compiling code'
-      files = await process(files)
-
-      // todo: take root path from from package json entrypoint
-      const file = files.find(file => file.basename === 'index.mdl')
-
-      if (!file) {
-        return console.error('ERROR: File not found')
-      }
-      if (!file.data.compiled) {
-        return console.warn('WARN: file cannot run since it did not compile')
-      }
-
-      rendered = file.data.compiled.render()
-
-
-    } catch (err) {
-      console.log(err)
-      status = 'error'
-      errorMsg = err + '';
-    }
-
-  }
-
-  onMount(async () => {
-
-    if (url) {
-      await download(url)
-    }
-  })
-
-  function onDownload() {
-    url = enteredUrl;
-    download(url);
+  function onHashChange(e) {
+    view = window.location.hash.substring(2).split('?')[0];
   }
 </script>
 
-<div class="w-full h-full flex justify-center">
-  {#if !url}
-    <div class="flex flex-col justify-center items-start">
-      <div class="text-xs mb-4 text-gray-700">Experimental web app for reading MDL articles.</div>
-      <div>Enter link to GitHub repository:</div>
+<svelte:window on:hashchange={onHashChange}/>
 
-      <input class="rounded-sm border border-gray-600 text-sm px-1 py-1"
-             placeholder="https://github.com/ldover/knowledge-engineering.git"
-             type="text" bind:value={enteredUrl} />
+{#if !view}
+  <div class="w-full h-full flex flex-col items-center text-gray-900">
+    <div class="h-16 w-full bg-indigo-500 hero flex flex-col items-start md:items-center justify-center px-8">
+<!--      <a href="/" class="merriweather text-gray-100 m-3 py-4">Menu</a>-->
+      <div class="content">
+        <div class="text-xs mb-4 text-2xl text-white uppercase">Knowledge as Software</div>
+        <div class="text-lg text-xs mb-4 text-white">An experiment in knowledge engineering, developing articles like software, publishing them on GitHub.</div>
+        <a class="text-sky-200 text-xs">About this project</a>
+      </div>
+<!--      <div class=""><a></a></div>-->
+<!--      <div class="text-xs mb-4 text-xl text-white uppercase">GitHub</div>-->
+    </div>
 
-      <button class="bg-sky-700 text-white rounded-sm px-4 text-lg mt-2" on:click={onDownload}>Open</button>
-    </div>
-  {:else}
-    <div class="absolute right-0 top-0 p-6">
-      <a href={url} class="text-gray-900 text-blue-500 text-xs" target="_blank">
-        <img src="./assets/GitHub-Mark-120px-plus.png" width="32px" alt="GitHub logo"/>
-      </a>
-    </div>
-    <div class="content p-6 pt-16">
-      {#if rendered}
-        <Node node={rendered}></Node>
-      {:else}
-        <div>
-          <div class="text-lg">Status: {status}</div>
-          {#if errorMsg}
-            <div class="text-gray-600 text-xs">{errorMsg}</div>
-          {/if}
+    <div class="flex flex-col justify-center items-start mt-8 px-8 md:p-0 content">
+      <div class="font-bold text-gray-500 mb-4">ARTICLES</div>
+
+      {#each index as article}
+        <div class="border border-black border-indigo-500 w-full">
+          <div class="p-4 pb-2 bg-black text-white">
+              <a class="text-sky-400 underline" href="#/reader?repository={encodeURIComponent(article.repository)}">{article.title}</a>
+              <div class="text-white-gray-200 font-light italic">
+                {article.author}
+              </div>
+            <div class="text-gray-300 font-light italic">
+              {article.date}
+            </div>
+          </div>
+          <div class="p-4 text-gray-900">
+            {article.description}
+          </div>
         </div>
-      {/if}
+      {/each}
     </div>
-  {/if}
-</div>
+  </div>
+{:else if view === 'reader'}
+  <Reader/>
+{:else}
+  <div>Weird link, try going to main menu:</div>
+{/if}
 
 <style lang="scss">
-  input {
-    width: 350px;
-  }
-
   .content {
     width: 100%;
     max-width: 600px;
+  }
+
+  .hero {
+    @apply bg-black h-1/3;
   }
 </style>
