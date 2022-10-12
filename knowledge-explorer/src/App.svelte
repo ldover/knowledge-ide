@@ -3,7 +3,7 @@
 
   let index = [
     {
-      repository: 'https://github.com/ldover/knowledge-engineering.git',
+      repository: 'https://gitlab.com/ldover/knowledge-engineering.git',
       title: 'Scaling Civilizational Knowledge',
       author: 'Luka Dover',
       description: 'Exploration of the first principles scaling knowledge systems',

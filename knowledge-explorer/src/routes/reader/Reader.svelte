@@ -9,15 +9,24 @@
   import ProjectInfo from "./components/ProjectInfo.svelte";
 
 
-  const cached = localStorage.getItem('repository') && localStorage.getItem('repository') === url;
+  const urlParams = new URLSearchParams(window.location.hash.substring(2).split('?')[1])
+  let url = urlParams.get('repository');
+  console.log({url})
+
+
+  const cache = localStorage.getItem('cache') && JSON.parse(localStorage.getItem('cache'));
+  let cached;
+  if (cache) {
+    const repoMatches = cache.repository === url;
+    // Invalidate after 10min to implicitly handle edge case when new version is published
+    const cacheValid = Date.now() - cache.time < 10 * 60 * 1000;
+    cached = repoMatches && cacheValid;
+    console.log({repoMatches, cacheValid, cached, res: {time: cache.time, now: Date.now(), diff:Date.now() - cache.time}})
+  }
 
   const fs = new LightningFS('fs', {wipe: !cached});
 
   const rootDir = '/project'
-
-  const urlParams = new URLSearchParams(window.location.hash.substring(2).split('?')[1])
-  let url = urlParams.get('repository');
-  console.log({url})
 
   let enteredUrl;
   let downloading = !!url;
@@ -128,13 +137,19 @@
       let files;
       try {
         if (cached) {
+          // TODO: this will become a problem if different version (might fix with a simple timeout — invalidate cache after 10min)
+          console.log('Using cached article')
           files = await getFiles();
         }
 
         if (files === undefined || !files.length) {
           await clone(url)
           files = await getFiles()
-          localStorage.setItem('repository', url);
+          localStorage.setItem('cache', JSON.stringify({
+              time: Date.now(),
+              repository: url
+            }
+          ));
         }
       } catch (err) {
         // No project yet — clone
