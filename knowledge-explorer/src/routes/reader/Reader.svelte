@@ -21,7 +21,6 @@
     // Invalidate after 10min to implicitly handle edge case when new version is published
     const cacheValid = Date.now() - cache.time < 10 * 60 * 1000;
     cached = repoMatches && cacheValid;
-    console.log({repoMatches, cacheValid, cached, res: {time: cache.time, now: Date.now(), diff:Date.now() - cache.time}})
   }
 
   const fs = new LightningFS('fs', {wipe: !cached});

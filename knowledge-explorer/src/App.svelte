@@ -23,7 +23,8 @@
 
 {#if !view}
   <div class="w-full h-full flex flex-col items-center text-gray-900">
-    <div class="h-16 w-full bg-indigo-500 hero flex flex-col items-start md:items-center justify-center px-8">
+    <div class="w-full bg-indigo-500 hero flex flex-col items-start md:items-center justify-center px-8 py-6 md:h-1/3">
+
 <!--      <a href="/" class="merriweather text-gray-100 m-3 py-4">Menu</a>-->
       <div class="content">
         <div class="text-xs mb-4 text-2xl text-white uppercase">Knowledge as Software</div>
@@ -68,6 +69,6 @@
   }
 
   .hero {
-    @apply bg-black h-1/3;
+    @apply bg-black;
   }
 </style>
