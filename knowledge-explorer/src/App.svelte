@@ -39,7 +39,7 @@
       <div class="font-bold text-gray-500 mb-4">ARTICLES</div>
 
       {#each index as article}
-        <div class="border border-black border-indigo-500 w-full">
+        <div class="border border-black w-full">
           <div class="p-4 pb-2 bg-black text-white">
               <a class="text-sky-400 underline" href="#/reader?repository={encodeURIComponent(article.repository)}">{article.title}</a>
               <div class="text-white-gray-200 font-light italic">
