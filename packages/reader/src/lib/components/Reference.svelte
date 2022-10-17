@@ -17,15 +17,31 @@
   }
 </script>
 
-<a href="javascript:;"
-   bind:this={el}
-   on:click={() => onClick()}
-   class="reference">
-  {node.title}
-</a>
+<!-- todo: temporary fix — will have to generalize how to handle references -->
+{#if node.kind === 'statement'}
+  <a href="javascript:;"
+     bind:this={el}
+     on:click={() => onClick()}
+     class="reference">
+    {node.title}
+  </a>
+{:else}
+  <span
+     class="symbol-reference">
+    {node.title}
+  </span>
+{/if}
 
 <style>
-    .reference {
-        @apply text-teal-600;
-    }
+  .symbol-reference {
+    @apply text-gray-900 font-medium;
+  }
+
+  .reference {
+    @apply text-teal-600;
+  }
+
+  .reference:hover {
+    @apply text-teal-700 underline;
+  }
 </style>
