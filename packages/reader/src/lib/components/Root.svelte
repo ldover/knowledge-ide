@@ -9,7 +9,8 @@
 
 <style>
     .root {
-        @apply font-light;
+        @apply font-normal text-gray-700;
+        /*font-family: 'Open Sans', sans-serif;*/
         font-family: 'Roboto', sans-serif;
     }
 </style>

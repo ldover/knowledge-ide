@@ -26,9 +26,9 @@
         {`${node.statement.root.symbol.name}: Statement ${node.name}`}
       </div>
     <!-- TODO: ADD PATH TO GITHUB      -->
-      <a href="https://github.com">
-        View file
-      </a>
+<!--      <a href="https://github.com">-->
+<!--        View file-->
+<!--      </a>-->
     </div>
 
     <!--{#if !isProof}-->
