@@ -203,7 +203,7 @@
 
   <div class="content p-6">
     {#if rendered}
-      <Node node={rendered}></Node>
+      <Node root={true} node={rendered}></Node>
     {:else}
       <div>
         <div class="text-lg">Status: {status}</div>

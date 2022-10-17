@@ -53,7 +53,12 @@ class Statement {
 
   ref(title = null) {
     title = title || `${this.root.symbol.name}:${this.name}`
-    return this.root.ref(title)
+    return {
+      type: 'reference',
+      statement: this,
+      url: null,
+      title
+    }
   }
 }
 
