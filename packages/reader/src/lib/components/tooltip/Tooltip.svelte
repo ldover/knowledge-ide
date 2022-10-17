@@ -30,6 +30,7 @@
     @apply absolute top-0 right-0 m-3 text-2xl text-white;
   }
   .tooltip-opacity {
+    z-index: 1;
     position: fixed;
     width: 100vw;
     height: 100vh;
@@ -47,13 +48,13 @@
 
   @media (min-width: 480px) {
     .tooltip-statement {
-      width: 480px
+      width: 480px;
     }
   }
 
-  @media (min-width: 920px) {
+  @media (min-width:640px)  {
     .tooltip-statement {
-      width: 600px
+      width: 594px;
     }
   }
 </style>
