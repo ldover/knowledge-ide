@@ -16,19 +16,15 @@ export function getTooltip() {
       console.assert(statement)
 
       // Compute position
-      const boundingRect = el.getBoundingClientRect();
-      let offset = 0;
-      const padding = 8;
-      const outerPadding = 24;
-      let style = `top: ${boundingRect.top}px; left: ${(boundingRect.width + outerPadding + padding + offset)}px;`;
+      // const boundingRect = el.getBoundingClientRect();
+      // let style = `top: ${boundingRect.top}px;`;
 
       _sTooltip.update(state => {
         return {
           ...state,
           visible: true,
           statement,
-          el,
-          style
+          el
         }
       })
     },

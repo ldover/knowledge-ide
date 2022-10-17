@@ -37,7 +37,7 @@
 {#if root === true}
   <Tooltip sTooltip={sTooltip}>
     {#if $sTooltip.statement}
-      <Node node={$sTooltip.statement.render()}/>
+      <Node node={$sTooltip.statement.render()} isTooltip={true}/>
     {/if}
   </Tooltip>
 {/if}

@@ -3,6 +3,7 @@
 
   export let node;
   export let isProof = false;
+  export let isTooltip = false;
 
   let expandProof;
 
@@ -16,11 +17,18 @@
 </script>
 
 
-<div class="statement relative">
+<div class="statement relative border border-black"
+     class:isTooltip>
 
   <div class="flex justify-between items-center">
-    <div class="uppercase text-sm text-gray-600 font-medium">
-      {`File Statement ${node.name}`}
+    <div class="statement-header">
+      <div>
+        {`${node.statement.root.symbol.name}: Statement ${node.name}`}
+      </div>
+    <!-- TODO: ADD PATH TO GITHUB      -->
+      <a href="https://github.com">
+        View file
+      </a>
     </div>
 
     <!--{#if !isProof}-->
@@ -32,7 +40,9 @@
     <!--  </div>-->
     <!--{/if}-->
   </div>
-  <slot></slot>
+  <div class="statement-body">
+    <slot></slot>
+  </div>
 
   <!--{#if expandProof}-->
   <!--  <div class="w-full mt-3">-->
@@ -42,8 +52,24 @@
 </div>
 
 <style>
+  a {
+    @apply text-gray-300 font-light;
+  }
+
+  .statement-header {
+    @apply px-3 py-1 w-full bg-black text-white flex justify-between font-medium;
+  }
+
+  .statement-body {
+    @apply p-3 bg-white;
+  }
+
   .statement {
-    @apply p-3 bg-gray-100 mb-4;
+    @apply mb-4;
+  }
+
+  .statement.isTooltip {
+    @apply mb-0;
   }
 </style>
 
