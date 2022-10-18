@@ -32,7 +32,7 @@
           Knowledge index
         </h1>
         <div class="mb-4 text-gray-200">
-          This experiment is testing whether we could use practices from software engineering to write and publish articles as software libraries.
+          Writing and publishing articles as software.
         </div>
 
         <div class="text-gray-200">
