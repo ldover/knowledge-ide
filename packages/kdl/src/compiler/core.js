@@ -29,7 +29,13 @@ class Symbol {
 
   ref(title = null) {
     title = title || `${this.name}`
-    return this.root.ref(title)
+    return {
+      type: 'reference',
+      kind: 'symbol',
+      symbol: this,
+      url: null,
+      title
+    }
   }
 }
 
@@ -53,7 +59,13 @@ class Statement {
 
   ref(title = null) {
     title = title || `${this.root.symbol.name}:${this.name}`
-    return this.root.ref(title)
+    return {
+      type: 'reference',
+      kind: 'statement',
+      statement: this,
+      url: null,
+      title
+    }
   }
 }
 

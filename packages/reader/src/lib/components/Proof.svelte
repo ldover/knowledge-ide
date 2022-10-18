@@ -17,7 +17,7 @@
 
 <style>
   .proof {
-    @apply p-3 bg-gray-200 rounded-md mb-3;
+    @apply p-3 bg-gray-200 rounded-md mb-4;
   }
 </style>
 

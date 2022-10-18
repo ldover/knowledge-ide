@@ -1,0 +1,38 @@
+{
+  "name": "@knowledge/reader",
+  "version": "0.0.1",
+  "exports": "./src/lib/index.js",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "svelte-kit sync && svelte-package",
+    "check": "svelte-kit sync && svelte-check --tsconfig jsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig jsconfig.json --watch",
+    "lint": "prettier --check @knowledge/reader && eslint .",
+    "format": "prettier --write @knowledge/reader"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "next",
+    "@sveltejs/kit": "next",
+    "@sveltejs/package": "next",
+    "autoprefixer": "^10.4.11",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-svelte3": "^4.0.0",
+    "postcss": "^8.4.16",
+    "prettier": "^2.6.2",
+    "prettier-plugin-svelte": "^2.7.0",
+    "svelte": "^3.44.0",
+    "svelte-check": "^2.7.1",
+    "tailwindcss": "^3.1.8",
+    "tslib": "^2.3.1",
+    "typescript": "^4.7.4",
+    "vite": "^3.1.0"
+  },
+  "dependencies": {
+    "@codemirror/state": "^6.1.1",
+    "@codemirror/view": "^6.0.2",
+    "@knowledge/codemirror-lang-knowledge": "0.0.1",
+    "codemirror": "^6.0.1"
+  },
+  "type": "module"
+}

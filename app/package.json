@@ -34,6 +34,7 @@
     "@knowledge/common": "0.0.1",
     "@knowledge/kdl": "0.0.1",
     "@knowledge/mdl": "0.0.1",
+    "@knowledge/reader": "0.0.1",
     "@lezer/common": "^1.0.0",
     "@lezer/javascript": "^1.0.0",
     "@lezer/markdown": "^1.0.0",

@@ -1,11 +1,25 @@
 <script>
+  import "../app.css";
   import Node from "./Node.svelte";
   import {beforeUpdate} from "svelte";
   import {Components} from "../util";
+  import Tooltip from "./tooltip/Tooltip.svelte";
+  import {getTooltip} from "./tooltip/store.js";
+  import {setContext} from 'svelte';
 
   export let node;
-  export const root = false;
+  export let root = false;
   let prevNode;
+
+  let sTooltip;
+
+  if (root === true) {
+    console.log('ROOT = true')
+    sTooltip = getTooltip();
+    console.log('setContext', sTooltip)
+    setContext('sTooltip', sTooltip)
+  }
+
 
   const addId = (node) => node.id = Math.round(Math.random() * 100000000) + '';
   beforeUpdate(() => {
@@ -19,6 +33,14 @@
   let component = Components[node.type].component;
   let hasChildren = Components[node.type].children;
 </script>
+
+{#if root === true}
+  <Tooltip sTooltip={sTooltip}>
+    {#if $sTooltip.statement}
+      <Node node={$sTooltip.statement.render()} isTooltip={true}/>
+    {/if}
+  </Tooltip>
+{/if}
 
 {#if hasChildren}
   <svelte:component this={component} node={node} {...$$restProps}>

@@ -15,9 +15,15 @@
 {/if}
 
 <style>
+    h1, h2, h3 {
+      @apply text-gray-900;
+      @apply font-medium;
+    }
+
     h1 {
-        @apply text-2xl;
-        @apply mb-3;
+      @apply font-bold;
+      @apply text-2xl;
+      @apply mb-3;
     }
     h2 {
         @apply text-xl;

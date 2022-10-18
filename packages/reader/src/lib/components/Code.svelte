@@ -6,7 +6,7 @@
 
 <style>
     pre {
-        @apply mb-3;
+        @apply mb-4;
         @apply p-2 bg-gray-100 overflow-x-auto rounded-sm;
 
     }

@@ -2,7 +2,6 @@ import {get, writable} from 'svelte/store';
 
 import * as http from 'isomorphic-git/http/web';
 import * as git from 'isomorphic-git'
-import fs from "fs";
 import {VFile} from 'vfile';
 import {getModal} from "../modal/store";
 
@@ -27,7 +26,7 @@ export function getGit(sFileSystem) {
         http,
         dir: rootDir,
         url,
-        corsProxy: 'https://cors.isomorphic-git.org',
+        corsProxy: 'https://knowledge-explorer-iiy8pvktp-ldover.vercel.app/api',
         onAuth: (url) => this._onAuth(url)
       })
 
@@ -261,7 +260,7 @@ export function getGit(sFileSystem) {
       return new TextDecoder().decode(blob);
     },
     _onAuth: function (url) {
-      const accessToken = "glpat-Mzd_iz-ysuRT5Yz6XgBV"
+      const accessToken = "glpat-_K6-u-e1CYwvRxYCtfog"
       const username = "ldover";
 
       return {
