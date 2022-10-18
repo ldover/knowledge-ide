@@ -6,12 +6,15 @@
       repository: 'https://gitlab.com/ldover/knowledge-engineering.git',
       title: 'Scaling Civilizational Knowledge',
       author: 'Luka Dover',
-      description: 'Exploration of the first principles scaling knowledge systems',
-      date: '12 Oct 2022',
+      description: "We have perfected our information systems, and yet as civilization we seem more prone suffer from ignorance than ever. " +
+        "In this article we use principles from Austrian economics to develop a conceptual framework for understanding knowledge systems and how to guide their development towards rendering us more useful service as individuals and as civilization.",
+      date: '18 Oct 2022',
+      version: 'v0.0.1'
     }
   ]
 
   let view;
+  let article;
   onHashChange();
 
   function onHashChange(e) {
@@ -23,20 +26,24 @@
 
 {#if !view}
   <div class="w-full h-full flex flex-col items-center text-gray-900">
-    <div class="w-full bg-indigo-500 hero flex flex-col items-start md:items-center justify-center px-8 py-6 md:h-1/3">
+    <div class="w-full hero flex flex-col items-start md:items-center  px-8 py-6 md:py-16">
+      <div class="content text-white text-lg font-normal">
+        <h1 class="text-2xl mb-4 font-medium">
+          Knowledge index
+        </h1>
+        <div class="mb-4 text-gray-200">
+          This experiment is testing whether we could use practices from software engineering to write and publish articles as software libraries.
+        </div>
 
-<!--      <a href="/" class="merriweather text-gray-100 m-3 py-4">Menu</a>-->
-      <div class="content">
-        <div class="text-xs mb-4 text-2xl text-white uppercase">Knowledge as Software</div>
-        <div class="text-lg text-xs mb-4 text-white">An experiment in knowledge engineering, developing articles like software, publishing them on GitHub.</div>
-        <a class="text-sky-200 text-xs">About this project</a>
+        <div class="text-gray-200">
+          Articles are published on GitHub and can be read using this tool.
+        </div>
       </div>
-<!--      <div class=""><a></a></div>-->
-<!--      <div class="text-xs mb-4 text-xl text-white uppercase">GitHub</div>-->
     </div>
 
     <div class="flex flex-col justify-center items-start mt-8 px-8 md:p-0 content">
-      <div class="font-bold text-gray-500 mb-4">ARTICLES</div>
+      <div class="font-bold text-gray-500 mb-3">ARTICLES</div>
+      <div class="font-light text-gray-600 text-sm mb-4">Note: this is an early a proof of concept and more articles will be added as it develops…</div>
 
       {#each index as article}
         <div class="border border-black w-full">
@@ -57,12 +64,15 @@
     </div>
   </div>
 {:else if view === 'reader'}
-  <Reader/>
+  <Reader article={index[0]}/>
 {:else}
   <div>Weird link, try going to main menu:</div>
 {/if}
 
 <style lang="scss">
+  nav > a {
+
+  }
   .content {
     width: 100%;
     max-width: 600px;

@@ -9,6 +9,7 @@
   import ProjectInfo from "./components/ProjectInfo.svelte";
 
 
+  export let article;
   const urlParams = new URLSearchParams(window.location.hash.substring(2).split('?')[1])
   let url = urlParams.get('repository');
   console.log({url})
@@ -197,11 +198,11 @@
   <div class="w-full bg-indigo-500 hero flex flex-col items-center justify-center">
     <a href="/" class="text-gray-400 mb-2 w-full pl-6 pt-4">← Index</a>
     <div class="content pt-4 pb-4 px-6">
-      <ProjectInfo/>
+      <ProjectInfo article={article}/>
     </div>
   </div>
 
-  <div class="content p-6">
+  <div class="article content p-6">
     {#if rendered}
       <Node root={true} node={rendered}></Node>
     {:else}

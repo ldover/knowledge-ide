@@ -1,20 +1,22 @@
 <script>
+  export let article;
+
   const rows = [
     {
       field: "title",
-      value: "Scaling Civilization Knowledge"
+      value: article.title
     },
     {
       field: "author",
-      value: "Luka Dover"
+      value: article.author
     },
     {
       field: "version",
-      value: "v1.0"
+      value: article.version
     },
     {
       field: "repository",
-      value: `<a href="https://gitlab.com/ldover/knowledge-library.git" target="_blank">https://gitlab.com/ldover/knowledge-library.git</a>`
+      value: `<a href="${article.repository}" target="_blank">${article.repository}</a>`
     },
   ]
 
