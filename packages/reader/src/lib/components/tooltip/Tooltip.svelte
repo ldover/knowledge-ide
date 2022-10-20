@@ -78,7 +78,7 @@
     @apply shadow-md bg-white rounded-sm flex flex-col;
     /*position: fixed;*/
     z-index: 1;
-    width: 320px;
+    width: 90%;
 
     min-height: 60vh;
   }
