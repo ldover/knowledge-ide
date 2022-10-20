@@ -16,9 +16,25 @@
            use:clickOutside
            on:outclick={() => sTooltip.hide()}
       >
-        <slot>
-          Missing content
-        </slot>
+        <div class="header">
+          <div class="filename">
+              {$sTooltip.node.path || $sTooltip.node.root.path}
+          </div>
+          {#if $sTooltip.mode === 'codemirror'}
+            <button class="view-code-button" on:click={() => sTooltip.setViewMode('normal')}>
+              Back
+            </button>
+          {:else}
+            <button class="view-code-button" on:click={() => sTooltip.setViewMode('codemirror')}>
+              View Code
+            </button>
+            {/if}
+        </div>
+        <div class="content">
+          <slot>
+            Missing content
+          </slot>
+        </div>
       </div>
     </div>
   </div>
@@ -29,6 +45,24 @@
   .close-button {
     @apply absolute top-0 right-0 m-3 text-2xl text-white;
   }
+
+  .header {
+    @apply bg-black py-2 px-4 flex justify-between text-white items-center;
+  }
+
+  .filename {
+    @apply text-gray-200 font-light italic text-sm;
+
+  }
+
+  .content {
+    @apply flex-grow p-4  overflow-y-auto;
+  }
+
+  .view-code-button {
+    @apply text-gray-100;
+  }
+
   .tooltip-opacity {
     z-index: 1;
     position: fixed;
@@ -39,11 +73,14 @@
     top: 0;
   }
 
+
   .tooltip-statement {
-    @apply shadow-md;
+    @apply shadow-md bg-white rounded-sm flex flex-col;
     /*position: fixed;*/
     z-index: 1;
     width: 320px;
+
+    min-height: 60vh;
   }
 
   @media (min-width: 480px) {

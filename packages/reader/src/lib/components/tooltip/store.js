@@ -4,16 +4,26 @@ import {writable} from 'svelte/store';
 export function getTooltip() {
   const _sTooltip = writable({
     visible: false,
-    statement: null,
+    node: null,
     el: null,
     style: null,
+    mode: 'normal' // normal | codemirror
   })
 
   return {
     subscribe: _sTooltip.subscribe,
-    show: function (statement, el) {
+    setViewMode: function(mode) {
+      console.log('set view mode', {mode})
+      _sTooltip.update(state => {
+        return {
+          ...state,
+          mode
+        }
+      })
+    },
+    show: function (node, el) {
       console.assert(el)
-      console.assert(statement)
+      console.assert(node)
 
       // Compute position
       // const boundingRect = el.getBoundingClientRect();
@@ -23,7 +33,7 @@ export function getTooltip() {
         return {
           ...state,
           visible: true,
-          statement,
+          node,
           el
         }
       })
@@ -33,7 +43,7 @@ export function getTooltip() {
         return {
           ...state,
           visible: false,
-          statement: null,
+          node: null,
           el: null,
         }
       })

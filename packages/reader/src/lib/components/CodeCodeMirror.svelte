@@ -77,13 +77,14 @@
   <div bind:this={node.el}
        class="h-full">
   </div>
-  <div class="file-header font-normal bg-gray-100 roboto-mono text-xs text-gray-700 py-1 px-2">
-    <div class="">{node.path}</div>
-    <!-- TODO: make this into link pointing to actual repo (maybe path above is clickable too?)  -->
-    <button class="">
-      View on Github
-    </button>
-  </div>
+  <!-- todo: add back this file footer  -->
+  <!--  <div class="file-header font-normal bg-gray-100 roboto-mono text-xs text-gray-700 py-1 px-2">-->
+  <!--    <div class="">{node.path}</div>-->
+  <!-- TODO: make this into link pointing to actual repo (maybe path above is clickable too?)  -->
+  <!--    <button class="">-->
+<!--      View on Github-->
+<!--    </button>-->
+<!--  </div>-->
 </div>
 
 <style>

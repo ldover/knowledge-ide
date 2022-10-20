@@ -22,8 +22,8 @@
 
   <div class="flex justify-between items-center">
     <div class="statement-header">
-      <div>
-        {`${node.statement.root.symbol.name}: Statement ${node.name}`}
+      <div class="roboto-mono font-light">
+        {`${node.statement?.root.symbol.name}:${node.name}`}
       </div>
     <!-- TODO: ADD PATH TO GITHUB      -->
 <!--      <a href="https://github.com">-->
@@ -52,6 +52,10 @@
 </div>
 
 <style>
+  .roboto-mono {
+    font-family: 'Roboto Mono', monospace;
+  }
+
   a {
     @apply text-gray-300 font-light;
   }
