@@ -95,7 +95,7 @@
   }
 
   async function clone(url) {
-    status = '(1/2) Cloning repository ' + url
+    status = '(1/2) Cloning repository... ' + url
 
     function _onAuth(url) {
       console.log('auth hook engaged')
@@ -161,7 +161,7 @@
         }
       }
 
-      status = '(2/2) Compiling code'
+      status = '(2/2) Compiling code...'
       files = await process(files)
 
       // todo: take root path from from package json entrypoint
@@ -194,7 +194,7 @@
 </script>
 
 
-<div class="w-full flex flex-col items-center">
+<div class="w-full flex flex-col items-center min-h-screen">
   <div class="w-full bg-indigo-500 hero flex flex-col items-center justify-center">
     <a href="/" class="text-gray-400 mb-2 w-full pl-6 pt-4">← Index</a>
     <div class="content pt-4 pb-4 px-6">
@@ -202,12 +202,12 @@
     </div>
   </div>
 
-  <div class="article content p-6">
+  <div class="article content p-6 flex-grow">
     {#if rendered}
       <Node root={true} node={rendered}></Node>
     {:else}
       <div>
-        <div class="text-lg">Status: {status}</div>
+        <div class="text-lg italic">{status}</div>
         {#if errorMsg}
           <div class="text-gray-600 text-xs">{errorMsg}</div>
         {/if}
