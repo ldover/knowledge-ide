@@ -5,6 +5,7 @@ export function getTooltip() {
   const _sTooltip = writable({
     visible: false,
     node: null,
+    type: null,
     el: null,
     style: null,
     mode: 'normal' // normal | codemirror
@@ -21,7 +22,7 @@ export function getTooltip() {
         }
       })
     },
-    show: function (node, el) {
+    show: function (node, type, el) {
       console.assert(el)
       console.assert(node)
 
@@ -33,6 +34,7 @@ export function getTooltip() {
         return {
           ...state,
           visible: true,
+          type,
           node,
           el
         }
@@ -42,6 +44,8 @@ export function getTooltip() {
       _sTooltip.update(state => {
         return {
           ...state,
+          type: null,
+          mode: 'normal',
           visible: false,
           node: null,
           el: null,

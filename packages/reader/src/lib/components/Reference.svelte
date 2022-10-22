@@ -8,9 +8,9 @@
   let el;
   function onClick() {
     if (node.statement) {
-      sTooltip.show(node.statement, el);
+      sTooltip.show(node.statement, 'statement', el);
     } else if (node.symbol) {
-      sTooltip.show(node.symbol, el);
+      sTooltip.show(node.symbol,'file', el);
     }  else {
       window.alert('WARNING: Broken reference, see log for details')
       console.warn("Broken reference", {node});

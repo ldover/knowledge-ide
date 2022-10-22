@@ -6,38 +6,57 @@
 </script>
 
 {#if $sTooltip.visible}
-  <div class="tooltip-opacity">
-    <div class="relative w-full h-full flex items-center justify-center ">
-      <button on:click={() => sTooltip.hide()}
-              class="close-button ">
-        ⨉
-      </button>
-      <div class="tooltip-statement"
-           use:clickOutside
-           on:outclick={() => sTooltip.hide()}
-      >
-        <div class="header">
-          <div class="filename">
-              {$sTooltip.node.path || $sTooltip.node.root.path}
-          </div>
-          {#if $sTooltip.mode === 'codemirror'}
-            <button class="view-code-button" on:click={() => sTooltip.setViewMode('normal')}>
-              Back
-            </button>
-          {:else}
-            <button class="view-code-button" on:click={() => sTooltip.setViewMode('codemirror')}>
-              View Code
-            </button>
-            {/if}
-        </div>
-        <div class="content">
+  {#if $sTooltip.type === 'statement'}
+    <div class="tooltip-opacity">
+      <div class="relative w-full h-full flex items-center justify-center ">
+        <button on:click={() => sTooltip.hide()}
+                class="close-button ">
+          ⨉
+        </button>
+        <div class="tooltip-statement"
+             use:clickOutside
+             on:outclick={() => sTooltip.hide()}
+        >
           <slot>
             Missing content
           </slot>
         </div>
       </div>
     </div>
-  </div>
+  {:else if $sTooltip.type === 'file'}
+    <div class="tooltip-opacity">
+      <div class="relative w-full h-full flex items-center justify-center ">
+        <button on:click={() => sTooltip.hide()}
+                class="close-button ">
+          ⨉
+        </button>
+        <div class="tooltip-modal"
+             use:clickOutside
+             on:outclick={() => sTooltip.hide()}
+        >
+          <div class="header">
+            <div class="filename">
+              {$sTooltip.node.path}
+            </div>
+            {#if $sTooltip.mode === 'codemirror'}
+              <button class="view-code-button" on:click={() => sTooltip.setViewMode('normal')}>
+                Back
+              </button>
+            {:else}
+              <button class="view-code-button" on:click={() => sTooltip.setViewMode('codemirror')}>
+                View Code
+              </button>
+            {/if}
+          </div>
+          <div class="content">
+            <slot>
+              Missing content
+            </slot>
+          </div>
+        </div>
+      </div>
+    </div>
+  {/if}
 {/if}
 
 
@@ -73,10 +92,18 @@
     top: 0;
   }
 
-
   .tooltip-statement {
+    @apply shadow-md;
+    z-index: 1;
+    width: 320px;
+  }
+
+  .tooltip-statement, .tooltip-modal {
+    max-height: 80vh;
+  }
+
+  .tooltip-modal {
     @apply shadow-md bg-white rounded-sm flex flex-col;
-    /*position: fixed;*/
     z-index: 1;
     width: 90%;
 
@@ -84,13 +111,13 @@
   }
 
   @media (min-width: 480px) {
-    .tooltip-statement {
+    .tooltip-statement, .tooltip-modal {
       width: 480px;
     }
   }
 
   @media (min-width:640px)  {
-    .tooltip-statement {
+    .tooltip-statement, .tooltip-modal {
       width: 594px;
     }
   }
