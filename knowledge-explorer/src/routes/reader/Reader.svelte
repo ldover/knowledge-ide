@@ -97,16 +97,14 @@
   async function clone(url) {
     status = '(1/2) Cloning repository... ' + url
 
-    function _onAuth(url) {
-      console.log('auth hook engaged')
-      const accessToken = "glpat-ZF1w2my4tExZsGvyfbbw"
-      const username = "ldover";
-
-      return {
-        username,
-        password: accessToken
-      };
-    }
+    // function _onAuth(url) {
+    //   console.log('auth hook engaged')
+    //
+    //   return {
+    //     username,
+    //     password: accessToken
+    //   };
+    // }
 
     console.info('INFO: cloning ' + url, {dir: rootDir, fs, http})
     await git.clone({
@@ -115,7 +113,7 @@
       dir: rootDir,
       url,
       corsProxy: corsProxy,
-      onAuth: (url) => _onAuth(url)
+      // onAuth: (url) => _onAuth(url)
     })
     console.info("INFO: cloning finished")
   }
