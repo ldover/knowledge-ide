@@ -45,7 +45,7 @@
 
     <div class="flex flex-col justify-center items-start mt-8 mb-16 px-8 md:p-0 content flex-grow">
       <div class="font-bold text-gray-500 mb-3">ARTICLES</div>
-      <div class="font-light text-gray-600 text-sm mb-4">Note: this is an early a proof of concept. and more articles will be added as it develops…</div>
+      <div class="font-light text-gray-600 text-sm mb-4">Note: this is an early a proof of concept and more articles will be added to the index as it develops…</div>
 
       {#each index as article}
         <div class="border border-black w-full">
