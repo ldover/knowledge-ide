@@ -162,6 +162,11 @@
       }
 
       status = '(2/2) Compiling code...'
+      files = files.filter(f => !f.basename?.startsWith('.') && ['.kdl', '.mdl', '.png', '.jpg'].includes(f.extname));
+      if (!files.length) {
+        return console.warn('No files to run');
+      }
+
       files = await process(files)
 
       // todo: take root path from from package json entrypoint

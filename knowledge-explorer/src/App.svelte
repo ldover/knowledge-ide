@@ -3,12 +3,12 @@
 
   let index = [
     {
-      repository: 'https://gitlab.com/ldover/knowledge-engineering.git',
+      repository: 'https://github.com/ldover/knowledge-systems',
       title: 'Scaling Civilizational Knowledge',
       author: 'Luka Dover',
       description: "We have perfected our information systems, and yet as civilization we seem more prone suffer from ignorance than ever. " +
-        "In this article we use principles from Austrian economics to develop a conceptual framework for understanding knowledge systems and how to guide their development towards rendering us more useful service as individuals and as civilization.",
-      date: '18 Oct 2022',
+        "In this article we use principles from Austrian economics to begin sketching out a conceptual framework for understanding knowledge systems, which may prove useful in continued work in this direction, so that in the future we may learn to design large-scale knowledge systems that render more useful service to individuals, and minimize our collective ignorance.",
+      date: '22 Oct 2022',
       version: 'v0.0.1'
     }
   ]
