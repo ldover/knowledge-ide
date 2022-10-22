@@ -36,8 +36,12 @@
 
 {#if root === true}
   <Tooltip sTooltip={sTooltip}>
-    {#if $sTooltip.statement}
-      <Node node={$sTooltip.statement.render()} isTooltip={true}/>
+    {#if $sTooltip.node}
+      {#if $sTooltip.mode === 'codemirror'}
+        <Node node={$sTooltip.node.render({type: 'codemirror'})} isTooltip={true}/>
+      {:else}
+        <Node node={$sTooltip.node.render()} isTooltip={true}/>
+      {/if}
     {/if}
   </Tooltip>
 {/if}

@@ -196,7 +196,9 @@ class Root {
     title = title || this.symbol.name;
     return {
       type: 'reference',
-      url:`#/${this.path}`,
+      kind: 'symbol',
+      symbol: this,
+      url: null,
       title
     }
   }
@@ -231,9 +233,10 @@ class Root {
     return {
       type: 'root',
       children: [
-        h(1, t(this.getTitle())),
+        // todo: think about adding backlinks back
+        // h(1, t(this.getTitle())),
         ...this.statements.map(s => s.render()),
-        ...this._renderBacklinks()
+        // ...this._renderBacklinks()
       ]
     }
   }
