@@ -9,14 +9,15 @@
 
   export let node;
   export let root = false;
+  export let isDev = false;
+
   let prevNode;
 
   let sTooltip;
 
   if (root === true) {
-    console.log('ROOT = true')
     sTooltip = getTooltip();
-    console.log('setContext', sTooltip)
+    setContext('isDev', isDev)
     setContext('sTooltip', sTooltip)
   }
 

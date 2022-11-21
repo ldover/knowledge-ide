@@ -172,7 +172,7 @@
         </div>
         <div class="px-4 py-3 overflow-y-auto w-full flex-grow">
           {#if note}
-            <Node root={true} node={note}/>
+            <Node root={true} node={note} isDev={true}/>
           {:else}
             (1) Add file (2) Press "Run"
           {/if}
