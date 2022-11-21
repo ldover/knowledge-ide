@@ -23,6 +23,7 @@
   import {getGitDiff} from "./versioning/diff/store";
   import {getGitUserModal} from "./modal/git-user/store";
   import GitUserModal from "./modal/git-user/GitUserModal.svelte";
+  import {writeExampleRepository} from "./onboarding/util";
 
 
   let note = null;
@@ -138,13 +139,19 @@
     } catch (err) {
       // Clone if we empty system
       if (err.code === 'ENOENT') {
+        await initRepository()
         console.info("INFO: no local repository exists — opening git clone modal.")
-        sCloneModal.show();
       } else {
         console.error(err)
       }
     }
   })
+
+  async function initRepository() {
+    await sGit.init()
+
+    writeExampleRepository(sFileSystem)
+  }
 </script>
 
 <svelte:window on:hashchange={onHashChange} />

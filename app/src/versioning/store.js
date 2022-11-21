@@ -68,6 +68,12 @@ export function getGit(sFileSystem) {
       localStorage.setItem('user.name', user);
       localStorage.setItem('user.email', email);
     },
+    init: async function () {
+      return await git.init({
+        fs,
+        dir: rootDir
+      })
+    },
     commit: async function (message) {
       await git.commit({fs, dir: rootDir, message})
       console.log('successfully committed changes')
