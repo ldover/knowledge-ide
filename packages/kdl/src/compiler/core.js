@@ -209,7 +209,7 @@ class Root {
   }
 
   getTitle() {
-    return  this.symbol.longName ? this.symbol.longName + ` (${this.symbol.name})` : this.symbol.name;
+    return  this.symbol.name;
   }
 
   render(options) {
@@ -230,25 +230,27 @@ class Root {
       }
     }
 
+    let children = [
+      ...this.statements.map(s => s.render()),
+    ];
+
+    options?.heading && (children = [h(1, t(this.getTitle())), ...children])
+    options?.backlinks && (children = [...children, ...this._renderBacklinks()]);
+
     return {
       type: 'root',
-      children: [
-        // todo: think about adding backlinks back
-        // h(1, t(this.getTitle())),
-        ...this.statements.map(s => s.render()),
-        // ...this._renderBacklinks()
-      ]
+      children: children
     }
   }
 
   _renderBacklinks() {
     // Find references in other root files
     const files = []
+    const referencedStatements = [];
     for (const [path, rootFile] of this.scope.entries()) {
       if (rootFile === this) continue;
       if (!rootFile.path.endsWith('.kdl')) continue;
       const statements = rootFile.statements;
-      const referencedStatements = [];
       statements.forEach(s => {
         const refs = s.value.filter(v => v instanceof Reference);
         const isReferenced = refs.find(r => {
@@ -260,31 +262,20 @@ class Root {
 
         });
         if (isReferenced) {
-          referencedStatements.push(s)
+          referencedStatements.push(s.render())
         }
       })
-
-      if (referencedStatements.length) {
-        files.push({file: rootFile, statements: referencedStatements})
-      }
     }
 
-    if (!files.length) return []
+    if (!referencedStatements.length) return []
 
-    const children = files.map(({file, statements}) => {
-      return listItem([
-          t(file.getTitle()),
-          list("unordered", statements.map(s => listItem(s.render())))
-        ]
-      )
-    })
 
     return [
       {
         type: 'thematicBreak'
       },
-      h(2, t('References')),
-      list("unordered", children)
+      h(2, t('Used in')),
+      ...referencedStatements
     ]
   }
 }

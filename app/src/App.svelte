@@ -86,7 +86,7 @@
         return console.warn('WARN: file cannot run since it did not compile')
       }
 
-      note = file.data.compiled.render()
+      note = file.data.compiled.render({heading: true, backlinks: true})
     } catch(err) {
       if (err instanceof CompilerError) {
         console.log('compilation error', file, err)
