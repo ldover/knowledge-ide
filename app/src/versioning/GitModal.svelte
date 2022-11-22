@@ -7,7 +7,7 @@
   import GitCommitTab from "./commit/GitCommitTab.svelte";
 
   export let sModal;
-  const {sGitModal, sGit, sGitRemoteModal, sAccessTokenModal} = getContext('stores');
+  const {sGitModal, sGit, sGitRemoteModal, sAccessTokenModal, sGitUserModal} = getContext('stores');
 
 
   let tabs = [
@@ -24,6 +24,12 @@
     if (!sGit.getAccessToken()) {
       window.alert("To modify remote repository you'll need to enter GitHub access token.")
       sAccessTokenModal.show();
+      return
+    }
+
+    if (!sGit.getUsername()) {
+      window.alert("Git username missing.")
+      sGitUserModal.show();
       return
     }
 

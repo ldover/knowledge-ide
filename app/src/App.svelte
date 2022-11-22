@@ -79,6 +79,7 @@
     const currentValue = sEditor.getValue();
 
     let files = await sFileSystem.getFiles();
+    // todo: could likewise process `md` files here
     files = files.filter(f => !f.basename?.startsWith('.') && ['.kdl', '.mdl', '.png', '.jpg'].includes(f.extname));
     if (!files.length) {
       return console.warn('No files to run');
@@ -87,6 +88,8 @@
     try {
       // Abstract everything away in the process method
       process(files)
+
+      // todo: here check if we have a fie that can be rendered (kdl, mdl, md), and only then run the code
       const file = files.find(f => f.path === currentFile.path);
       if (!file) {
         return console.error('ERROR: File not found')

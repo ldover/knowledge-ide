@@ -16,6 +16,8 @@ export function getGit(sFileSystem) {
   const fs = sFileSystem.getInstance();
 
   let accessToken = localStorage.getItem('accessToken') || null;
+  let username = localStorage.getItem('user.name') || null;
+  let email = localStorage.getItem('user.email') || null;
 
   const sGit = {
     subscribe: _sGit.subscribe,
@@ -86,8 +88,8 @@ export function getGit(sFileSystem) {
         value: email
       })
 
-      localStorage.setItem('user.name', user);
-      localStorage.setItem('user.email', email);
+      this.setUsername(user);
+      this.setEmail(email);
     },
     init: async function () {
       return await git.init({
@@ -287,16 +289,31 @@ export function getGit(sFileSystem) {
       localStorage.setItem('accessToken', token)
       accessToken = token
     },
-    getAccessToken(token) {
+    getAccessToken() {
       return accessToken
+    },
+    setUsername(name) {
+      localStorage.setItem('user.name', name)
+      username = name;
+    },
+    getUsername() {
+      return username
+    },
+    setEmail(userEmail) {
+      localStorage.setItem('user.email', userEmail)
+      email = userEmail;
+    },
+    getEmail() {
+      return email;
     },
     _onAuth: function (url) {
       if (!accessToken) {
         throw new Error('Access token missing.')
       }
 
-      // todo: this is hardcoded now
-      const username = "ldover";
+      if (!username) {
+        throw new Error('Username is missing.')
+      }
 
       return {
         username,
