@@ -24,6 +24,8 @@
   import {getGitUserModal} from "./modal/git-user/store";
   import GitUserModal from "./modal/git-user/GitUserModal.svelte";
   import {writeExampleRepository} from "./onboarding/util";
+  import {getGitRemoteModal} from "./modal/git-remote/store";
+  import GitRemoteModal from "./modal/git-remote/GitRemoteModal.svelte";
 
 
   let note = null;
@@ -43,6 +45,7 @@
   let sGitModal = getGitModal(sGit, sFileSystem, sDiff)
   let sGitLogTab = getGitLogTab(sGit, sGitModal)
   let sGitUserModal = getGitUserModal(sGit, sGitModal)
+  let sGitRemoteModal = getGitRemoteModal(sGit)
 
   let scope = {
     sFileSystem,
@@ -55,6 +58,7 @@
     sGitModal,
     sGitLogTab,
     sGitUserModal,
+    sGitRemoteModal,
     sDiff,
   };
 
@@ -161,6 +165,9 @@
     <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sGitModal.show()}>
       <span class="material-symbols-sharp text-gray-900">conversion_path</span> Git
     </button>
+    <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sGitRemoteModal.show()}>
+      <span class="material-symbols-sharp text-gray-900">backup</span> Set Remote
+    </button>
   </div>
   <div class="w-full flex h-5/6 overflow-y-hidden overflow-x-hidden">
       <div class="w-3/12 bg-gray-100 text-white overflow-x-auto">
@@ -195,6 +202,7 @@
 <CloneModal sModal={sCloneModal}/>
 <GitModal sModal={sGitModal}/>
 <GitUserModal sModal={sGitUserModal}/>
+<GitRemoteModal sModal={sGitRemoteModal}/>
 
 <style lang="scss">
   .toolbar {

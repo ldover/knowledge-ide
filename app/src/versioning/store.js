@@ -50,6 +50,26 @@ export function getGit(sFileSystem) {
     isGit: async function () {
       return sFileSystem.exists('.git')
     },
+    setRemote: async function(url) {
+      try {
+        await git.addRemote({
+          fs,
+          dir: rootDir,
+          remote: 'origin',
+          url
+        })
+      } catch (err) {
+        if (err.code === 'AlreadyExistsError') {
+          await git.deleteRemote({
+            fs,
+            dir: rootDir,
+            remote: 'origin',
+          })
+
+          return this.setRemote(url);
+        }
+      }
+    },
     setConfig: async function({user, email}) {
       await git.setConfig({
         fs,
@@ -71,7 +91,8 @@ export function getGit(sFileSystem) {
     init: async function () {
       return await git.init({
         fs,
-        dir: rootDir
+        dir: rootDir,
+        defaultBranch: 'main'
       })
     },
     commit: async function (message) {
@@ -110,23 +131,17 @@ export function getGit(sFileSystem) {
       this.refresh()
     },
     push: async function () {
-      try {
-        let pushResult = await git.push({
-          fs,
-          dir: rootDir,
-          http,
-          remote: 'origin',
-          ref: 'main',
-          onAuth: (url) => this._onAuth(url),
-        })
+      let pushResult = await git.push({
+        fs,
+        dir: rootDir,
+        http,
+        remote: 'origin',
+        ref: 'main',
+        onAuth: (url) => this._onAuth(url),
+      })
 
-        console.log(pushResult);
-        window.alert('Push successful')
-      } catch (err) {
-        let msg = 'Push to remote failed: ' + err;
-        console.error(msg)
-        window.alert(msg);
-      }
+      console.log(pushResult);
+
     },
     pull: async function () {
       try {
@@ -266,7 +281,11 @@ export function getGit(sFileSystem) {
       return new TextDecoder().decode(blob);
     },
     _onAuth: function (url) {
-      const accessToken = "glpat-_K6-u-e1CYwvRxYCtfog"
+      const accessToken = localStorage.getItem('accessToken')
+      if (!accessToken) {
+        throw new Error('Access token missing.')
+      }
+
       const username = "ldover";
 
       return {
