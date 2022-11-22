@@ -199,7 +199,9 @@
           {#if note}
             <Node root={true} node={note} isDev={true}/>
           {:else}
-            (1) Add file (2) Press "Run"
+            <div class="text-gray-700">
+              Select one .mdl file on the left
+            </div>
           {/if}
         </div>
       </div>

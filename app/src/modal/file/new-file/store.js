@@ -19,7 +19,8 @@ export function getNewFileModal(sFileSystem) {
     onNew: function() {
       const {file, value, type} = get(_sModal);
       if (file.type !== 'folder') {
-        return window.alert('Cannot add file to file... this edge case not implemented')
+        // todo: handle this edge case
+        return window.alert('Try again, drag the file over the folder icon.')
       }
       if (!value) return window.alert('value invalid')
 
@@ -28,11 +29,11 @@ export function getNewFileModal(sFileSystem) {
         path = `${file.path}/${value}/.`;
         sFileSystem.addFolder(path); // todo: unhandled error here
       } else {
-        const isMDL = value.endsWith('.mdl')
-        const isKDL = value.endsWith('.kdl')
+        const supportedExtensions = ['.mdl', '.kdl.', '.md', '.json'];
 
-        if (!isMDL && !isKDL) {
-          return window.alert('Specify one of the supported extensions: .mdl, .kdl.')
+        const supported = supportedExtensions.includes((new VFile({path: value})).extname);
+        if (!supported) {
+          return window.alert('Currently the supported extensions are: ' + supportedExtensions.join(', '))
         }
 
         path = `${file.path}/${value}`;
