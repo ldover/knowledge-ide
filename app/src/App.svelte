@@ -172,8 +172,12 @@
     <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sGitModal.show()}>
       <span class="material-symbols-sharp text-gray-900">conversion_path</span> Git
     </button>
+    <div class="text-gray-400">|</div>
+    <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sCloneModal.show()}>
+      <span class="material-symbols-sharp text-gray-500">cloud_download</span> Clone repository
+    </button>
     <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sGitRemoteModal.show()}>
-      <span class="material-symbols-sharp text-gray-900">backup</span> Set Remote
+      <span class="material-symbols-sharp text-gray-500">backup</span> Set Remote
     </button>
   </div>
   <div class="w-full flex h-5/6 overflow-y-hidden overflow-x-hidden">

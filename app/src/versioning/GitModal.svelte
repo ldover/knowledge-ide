@@ -7,7 +7,7 @@
   import GitCommitTab from "./commit/GitCommitTab.svelte";
 
   export let sModal;
-  const {sGitModal, sGit, sGitRemoteModal, sAccessTokenModal, sGitUserModal} = getContext('stores');
+  const {sGitModal, sGit, sGitRemoteModal, sAccessTokenModal, sGitUserModal, sCloneModal} = getContext('stores');
 
 
   let tabs = [
