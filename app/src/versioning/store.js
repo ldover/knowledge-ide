@@ -15,6 +15,7 @@ export function getGit(sFileSystem) {
   const rootDir = sFileSystem.getWorkingDir();
   const fs = sFileSystem.getInstance();
 
+  let accessToken = localStorage.getItem('accessToken') || null;
 
   const sGit = {
     subscribe: _sGit.subscribe,
@@ -26,7 +27,7 @@ export function getGit(sFileSystem) {
         http,
         dir: rootDir,
         url,
-        corsProxy: 'https://knowledge-explorer-iiy8pvktp-ldover.vercel.app/api',
+        corsProxy: 'https://knowledge.lukadover.com/api',
         onAuth: (url) => this._onAuth(url)
       })
 
@@ -136,6 +137,7 @@ export function getGit(sFileSystem) {
         dir: rootDir,
         http,
         remote: 'origin',
+        corsProxy: 'https://knowledge.lukadover.com/api',
         ref: 'main',
         onAuth: (url) => this._onAuth(url),
       })
@@ -150,6 +152,7 @@ export function getGit(sFileSystem) {
           dir: rootDir,
           http,
           remote: 'origin',
+          corsProxy: 'https://knowledge.lukadover.com/api',
           singleBranch: true,
           ref: 'main',
           onAuth: (url) => this._onAuth(url),
@@ -280,12 +283,19 @@ export function getGit(sFileSystem) {
 
       return new TextDecoder().decode(blob);
     },
+    setAccessToken(token) {
+      localStorage.setItem('accessToken', token)
+      accessToken = token
+    },
+    getAccessToken(token) {
+      return accessToken
+    },
     _onAuth: function (url) {
-      const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
         throw new Error('Access token missing.')
       }
 
+      // todo: this is hardcoded now
       const username = "ldover";
 
       return {

@@ -7,7 +7,7 @@
   import GitCommitTab from "./commit/GitCommitTab.svelte";
 
   export let sModal;
-  const {sGitModal, sGit, sGitRemoteModal} = getContext('stores');
+  const {sGitModal, sGit, sGitRemoteModal, sAccessTokenModal} = getContext('stores');
 
 
   let tabs = [
@@ -21,6 +21,12 @@
   let tab = 'changes';
 
   async function onPush() {
+    if (!sGit.getAccessToken()) {
+      window.alert("To modify remote repository you'll need to enter GitHub access token.")
+      sAccessTokenModal.show();
+      return
+    }
+
     try {
       await sGit.push()
       window.alert('Push successful')

@@ -26,6 +26,8 @@
   import {writeExampleRepository} from "./onboarding/util";
   import {getGitRemoteModal} from "./modal/git-remote/store";
   import GitRemoteModal from "./modal/git-remote/GitRemoteModal.svelte";
+  import {getAccessTokenModal} from "./modal/git-access-token/store";
+  import AccessTokenModal from "./modal/git-access-token/AccessTokenModal.svelte";
 
 
   let note = null;
@@ -46,6 +48,7 @@
   let sGitLogTab = getGitLogTab(sGit, sGitModal)
   let sGitUserModal = getGitUserModal(sGit, sGitModal)
   let sGitRemoteModal = getGitRemoteModal(sGit)
+  let sAccessTokenModal = getAccessTokenModal(sGit)
 
   let scope = {
     sFileSystem,
@@ -60,6 +63,7 @@
     sGitUserModal,
     sGitRemoteModal,
     sDiff,
+    sAccessTokenModal,
   };
 
   setContext('stores', scope);
@@ -203,6 +207,7 @@
 <GitModal sModal={sGitModal}/>
 <GitUserModal sModal={sGitUserModal}/>
 <GitRemoteModal sModal={sGitRemoteModal}/>
+<AccessTokenModal sModal={sAccessTokenModal}/>
 
 <style lang="scss">
   .toolbar {
