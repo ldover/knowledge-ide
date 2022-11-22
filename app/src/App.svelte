@@ -162,6 +162,9 @@
     await sGit.init()
 
     writeExampleRepository(sFileSystem)
+
+    // Open index.mdl
+    window.location.assign('#//project/index.mdl')
   }
 </script>
 
