@@ -1,9 +1,9 @@
 # Knowledge IDE 
 Work-in-progress system of tools for developing knowledge like software.
 
-You can use the public [IDE](https://ide.lukadover.com) to develop your article, or run your local instance. Articles can be read at [Knowledge Index](https://knowledge.lukadover.com) (like this [example](./https://knowledge.lukadover.com/#reader?repository=https%3A%2F%2Fgithub.com%2Fldover%2Fknowledge-systems)). 
+You can play with the [Web IDE](https://ide.lukadover.com) or run your local instance. You can develop an article like this [one](./https://knowledge.lukadover.com/#reader?repository=https%3A%2F%2Fgithub.com%2Fldover%2Fknowledge-systems) and have it published at [Knowledge Index](https://knowledge.lukadover.com). 
 
-See below for more instructions how to use this to write / public articles.
+See the section below for more information on how to write and publish articles.
 
 ## Project structure
 Monorepo consists of two web applications:
@@ -12,11 +12,11 @@ Monorepo consists of two web applications:
 
 Packages:
 * [KDL](./packages/kdl/README.md) — language used to encode knowledge in a pseudo-formal syntax
-* [MDL](./packages/mdl/README.md) — extended Markdown Language to communicate ideas
-* [Reader](./packages/reader/README.md) — library that renders articles
+* [MDL](./packages/mdl/README.md) — extended Markdown Language, used to write prose and communicate ideas
+* [Reader](./packages/reader/README.md) — Svelte library that renders articles
 * [codemirror-lang-knowledge](./packages/reader/README.md) - codemirror plugin for KDL
 
-*Note: this monorepo is optimized for personal Vercel deployments. It will be split into separate packages, published on NPM. **Caveat**: everything here is just one step from breaking, and without user-friendly error messages — it's just an early release and will change a lot.*
+*Note: this monorepo is optimized for personal Vercel deployments. It will be split into separate packages, published on NPM. Everything here is just one step from breaking, and without user-friendly error messages — it's just an early release and will change a lot.*
 
 ## Writing and publishing articles
 The main idea is separating your writing project into two parts:
@@ -27,13 +27,10 @@ You can import and reference your KDL code in MDL, but not vice versa.
 
 See this [published article](https://github.com/ldover/knowledge-systems)'s code as reference.
 
-
 ## Further work and collaboration
-This is just the PoC version exploring if this idea makes sense.
+This is a *very* early proof of concept, designed to bring the project into public view and begin learning. While developing articles with this framework is certainly interesting, the technology will change many times, and consequently the articles will need to be refactored.
 
-For a more rigorous test, there should be at least two such knowledge libraries on NPM, one importing the concepts (KDL code) from another, specifying `dependencies` like in our usual JavaScript projects.
+Next step is to develop a more complete prototype: publishing several inter-linked articles or knowledge libraries, bootstrapping on NPM / JS ecosystem for convenience and speed. 
 
-The reason for bootstrapping on NPM / JS ecosystem is mainly for convenience and speed.
-
-**If you want to write an article, if you want to help build this, or chat about these concepts, reach out: knowledge@lukadover.com.**
+**If you want to learn more or write an article, if you want to help build this technology, if you want to chat about these concepts, reach out: knowledge@lukadover.com.**
 
