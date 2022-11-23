@@ -1,7 +1,7 @@
 # Knowledge IDE 
 Work-in-progress system of tools for developing knowledge like software.
 
-You can play with the [Web IDE](https://ide.lukadover.com) or run your local instance. You can develop an article like this [one](https://knowledge.lukadover.com/#reader?repository=https%3A%2F%2Fgithub.com%2Fldover%2Fknowledge-systems) and have it published at [Knowledge Index](https://knowledge.lukadover.com). 
+You can play with the [Web IDE](https://ide.lukadover.com) or run your local instance. You can develop an article like this [one](https://knowledge.lukadover.com/#/reader?repository=https%3A%2F%2Fgithub.com%2Fldover%2Fknowledge-systems) and have it published at [Knowledge Index](https://knowledge.lukadover.com). 
 
 See the section below for more information on how to write and publish articles.
 
