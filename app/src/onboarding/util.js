@@ -40,9 +40,9 @@ clone existing project.
 </script>
 
 # Knowledge Project
-This is sample repository to demonstrate the syntax, capabilities, and limitations of this framework.
+This is a sample repository to demonstrate the syntax, capabilities, and limitations of this framework for developing articles.
 
-**Caveat**: this is very early proof of concept. If you get the syntax right, everything should work. If you don't, you can have some trouble finding the bug. Not all errors are caught nicely. You should keep an eye on the JS console, use Git to revert to previous versions, and make heavy use of CMD+R.
+**Caveat**: this is very early proof of concept. Things will sometimes break without user-friendly error messages. You should keep an eye on the JS console, use Git to revert to previous versions, and make heavy use of CMD+R.
 
 ## MDL — Markdown Language
 MDL is Markdown with added syntax to make it more "programmable".

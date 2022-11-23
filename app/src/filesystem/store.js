@@ -174,7 +174,7 @@ export function getFileSystem(workingDir = '/project') {
       await fs.promises.unlink(file.path)
       this.init();
     },
-    deleteFolder: async function (path) {
+    deleteFolder: async function (path, confirm = true) {
       async function recursiveDelete(folder) {
         await Promise.all(folder.files.map(async f => {
           if (f.type === 'folder') {
@@ -191,7 +191,7 @@ export function getFileSystem(workingDir = '/project') {
         await fs.promises.rmdir(path)
       } catch (err) {
         if (err.message ==='ENOTEMPTY') {
-          if (window.confirm('directory is not empty — sure you want to delete all contents?')) {
+          if (!confirm || window.confirm('directory is not empty — sure you want to delete all contents?')) {
             const dir = await this._getAllFiles(path);
             console.log('recursive delete', dir);
             await recursiveDelete(dir);

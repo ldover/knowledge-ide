@@ -20,6 +20,22 @@ export function getCloneModal(sFileSystem, sGit) {
         throw new Error("Specify url")
       }
 
+      try {
+        if ((await sFileSystem.getFiles()).length) {
+          if (!window.confirm('Git clone will overwrite your local files. To avoid losing changes you should push to remote repo. Confirm to override.')) {
+            return;
+          } else {
+            if (!window.confirm('Confirm again to overwrite local files and clone.')) {
+              return
+            }
+          }
+
+          await sFileSystem.deleteFolder(sFileSystem.getWorkingDir(), false)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+
       // todo: run all required checks: is folder path valid (empty, etc.)
       // const isEmpty = await sFileSystem.isValidDirectory(dir);
 
