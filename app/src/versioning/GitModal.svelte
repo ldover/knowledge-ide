@@ -74,16 +74,28 @@
       <div class="w-5/12 h-full border-l border-gray-200 bg-gray-100 flex flex-col">
         <div class="flex justify-end bg-gray-700 border-t border-gray-100">
           <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
+                  on:click={() => sCloneModal.show()}>
+            Git Clone
+          </button>
+          <div class="border-r border-gray-400 my-1"></div>
+          <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
+                  on:click={() => sGitRemoteModal.show()}>
+            Set Remote
+          </button>
+          <div class="border-r border-gray-400 my-1"></div>
+          <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
                   on:click={() => sGit.pull()}>
             <span class="material-symbols-sharp text-gray-100">file_download</span> Pull
           </button>
+          <div class="border-r border-gray-400 my-1"></div>
           <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
                   on:click={onPush}>
             <span class="material-symbols-sharp text-gray-100">publish</span> Push
           </button>
+          <div class="border-r border-gray-400 my-1"></div>
           <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
                   on:click={() => sGit.refresh()}>
-            <span class="material-symbols-sharp text-gray-100">refresh</span> Refresh
+            <span class="material-symbols-sharp text-gray-100">refresh</span>
           </button>
         </div>
         <div class="flex justify-between border-b border-gray-300">
