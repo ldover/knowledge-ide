@@ -7,7 +7,7 @@
   import GitCommitTab from "./commit/GitCommitTab.svelte";
 
   export let sModal;
-  const {sGitModal, sGit} = getContext('stores');
+  const {sGitModal, sGit, sGitRemoteModal, sAccessTokenModal, sGitUserModal, sCloneModal} = getContext('stores');
 
 
   let tabs = [
@@ -19,6 +19,42 @@
     }
   ]
   let tab = 'changes';
+
+  async function onPush() {
+    if (!sGit.getAccessToken()) {
+      window.alert("To modify remote repository you'll need to enter GitHub access token.")
+      sAccessTokenModal.show();
+      return
+    }
+
+    if (!sGit.getUsername()) {
+      window.alert("Git username missing.")
+      sGitUserModal.show();
+      return
+    }
+
+    try {
+      await sGit.push()
+      window.alert('Push successful')
+    } catch (err) {
+      let msg = 'Push to remote failed: ' + err;
+      console.error(msg)
+      console.log({err})
+      if (err.code === 'MissingParameterError') {
+        window.alert("Git remote missing");
+        sGitRemoteModal.show();
+      } else if (err.code === 'UnknownTransportError') {
+        if (err.data.suggestion) {
+          if (window.confirm(`This IDE doesn't support SSH. Use suggested remote instead? — ${err.data.suggestion}`)) {
+            await sGit.setRemote(err.data.suggestion);
+            onPush();
+          }
+        }
+      } else {
+        window.alert('Unhandled error: ' + msg)
+      }
+    }
+  }
 </script>
 
 <Modal style="width: 80%; height: 80%;" {sModal}
@@ -42,7 +78,7 @@
             <span class="material-symbols-sharp text-gray-100">file_download</span> Pull
           </button>
           <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"
-                  on:click={() => sGit.push()}>
+                  on:click={onPush}>
             <span class="material-symbols-sharp text-gray-100">publish</span> Push
           </button>
           <button class="text-gray-100 flex items-center hover:bg-gray-600 px-2 text-sm"

@@ -1,9 +1,12 @@
 <script>
   import Proof from "./Proof.svelte";
+  import {getContext} from "svelte";
 
   export let node;
   export let isProof = false;
   export let isTooltip = false;
+
+  const isDev = getContext('isDev')
 
   let expandProof;
 
@@ -20,35 +23,29 @@
 <div class="statement relative border border-black"
      class:isTooltip>
 
-  <div class="flex justify-between items-center">
-    <div class="statement-header">
-      <div class="roboto-mono font-light">
-        {`${node.statement?.root.symbol.name}:${node.name}`}
-      </div>
-    <!-- TODO: ADD PATH TO GITHUB      -->
-<!--      <a href="https://github.com">-->
-<!--        View file-->
-<!--      </a>-->
+  <div class="statement-header flex justify-between items-center"
+       class:isDev>
+    <div class="roboto-mono font-light">
+      {`${node.statement?.root.symbol.name}:${node.name}`}
     </div>
 
-    <!--{#if !isProof}-->
-    <!--  <div class:cursor-pointer={node.proven}-->
-    <!--       on:click={onProof}-->
-    <!--       class:text-yellow-400={!node.proven}-->
-    <!--       class:text-teal-500={node.proven}>-->
-    <!--    <span class="material-symbols-sharp">{node.proven ? 'verified' : 'warning'}</span>-->
-    <!--  </div>-->
-    <!--{/if}-->
+    <!-- Show only in dev mode -->
+    {#if isDev && !isProof && node.proven}
+      <div on:click={onProof}
+           class="flex">
+        <span class="cursor-pointer material-symbols-sharp text-teal-500">verified</span>
+      </div>
+    {/if}
   </div>
   <div class="statement-body">
     <slot></slot>
   </div>
 
-  <!--{#if expandProof}-->
-  <!--  <div class="w-full mt-3">-->
-  <!--    <Proof node={node.statement.proof.render()} />-->
-  <!--  </div>-->
-  <!--{/if}-->
+  {#if expandProof}
+    <div class="w-full mt-3">
+      <Proof node={node.statement.proof.render()} />
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -62,6 +59,10 @@
 
   .statement-header {
     @apply px-3 py-1 w-full bg-black text-white flex justify-between font-medium;
+  }
+
+  .statement-header.isDev {
+    @apply bg-gray-100 text-gray-900 font-bold;
   }
 
   .statement-body {

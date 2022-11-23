@@ -1,2 +1,3 @@
-# KDL language support for CodeMirror
-todo: write README
+# codemirror-lang-knowledge
+CodeMirror language plugin for KDL. 
+

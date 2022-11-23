@@ -23,6 +23,11 @@
   import {getGitDiff} from "./versioning/diff/store";
   import {getGitUserModal} from "./modal/git-user/store";
   import GitUserModal from "./modal/git-user/GitUserModal.svelte";
+  import {writeExampleRepository} from "./onboarding/util";
+  import {getGitRemoteModal} from "./modal/git-remote/store";
+  import GitRemoteModal from "./modal/git-remote/GitRemoteModal.svelte";
+  import {getAccessTokenModal} from "./modal/git-access-token/store";
+  import AccessTokenModal from "./modal/git-access-token/AccessTokenModal.svelte";
 
 
   let note = null;
@@ -42,6 +47,8 @@
   let sGitModal = getGitModal(sGit, sFileSystem, sDiff)
   let sGitLogTab = getGitLogTab(sGit, sGitModal)
   let sGitUserModal = getGitUserModal(sGit, sGitModal)
+  let sGitRemoteModal = getGitRemoteModal(sGit)
+  let sAccessTokenModal = getAccessTokenModal(sGit)
 
   let scope = {
     sFileSystem,
@@ -54,7 +61,9 @@
     sGitModal,
     sGitLogTab,
     sGitUserModal,
+    sGitRemoteModal,
     sDiff,
+    sAccessTokenModal,
   };
 
   setContext('stores', scope);
@@ -70,6 +79,7 @@
     const currentValue = sEditor.getValue();
 
     let files = await sFileSystem.getFiles();
+    // todo: could likewise process `md` files here
     files = files.filter(f => !f.basename?.startsWith('.') && ['.kdl', '.mdl', '.png', '.jpg'].includes(f.extname));
     if (!files.length) {
       return console.warn('No files to run');
@@ -78,6 +88,8 @@
     try {
       // Abstract everything away in the process method
       process(files)
+
+      // todo: here check if we have a fie that can be rendered (kdl, mdl, md), and only then run the code
       const file = files.find(f => f.path === currentFile.path);
       if (!file) {
         return console.error('ERROR: File not found')
@@ -86,7 +98,7 @@
         return console.warn('WARN: file cannot run since it did not compile')
       }
 
-      note = file.data.compiled.render()
+      note = file.data.compiled.render({heading: true, backlinks: true})
     } catch(err) {
       if (err instanceof CompilerError) {
         console.log('compilation error', file, err)
@@ -138,13 +150,22 @@
     } catch (err) {
       // Clone if we empty system
       if (err.code === 'ENOENT') {
+        await initRepository()
         console.info("INFO: no local repository exists — opening git clone modal.")
-        sCloneModal.show();
       } else {
         console.error(err)
       }
     }
   })
+
+  async function initRepository() {
+    await sGit.init()
+
+    writeExampleRepository(sFileSystem)
+
+    // Open index.mdl
+    window.location.assign('#//project/index.mdl')
+  }
 </script>
 
 <svelte:window on:hashchange={onHashChange} />
@@ -153,6 +174,13 @@
   <div class="toolbar w-full text-white bg-gray-200 flex">
     <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sGitModal.show()}>
       <span class="material-symbols-sharp text-gray-900">conversion_path</span> Git
+    </button>
+    <div class="text-gray-400">|</div>
+    <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sCloneModal.show()}>
+      <span class="material-symbols-sharp text-gray-500">cloud_download</span> Clone repository
+    </button>
+    <button class="text-gray-900 flex items-center hover:bg-gray-300 px-2 text-sm" on:click={() => sGitRemoteModal.show()}>
+      <span class="material-symbols-sharp text-gray-500">backup</span> Set Remote
     </button>
   </div>
   <div class="w-full flex h-5/6 overflow-y-hidden overflow-x-hidden">
@@ -172,9 +200,11 @@
         </div>
         <div class="px-4 py-3 overflow-y-auto w-full flex-grow">
           {#if note}
-            <Node root={true} node={note}/>
+            <Node root={true} node={note} isDev={true}/>
           {:else}
-            (1) Add file (2) Press "Run"
+            <div class="text-gray-700">
+              Select one .mdl file on the left
+            </div>
           {/if}
         </div>
       </div>
@@ -188,6 +218,8 @@
 <CloneModal sModal={sCloneModal}/>
 <GitModal sModal={sGitModal}/>
 <GitUserModal sModal={sGitUserModal}/>
+<GitRemoteModal sModal={sGitRemoteModal}/>
+<AccessTokenModal sModal={sAccessTokenModal}/>
 
 <style lang="scss">
   .toolbar {

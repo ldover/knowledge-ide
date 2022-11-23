@@ -15,6 +15,9 @@ export function getGit(sFileSystem) {
   const rootDir = sFileSystem.getWorkingDir();
   const fs = sFileSystem.getInstance();
 
+  let accessToken = localStorage.getItem('accessToken') || null;
+  let username = localStorage.getItem('user.name') || null;
+  let email = localStorage.getItem('user.email') || null;
 
   const sGit = {
     subscribe: _sGit.subscribe,
@@ -26,7 +29,7 @@ export function getGit(sFileSystem) {
         http,
         dir: rootDir,
         url,
-        corsProxy: 'https://knowledge-explorer-iiy8pvktp-ldover.vercel.app/api',
+        corsProxy: 'https://knowledge.lukadover.com/api',
         onAuth: (url) => this._onAuth(url)
       })
 
@@ -50,6 +53,26 @@ export function getGit(sFileSystem) {
     isGit: async function () {
       return sFileSystem.exists('.git')
     },
+    setRemote: async function(url) {
+      try {
+        await git.addRemote({
+          fs,
+          dir: rootDir,
+          remote: 'origin',
+          url
+        })
+      } catch (err) {
+        if (err.code === 'AlreadyExistsError') {
+          await git.deleteRemote({
+            fs,
+            dir: rootDir,
+            remote: 'origin',
+          })
+
+          return this.setRemote(url);
+        }
+      }
+    },
     setConfig: async function({user, email}) {
       await git.setConfig({
         fs,
@@ -65,8 +88,15 @@ export function getGit(sFileSystem) {
         value: email
       })
 
-      localStorage.setItem('user.name', user);
-      localStorage.setItem('user.email', email);
+      this.setUsername(user);
+      this.setEmail(email);
+    },
+    init: async function () {
+      return await git.init({
+        fs,
+        dir: rootDir,
+        defaultBranch: 'main'
+      })
     },
     commit: async function (message) {
       await git.commit({fs, dir: rootDir, message})
@@ -104,23 +134,18 @@ export function getGit(sFileSystem) {
       this.refresh()
     },
     push: async function () {
-      try {
-        let pushResult = await git.push({
-          fs,
-          dir: rootDir,
-          http,
-          remote: 'origin',
-          ref: 'main',
-          onAuth: (url) => this._onAuth(url),
-        })
+      let pushResult = await git.push({
+        fs,
+        dir: rootDir,
+        http,
+        remote: 'origin',
+        corsProxy: 'https://knowledge.lukadover.com/api',
+        ref: 'main',
+        onAuth: (url) => this._onAuth(url),
+      })
 
-        console.log(pushResult);
-        window.alert('Push successful')
-      } catch (err) {
-        let msg = 'Push to remote failed: ' + err;
-        console.error(msg)
-        window.alert(msg);
-      }
+      console.log(pushResult);
+
     },
     pull: async function () {
       try {
@@ -129,6 +154,7 @@ export function getGit(sFileSystem) {
           dir: rootDir,
           http,
           remote: 'origin',
+          corsProxy: 'https://knowledge.lukadover.com/api',
           singleBranch: true,
           ref: 'main',
           onAuth: (url) => this._onAuth(url),
@@ -259,9 +285,35 @@ export function getGit(sFileSystem) {
 
       return new TextDecoder().decode(blob);
     },
+    setAccessToken(token) {
+      localStorage.setItem('accessToken', token)
+      accessToken = token
+    },
+    getAccessToken() {
+      return accessToken
+    },
+    setUsername(name) {
+      localStorage.setItem('user.name', name)
+      username = name;
+    },
+    getUsername() {
+      return username
+    },
+    setEmail(userEmail) {
+      localStorage.setItem('user.email', userEmail)
+      email = userEmail;
+    },
+    getEmail() {
+      return email;
+    },
     _onAuth: function (url) {
-      const accessToken = "glpat-_K6-u-e1CYwvRxYCtfog"
-      const username = "ldover";
+      if (!accessToken) {
+        throw new Error('Access token missing.')
+      }
+
+      if (!username) {
+        throw new Error('Username is missing.')
+      }
 
       return {
         username,
