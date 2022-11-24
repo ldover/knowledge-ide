@@ -7,8 +7,8 @@ See the section below for more information on how to write and publish articles.
 
 ## Project structure
 Monorepo consists of two web applications:
-* [Knowledge IDE](https://ide.lukadover.com) — web app for developing articles
-* [Knowledge Index](https://knowledge.lukadover.com) — frontend for reading published articles
+* [Knowledge IDE](./app/README.md) — web app for developing articles
+* [Knowledge Index](knowledge-index/README.md) — frontend for reading published articles
 
 Packages:
 * [KDL](./packages/kdl/README.md) — language used to encode knowledge in a pseudo-formal syntax

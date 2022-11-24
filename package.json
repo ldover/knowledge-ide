@@ -1,6 +1,5 @@
 {
   "version": "0.0.1",
-  "private": true,
   "author": "Luka Dover",
   "license": "MIT",
   "engines": {
@@ -9,7 +8,7 @@
   },
   "workspaces": [
     "app",
-    "knowledge-explorer",
+    "knowledge-index",
     "./packages/*"
   ]
 }
