@@ -9,7 +9,7 @@
       author: 'Luka Dover',
       description: "We have perfected our information systems, and yet as civilization we seem more prone to ignorance than ever. In this article we address this dichotomy and use principles from Austrian economics to begin sketching out a conceptual framework for understanding knowledge systems, so that in the future we may learn to design large-scale knowledge systems that render more value to individuals and minimize our collective ignorance.",
       date: '22 Oct 2022',
-      version: 'v0.0.1'
+      version: 'v0.0.2'
     }
   ]
 
@@ -27,22 +27,35 @@
 {#if !view}
   <div class="w-full h-full flex flex-col items-center text-gray-900 min-h-screen">
     <div class="w-full hero flex flex-col items-start md:items-center  px-8 py-6 md:py-16">
+      <a href="https://github.com/ldover/knowledge-ide"
+         target="_blank"
+         class="absolute top-0 right-0 m-4"
+      >
+        <img src="./assets/GitHub-Mark-Light-120px-plus.png"
+             width="40px"
+        />
+      </a>
       <div class="content text-white text-lg font-normal">
         <h1 class="text-3xl mb-4 font-medium">
-          Writing and publishing articles as software.
+          Knowledge Index
         </h1>
         <div class="mb-4 text-gray-200">
 
         </div>
 
         <div class="text-gray-200">
-          You're looking at an early experiment: articles are published on GitHub and can be read using this frontend.
-          You can learn more about it <a class="text-sky-400 hover:underline" href="https://lukadover.com/workshop">here</a>.
+          This is an experiment to see if we can write articles like software, publish them on GitHub like software libraries, and access them with open-source UIs like this one.
+        </div>
+        <div class="mt-3">
+          To learn more, see the project on
+          <a class="text-sky-400 hover:underline mt-3"
+             target="_blank"
+             href="https://github.com/ldover/knowledge-ide">GitHub</a>.
         </div>
       </div>
     </div>
 
-    <div class="flex flex-col justify-center items-start mt-8 mb-16 px-8 md:p-0 content flex-grow">
+    <div class="flex flex-col justify-start items-start mt-8 mb-16 px-8 md:p-0 content flex-grow">
       <div class="font-bold text-gray-500 mb-3">ARTICLES</div>
       <div class="font-light text-gray-600 text-sm mb-4">Note: this is an early a proof of concept and more articles will be added to the index as it develops…</div>
 
@@ -63,7 +76,6 @@
         </div>
       {/each}
     </div>
-    <Footer />
   </div>
 {:else if view === 'reader'}
   <Reader article={index[0]}/>
