@@ -1,16 +1,20 @@
 # KDL - Knowledge Definition Language
-This is little more than a proof of concept of what the programming language for knowledge might look like.
+Proof of concept programming language for knowledge.
 
-The idea comes from an observation that explicit knowledge is always encoded with series of symbols and statements, representing concepts and concept descriptions respectively. Symbols (concepts) can only be defined in relation to one another with statements, and statements are built on other statements to further describe a symbol or form a new one.  
+Unlike query languages, like SPARQL and SHACL, which define data structures and queries, KDL defines concepts and remains a purely abstract language, without any data associated with it. Since it can't be used to enter data, or manipulate it in any way, it's not useful for the same types of applications as query languages. Its aim is to enable us to define, design, and engineer knowledge itself — knowledge, which might then be used as a conceptual layer for various things, including defining data structures and queries for SPARQL and other languages.  
 
-KDL language is at present just a UI that enforces these constraints, it has no power to do actual computation and validation of statements. Even so, as a user interface imposing these constraints on one's thinking, it can be a useful environment for developing ideas.
+The idea for a programming language for knowledge comes from an observation that explicit knowledge is always encoded with series of symbols and statements, representing concepts and concept descriptions respectively. Symbols (concepts) can only be defined in relation to one another with statements, and statements are built on other statements to further describe a symbol or form a new one.  
 
-In the future we might find a way to compile KDL code to a general, mathematical representation and check individual statements for validity.
+KDL language is at present just a UI that enforces these constraints — you can define symbols, statements, and that's pretty much it. But it has no way of doing actual computation and validation of statements. Yet.
+
+The eventual goal is to create a real programming language, where we can compile high level statements to a general, mathematical representation and evaluate individual knowledge statements just as we evaluate statements of C++ or JavaScript.
+
+Let me know if you have any ideas how to approach that.
 
 ## Syntax
 Far from finished, the language has two main keywords: `statement`, `symbol`.
 
-To create a concept, create corresponding file, like `Energy.kdl` and describe it with statements:
+To create a concept, create the corresponding file, like `Energy.kdl` and describe it with statements:
 ```
 use Mass of './Mass.kdl'
 
@@ -26,21 +30,15 @@ You can "prove" individual statements:
 
 // Derive energy from mass
 proof §2 {
-  statement 1.1 (
-    // Step 1
+  // To reference Mass's first statement use {Mass:1}
+  statement 2.1 (
+    Since {Mass:1}
   )
-  
-   statement 1.2 (
-    // Step 2 
+
+  // Note: not actual proof of mass-energy equivalence,
+  // just an example how to use the syntax.
+  statement 2.2 (
+    QED {2}
   )
-  
-  // etc.
 }
 ```
-
-
-## Potential use case
-I can imagine a use case where KDL forms a backbone of research articles.   
-
-As long as the findings are explicit (like a new physics equation construct), they could in principle be encoded with KDL and imported into other research projects. Like open source software, research projects would have "dependencies" on other projects.
-
