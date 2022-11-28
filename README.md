@@ -38,9 +38,9 @@ That's it! In the near future we might use NPM ecosystem as well to publish know
 See this [published article](https://github.com/ldover/knowledge-systems)'s code as reference.
 
 ## Further work and collaboration
-This is a *very* early proof of concept. As the nature of knowledge is to be open source, I wanted to bring this into public domain as soon as possible. I hope that building in public and learning aloud inspires you to pursue this crazy vision as well. If you want to fork it make it your own, feel free to do so. If you're good designing programming languages, known math or physics, or this type of thing inspires you, let me know we can collaborate.
+This is a *very* early proof of concept. As the nature of knowledge is to be open source, I wanted to bring this into public domain as soon as possible. I hope that building in public and learning aloud inspires you to pursue this crazy vision as well. If you want to fork it make it your own, feel free to do so. If you're good designing programming languages, or skilled in math or physics, or this type of thing inspires you, send me a message, and maybe we can collaborate.
 
-Next step is to develop a more complete prototype: extending the KDL / MDL compilers to work with NPM ecosystem, so we can publish knowledge libraries like JS libs. If we can do `npm install <knowledge-lib>` to import others' KDL-defined knowledge into our projects, and keep a list of "dependencies" instead of article references, that would be an interesting experiment. 
+Next step is to develop a more complete prototype: extending the KDL / MDL compilers to work with NPM ecosystem, so we can publish knowledge libraries like JS libs. If we can do `npm install <knowledge-lib>` to import other KDL-defined knowledge into our projects, and keep a list of "dependencies" instead of article references, that would be an interesting experiment. 
 
 **If you want to learn more or connect, please reach out: knowledge@lukadover.com.**
 
